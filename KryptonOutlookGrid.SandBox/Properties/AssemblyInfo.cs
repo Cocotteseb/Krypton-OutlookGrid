@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // Les informations générales relatives à un assembly dépendent de 
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
-[assembly: AssemblyTitle("KryptonOutlookGrid")]
-[assembly: AssemblyDescription("Kryptonized DataGridView allowing nested grouping")]
+[assembly: AssemblyTitle("KryptonOutlookGrid.SandBox")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("JDH Software")]
-[assembly: AssemblyProduct("KryptonOutlookGrid")]
-[assembly: AssemblyCopyright("Copyright © JDH Software 2013")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("KryptonOutlookGrid.SandBox")]
+[assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("f4c8df7d-820c-4ead-befb-8f740e896292")]
+[assembly: Guid("7ab89ff8-9bd3-4a88-9597-c879830676f7")]
 
 // Les informations de version pour un assembly se composent des quatre valeurs suivantes :
 //

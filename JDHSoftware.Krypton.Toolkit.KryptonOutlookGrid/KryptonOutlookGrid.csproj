@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8532CA10-4C92-411E-99B4-65106628D131}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid</RootNamespace>
+    <AssemblyName>JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ComponentFactory.Krypton.Toolkit, Version=4.3.2.1, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Librairies\ComponentFactory.Krypton.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="KryptonOutlookGrid\IOutlookGridGroup.cs" />
+    <Compile Include="KryptonOutlookGrid\KryptonOutlookGridGroupBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="KryptonOutlookGrid\KryptonOutlookGridGroupBox.Designer.cs">
+      <DependentUpon>KryptonOutlookGridGroupBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewPercentageColumn.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewRatingcolumn.cs" />
+    <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewTextAndImageColumn.cs" />
+    <Compile Include="KryptonOutlookGrid\Helpers\GridGroupDateUtility.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGrid.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGrid.designer.cs">
+      <DependentUpon>OutlookGrid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KryptonOutlookGrid\OutlookGridColumn.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGridColumnCollection.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGridColumnEventArgs.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGridGroup.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGridGroupBoxColumn.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGridGroupCollection.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGridRow.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGridRowComparer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\LangManager.cs" />
+    <EmbeddedResource Include="KryptonOutlookGrid\KryptonOutlookGridGroupBox.resx">
+      <DependentUpon>KryptonOutlookGridGroupBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Utils\Lang\Strings.fr.resx" />
+    <EmbeddedResource Include="Utils\Lang\Strings.resx" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Librairies\ComponentFactory.Krypton.Toolkit.dll" />
+    <None Include="Resources\element_selection_delete.png" />
+    <None Include="Resources\element_delete.png" />
+    <None Include="Resources\element.png" />
+    <None Include="Resources\star_yellow_half_16.png" />
+    <None Include="Resources\star_yellow_disabled.png" />
+    <None Include="Resources\star_yellow.png" />
+    <None Include="Resources\sort_up_down_delete_16.png" />
+    <None Include="Resources\fit_to_size.png" />
+    <None Include="Resources\navigate_minus.png" />
+    <None Include="Resources\sort_az_descending2.png" />
+    <None Include="Resources\sort_az_ascending2.png" />
+    <None Include="Resources\navigate_plus.png" />
+    <None Include="Resources\starhot5.png" />
+    <None Include="Resources\starhot4.png" />
+    <None Include="Resources\starhot3.png" />
+    <None Include="Resources\starhot2.png" />
+    <None Include="Resources\starhot1.png" />
+    <None Include="Resources\starhot0.png" />
+    <None Include="Resources\star5.png" />
+    <None Include="Resources\star4.png" />
+    <None Include="Resources\star3.png" />
+    <None Include="Resources\star2.png" />
+    <None Include="Resources\star1.png" />
+    <None Include="Resources\star0.png" />
+    <None Include="Resources\ExpandIcon2010.png" />
+    <None Include="Resources\ExpandIcon.png" />
+    <None Include="Resources\CollapseIcon2010.png" />
+    <None Include="Resources\CollapseIcon.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
