@@ -1,36 +1,36 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KryptonOutlookGrid", "JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid\KryptonOutlookGrid.csproj", "{8532CA10-4C92-411E-99B4-65106628D131}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KryptonOutlookGrid.SandBox", "KryptonOutlookGrid.SandBox\KryptonOutlookGrid.SandBox.csproj", "{07D41E03-A98F-401A-9D4E-E1C5A04ED843}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KryptonOutlookGrid", "KryptonOutlookGrid\KryptonOutlookGrid.csproj", "{8532CA10-4C92-411E-99B4-65106628D131}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 3
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs25
-		SccProjectUniqueName0 = JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid\\KryptonOutlookGrid.csproj
-		SccProjectName0 = JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
-		SccLocalPath0 = JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
+		SccLocalPath0 = .
 		SccProjectUniqueName1 = KryptonOutlookGrid.SandBox\\KryptonOutlookGrid.SandBox.csproj
 		SccProjectName1 = KryptonOutlookGrid.SandBox
 		SccLocalPath1 = KryptonOutlookGrid.SandBox
-		SccLocalPath2 = .
+		SccProjectUniqueName2 = KryptonOutlookGrid\\KryptonOutlookGrid.csproj
+		SccProjectName2 = KryptonOutlookGrid
+		SccLocalPath2 = KryptonOutlookGrid
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8532CA10-4C92-411E-99B4-65106628D131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8532CA10-4C92-411E-99B4-65106628D131}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8532CA10-4C92-411E-99B4-65106628D131}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8532CA10-4C92-411E-99B4-65106628D131}.Release|Any CPU.Build.0 = Release|Any CPU
 		{07D41E03-A98F-401A-9D4E-E1C5A04ED843}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{07D41E03-A98F-401A-9D4E-E1C5A04ED843}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07D41E03-A98F-401A-9D4E-E1C5A04ED843}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07D41E03-A98F-401A-9D4E-E1C5A04ED843}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8532CA10-4C92-411E-99B4-65106628D131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8532CA10-4C92-411E-99B4-65106628D131}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8532CA10-4C92-411E-99B4-65106628D131}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8532CA10-4C92-411E-99B4-65106628D131}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
 [assembly: AssemblyTitle("KryptonOutlookGrid")]
-[assembly: AssemblyDescription("Kryptonized DataGridView allowing nested grouping")]
+[assembly: AssemblyDescription("Kryptonized DataGridView with nested grouping")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("JDH Software")]
 [assembly: AssemblyProduct("KryptonOutlookGrid")]

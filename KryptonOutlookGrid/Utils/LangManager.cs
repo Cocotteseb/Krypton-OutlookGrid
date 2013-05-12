@@ -27,7 +27,7 @@ namespace JDHSoftware.Krypton.Toolkit.Utils
         // Le constructeur est Private
         private LangManager()
         {
-            rm = new ResourceManager("JDHSoftware.Krypton.Toolkit.Utils.Lang.Strings", Assembly.GetExecutingAssembly());
+            rm = new ResourceManager("JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Utils.Lang.Strings", Assembly.GetExecutingAssembly());
             ci = Thread.CurrentThread.CurrentCulture; //CultureInfo.CurrentCulture;
         }
 

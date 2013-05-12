@@ -80,6 +80,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         public OutlookGrid()
         {
+            DoubleBuffered = true;
+
             // To remove flicker we use double buffering for drawing
             SetStyle(
                      ControlStyles.AllPaintingInWmPaint |
