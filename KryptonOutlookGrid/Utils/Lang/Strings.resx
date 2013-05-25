@@ -214,7 +214,7 @@
     <value>1 item</value>
   </data>
   <data name="XXXItems" xml:space="preserve">
-    <value>items</value>
+    <value> items</value>
   </data>
   <data name="YearGroupText" xml:space="preserve">
     <value>Year</value>

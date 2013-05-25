@@ -2,7 +2,7 @@ using System.Drawing;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
-    partial class OutlookGrid
+    partial class KryptonOutlookGrid
     {
         /// <summary> 
         /// Required designer variable.

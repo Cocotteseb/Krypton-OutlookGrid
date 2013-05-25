@@ -314,24 +314,20 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         /// <param name="paintParts"></param>
         protected override void Paint(Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
         {
-            //TODO : improve we assume it is a 16x16 image
-            Padding inheritedPadding = this.InheritedStyle.Padding;
-            this.Style.Padding = new Padding(18, inheritedPadding.Top, inheritedPadding.Right, inheritedPadding.Bottom);
-            // Paint the base content
-            base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, paintParts);
+            //TODO : improve we assume it is a 16x16 image 
             if (((TextAndImage)this.Value).Image != null)
             {
+                Padding inheritedPadding = this.InheritedStyle.Padding;
+                this.Style.Padding = new Padding(18, inheritedPadding.Top, inheritedPadding.Right, inheritedPadding.Bottom);
                 // Draw the image clipped to the cell.
                 System.Drawing.Drawing2D.GraphicsContainer container = graphics.BeginContainer();
                 graphics.SetClip(cellBounds);
                 graphics.DrawImageUnscaled(((TextAndImage)this.Value).Image, new Point(cellBounds.Location.X + 2, cellBounds.Location.Y + ((cellBounds.Height - 16) / 2)-1));
                 graphics.EndContainer(container);
             }
-        }
 
-        //private KryptonDataGridViewTextAndImageColumn OwningTextAndImageColumn
-        //{
-        //    get { return this.OwningColumn as KryptonDataGridViewTextAndImageColumn; }
-        //}
+            // Paint the base content
+            base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, paintParts);
+        }
     }
 }

@@ -27,6 +27,7 @@ using System.ComponentModel;
 using System.Drawing.Drawing2D;
 using ComponentFactory.Krypton.Toolkit;
 using System.Diagnostics;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -99,6 +100,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                         long n1 = (long)o1;
                         long n2 = (long)o2;
                         compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
+                    }
+                    if (o1 is TextAndImage)
+                    {
+                        compareResult = string.Compare(((TextAndImage)o1).ToString(), ((TextAndImage)o2).ToString()) * orderModifier;
                     }
                 }
                 return compareResult;

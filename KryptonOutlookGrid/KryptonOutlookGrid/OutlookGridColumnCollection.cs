@@ -21,12 +21,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     /// </summary>
     public class OutlookGridColumnCollection : List<OutlookGridColumn>
     {
+        private int maxGroupOrder;
+
         /// <summary>
         /// Constructor
         /// </summary>
         public OutlookGridColumnCollection()
             : base()
         {
+            maxGroupOrder = 0;
         }
 
         /// <summary>
@@ -40,6 +43,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             {
                 return this.Find(c => c.DataGridViewColumn.Name.Equals(columnName));
             }
+        }
+
+        public int MaxGroupOrder
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -57,7 +66,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <returns>The list of grouped columns.</returns>
         public List<OutlookGridColumn> GroupedColumns()
         {
-            return this.FindAll(c => c.IsGrouped);
+            return this.Where(c => c.IsGrouped).OrderBy(c => c.GroupOrder).ToList();
         }
 
         /// <summary>
@@ -85,6 +94,22 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             {
                 return res.DataGridViewColumn.Index;
             }
+        }
+
+        /// <summary>
+        /// Removes a groupOrder and update the groups order for all columns
+        /// </summary>
+        /// <param name="removed">The order that will be removed.</param>
+        internal void RemoveGroupOrder(int removed)
+        {
+            for (int i = 0; i < this.Count; i++)
+            {
+                if (this[i].GroupOrder > removed)
+                {
+                    this[i].GroupOrder--;
+                }
+            }
+            maxGroupOrder--;
         }
     }
 }

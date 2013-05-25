@@ -33,7 +33,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     /// <summary>
     /// Krypton DataGridView allowing nested grouping
     /// </summary>
-    public partial class OutlookGrid : KryptonDataGridView
+    public partial class KryptonOutlookGrid : KryptonDataGridView
     {
         private KryptonOutlookGridGroupBox groupBox;
         //Krypton
@@ -78,16 +78,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <summary>
         /// Constructor
         /// </summary>
-        public OutlookGrid()
+        public KryptonOutlookGrid()
         {
-            DoubleBuffered = true;
-
-            // To remove flicker we use double buffering for drawing
-            SetStyle(
-                     ControlStyles.AllPaintingInWmPaint |
-                     ControlStyles.OptimizedDoubleBuffer |
-                     ControlStyles.ResizeRedraw, true);
-
             InitializeComponent();
 
             // very important, this indicates that a new default row class is going to be used to fill the grid
@@ -117,6 +109,20 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
             this.AllowUserToOrderColumns = false;  //we will handle it ourselves
         }
+
+        /// <summary>
+        /// Definitvely removes flickering - may not work on some systems/can cause higher CPU usage.
+        /// </summary>
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+                return cp;
+            }
+        }
+
 
         #endregion OutlookGrid constructor
 
@@ -639,6 +645,21 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             base.OnColumnHeaderMouseClick(e);
         }
 
+        /// <summary>
+        /// Overrides OnCellFormatting
+        /// </summary>
+        /// <param name="e">DataGridViewCellFormattingEventArgs event args.</param>
+        protected override void OnCellFormatting(DataGridViewCellFormattingEventArgs e)
+        {
+            //Allows to have a picture in the first column
+            if (e.DesiredType.Name == "Image" && e.Value != null && e.Value.GetType().Name != e.DesiredType.Name && e.Value.GetType().Name != "Bitmap")
+            {
+                e.Value = null;
+            }
+
+            base.OnCellFormatting(e);
+        }
+
         #endregion
 
         #region OutlookGrid Events
@@ -923,6 +944,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public void GroupColumn(string columnName, SortOrder sort, IOutlookGridGroup gr)
         {
             internalColumns[columnName].IsGrouped = true;
+            internalColumns[columnName].GroupOrder = ++internalColumns.MaxGroupOrder;
             internalColumns[columnName].SortDirection = sort;
             internalColumns[columnName].DataGridViewColumn.HeaderCell.SortGlyphDirection = sort;
             if (gr != null)
@@ -936,6 +958,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public void UnGroupColumn(string columnName)
         {
             internalColumns[columnName].IsGrouped = false;
+            internalColumns.RemoveGroupOrder(internalColumns[columnName].GroupOrder);
+            internalColumns[columnName].GroupOrder = 0;
             internalColumns[columnName].SortDirection = SortOrder.None;
             internalColumns[columnName].DataGridViewColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
         }

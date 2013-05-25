@@ -108,9 +108,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="Librairies\ComponentFactory.Krypton.Toolkit.dll" />
+    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Toolkit.dll" />
+    <Content Include="Librairies\Release\ComponentFactory.Krypton.Toolkit.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\element_selection_delete.png" />
     <None Include="Resources\element_delete.png" />
     <None Include="Resources\element.png" />

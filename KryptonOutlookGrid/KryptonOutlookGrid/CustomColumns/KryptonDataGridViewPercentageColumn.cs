@@ -9,8 +9,10 @@
 //--------------------------------------------------------------------------------
 
 using ComponentFactory.Krypton.Toolkit;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
@@ -23,14 +25,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     /// <summary>
     /// Hosts a collection of KryptonDataGridViewPercentageColumn cells.
     /// </summary>
-    public class KryptonDataGridViewPercentageColumn : KryptonDataGridViewTextBoxColumn
+    public class KryptonDataGridViewPercentageColumn : DataGridViewColumn// KryptonDataGridViewTextBoxColumn
     {
         #region Identity
         /// <summary>
         /// Initialize a new instance of the KryptonDataGridViewPercentageColumn class.
         /// </summary>
         public KryptonDataGridViewPercentageColumn()
-            : base()
+            : base(new DataGridViewPercentageCell())
         {
         }
 
@@ -127,25 +129,27 @@ public class DataGridViewPercentageCell : KryptonDataGridViewTextBoxCell
     protected override void Paint(System.Drawing.Graphics graphics, System.Drawing.Rectangle clipBounds, System.Drawing.Rectangle cellBounds, int rowIndex, System.Windows.Forms.DataGridViewElementStates cellState, object value, object formattedValue, string errorText, System.Windows.Forms.DataGridViewCellStyle cellStyle, System.Windows.Forms.DataGridViewAdvancedBorderStyle advancedBorderStyle,
     System.Windows.Forms.DataGridViewPaintParts paintParts)
     {
-        Single p = 0;
-        float percentage = 0f;
-        if (value != null && Single.TryParse((string)value, out p))
+        Double p = 0;
+        //Single percentage = 0f;
+        if (value != null && Double.TryParse((string)value, out p))
         {
             //p = Convert.ToDouble(value);
-            percentage = (p / 100f);
+            //percentage = (Convert.ToSingle(value) / 100f);
             formattedValue = value + "%";
         }
 
         //Draw the bar
-        if (p > 0)
+        int barWidth = (int)((cellBounds.Width - 10) * p / 100);
+        if (p > 0 && barWidth > 0)
         {
-            Rectangle r = new Rectangle(cellBounds.X + 5, cellBounds.Y + 3, (cellBounds.Width - 10) * (int)percentage, cellBounds.Height - 8);
+            Rectangle r = new Rectangle(cellBounds.X + 5, cellBounds.Y + 3, barWidth, cellBounds.Height - 8);
+          
             using (LinearGradientBrush linearBrush = new LinearGradientBrush(r, KryptonManager.CurrentGlobalPalette.GetBackColor1(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), KryptonManager.CurrentGlobalPalette.GetBackColor2(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), LinearGradientMode.Vertical))
             {
                 graphics.FillRectangle(linearBrush, r);
             }
 
-            using (Pen pen = new Pen(Color.FromArgb(70, Color.Gray)))
+            using (Pen pen = new Pen(KryptonManager.CurrentGlobalPalette.GetBackColor2(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal)))
             {
                 graphics.DrawRectangle(pen, r);
             }
@@ -159,6 +163,7 @@ public class DataGridViewPercentageCell : KryptonDataGridViewTextBoxCell
 /// <summary>
 /// Public class for the underlying editing control
 /// </summary>
+[ToolboxItem(false)]
 public class PercentageEditingControl : DataGridViewTextBoxEditingControl
 {
     /// <summary>

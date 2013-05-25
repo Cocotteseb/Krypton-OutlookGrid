@@ -26,6 +26,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private DataGridViewColumn column;
         private SortOrder sortDirection;
         private bool isGrouped;
+        private int groupOrder;
         private string name;
 
         #region Constructor
@@ -109,6 +110,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             get { return groupingType; }
             set { groupingType = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the group order
+        /// </summary>
+        public int GroupOrder
+        {
+            get { return groupOrder; }
+            set { groupOrder = value; }
         }
         #endregion
 

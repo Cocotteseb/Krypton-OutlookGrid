@@ -129,8 +129,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <returns></returns>
         public override DataGridViewElementStates GetState(int rowIndex)
         {
-            //if(group != null)
-            // Console.WriteLine("Group : " +  group.Text + " collapsed : " + group.Collapsed.ToString() + " Parent : " + IsAParentCollapsed(group,0).ToString() );
+            //yes its readable ;)
             if ((IsGroupRow && IsAParentCollapsed(group, 0)) || (!IsGroupRow && group != null && (group.Collapsed || IsAParentCollapsed(group, 0))))
             {
                 return base.GetState(rowIndex) & DataGridViewElementStates.Selected;
@@ -154,10 +153,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             if (this.isGroupRow)
             {
-                OutlookGrid grid = (OutlookGrid)this.DataGridView;
+                KryptonOutlookGrid grid = (KryptonOutlookGrid)this.DataGridView;
                 int rowHeadersWidth = grid.RowHeadersVisible ? grid.RowHeadersWidth : 0;
 
                 int gridwidth = grid.Columns.GetColumnsWidth(DataGridViewElementStates.Visible);
+                Rectangle myRowBounds = rowBounds;
+                myRowBounds.Width = gridwidth;
 
                 IPaletteBack paletteBack = grid.StateNormal.DataCell.Back;
                 IPaletteBorder paletteBorder = grid.StateNormal.DataCell.Border;
@@ -166,13 +167,13 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 if (grid.PreviousSelectedGroupRow == rowIndex)
                     state = PaletteState.CheckedNormal;
 
-                using (RenderContext renderContext = new RenderContext(grid, graphics, rowBounds, grid.Renderer))
+                using (RenderContext renderContext = new RenderContext(grid, graphics, myRowBounds, grid.Renderer))
                 {
-                    using (GraphicsPath path = grid.Renderer.RenderStandardBorder.GetBackPath(renderContext, rowBounds, paletteBorder, VisualOrientation.Top, PaletteState.Normal))
+                    using (GraphicsPath path = grid.Renderer.RenderStandardBorder.GetBackPath(renderContext, myRowBounds, paletteBorder, VisualOrientation.Top, PaletteState.Normal))
                     {
 
                         IDisposable unused = grid.Renderer.RenderStandardBack.DrawBack(renderContext,
-                            rowBounds,
+                            myRowBounds,
                             path,
                             paletteBack,
                             VisualOrientation.Top,
@@ -281,10 +282,16 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             i++;
             if (gr.ParentGroup != null)
             {
-                return IsAParentCollapsed(gr.ParentGroup, i);
+                //if it is not the original group but it is one parent and if it is collapsed just stop here
+                //no need to look further to the parents (one of the parents can be expanded...)
+                if (i > 1 && gr.Collapsed)
+                    return true;
+                else
+                    return IsAParentCollapsed(gr.ParentGroup, i);
             }
             else
             {
+                //if 1 that means there is no parent
                 if (i == 1)
                     return false;
                 else
@@ -306,7 +313,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             if (e.ColumnIndex < 0) return false;
 
-            OutlookGrid grid = (OutlookGrid)this.DataGridView;
+            KryptonOutlookGrid grid = (KryptonOutlookGrid)this.DataGridView;
             Rectangle rowBounds = grid.GetRowDisplayRectangle(this.Index, false);
 
             // DataGridViewColumn c = grid.Columns[e.ColumnIndex];
