@@ -820,7 +820,7 @@
     <ProductName>Rd Kaviar</ProductName>
     <Price>300</Price>
   </invoice>
-  <!--<invoice>
+  <invoice>
     <CustomerID>LEHMS</CustomerID>
     <CustomerName>Lehmanns Marktstand</CustomerName>
     <Address>Magazinweg 7</Address>
@@ -21549,5 +21549,5 @@
     <OrderDate>5/6/1998</OrderDate>
     <ProductName>Original Frankfurter grne Soe</ProductName>
     <Price>26</Price>
-  </invoice>-->
+  </invoice>
 </DocumentElement>

@@ -1,4 +1,5 @@
 ﻿using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +13,7 @@ using System.Xml;
 
 namespace KryptonOutlookGrid.SandBox
 {
-    public partial class MainForm : Form
+    public partial class MainForm : ComponentFactory.Krypton.Toolkit.KryptonForm
     {
         public MainForm()
         {
@@ -42,15 +43,14 @@ namespace KryptonOutlookGrid.SandBox
             OutlookGrid1.AddInternalColumn(ColumnOrderDate, new OutlookGridDateTimeGroup(null), SortOrder.None, false);
             OutlookGrid1.AddInternalColumn(ColumnProduct, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
             OutlookGrid1.AddInternalColumn(ColumnPrice, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
-
-            OutlookGridRow row = new OutlookGridRow();
-            List<OutlookGridRow> l = new List<OutlookGridRow>();
-
-            OutlookGrid1.SuspendLayout();
-
-            OutlookGrid1.ClearInternalRows();
+            OutlookGrid1.AddInternalColumn(SatisfactionColumn, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
 
             //Setup Rows
+            OutlookGridRow row = new OutlookGridRow();
+            List<OutlookGridRow> l = new List<OutlookGridRow>();
+            OutlookGrid1.SuspendLayout();
+            OutlookGrid1.ClearInternalRows();
+     
 
             Random random = new Random();
             int rndnbr = 0;
@@ -59,7 +59,7 @@ namespace KryptonOutlookGrid.SandBox
             //.Next permet de retourner un nombre aléatoire contenu dans la plage spécifiée entre parenthèses.
             XmlDocument doc = new XmlDocument();
             doc.Load("invoices.xml");
-            IFormatProvider  culture   = new CultureInfo("en-US", true);
+            IFormatProvider  culture  = new CultureInfo("en-US", true);
             foreach (XmlNode customer in doc.SelectNodes("//invoice"))
             {
                 try
@@ -70,63 +70,59 @@ namespace KryptonOutlookGrid.SandBox
                     customer["CustomerName"].InnerText,
                     customer["Address"].InnerText,
                     customer["City"].InnerText,
-                    customer["Country"].InnerText,
+                    new TextAndImage(customer["Country"].InnerText,GetFlag(customer["Country"].InnerText)),
                     DateTime.Parse(customer["OrderDate"].InnerText,culture),
                     customer["ProductName"].InnerText,  
-                    customer["Price"].InnerText
+                    double.Parse(customer["Price"].InnerText, CultureInfo.InvariantCulture).ToString("C", CultureInfo.CurrentCulture),
+                    random.Next(100).ToString()
                 });
                     l.Add(row);
                 }
-                catch (Exception xe) { }
+                catch (Exception ex) {
+                    MessageBox.Show("Gasp...Something went wrong ! " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
-            //    for (int i = 0; i <= 10000; i++)
-            //    {
-            //        rndnbr = random.Next(0, 10000);
-            ////        tt = random.Next(Strings.Asc("A"), Strings.Asc("Z") + 1);
-
-            //        row = new OutlookGridRow();
-            //       row.CreateCells(OutlookGrid1, new object[] {
-            //    rndnbr.ToString,
-            //    tt,
-            //    RandomDate(DateTime.Today.AddDays(-600))
-            //});
-            //        l.Add(row);
-            //    }
             OutlookGrid1.ResumeLayout();
-
             OutlookGrid1.AssignRows(l);
             OutlookGrid1.ForceRefreshGroupBox();
             OutlookGrid1.Fill();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private Image GetFlag(string country)
         {
-
-
+            switch (country)
+            { 
+                case "France":
+                    return Properties.Resources.flag_france;
+                case "Germany":
+                    return Properties.Resources.flag_germany;
+                default:
+                    return null;
+            }
         }
 
-        private void OutlookGrid1_Resize(object sender, EventArgs e)
-        {
-            //int PreferredTotalWidth = 0;
-            //foreach (DataGridViewColumn c in OutlookGrid1.Columns)
-            //{
-            //    PreferredTotalWidth += Math.Min(c.GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true), 250);
-            //}
+        //private void OutlookGrid1_Resize(object sender, EventArgs e)
+        //{
+        //    //int PreferredTotalWidth = 0;
+        //    //foreach (DataGridViewColumn c in OutlookGrid1.Columns)
+        //    //{
+        //    //    PreferredTotalWidth += Math.Min(c.GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true), 250);
+        //    //}
 
-            //if (OutlookGrid1.Width > PreferredTotalWidth)
-            //{
-            //    OutlookGrid1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            //}
-            //else
-            //{
-            //    OutlookGrid1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-            //    foreach (DataGridViewColumn c in OutlookGrid1.Columns)
-            //    {
-            //        c.Width = Math.Min(c.GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true), 250);
-            //        //TODO imposr un max
-            //    }
-            //}
-        }
+        //    //if (OutlookGrid1.Width > PreferredTotalWidth)
+        //    //{
+        //    //    OutlookGrid1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        //    //}
+        //    //else
+        //    //{
+        //    //    OutlookGrid1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+        //    //    foreach (DataGridViewColumn c in OutlookGrid1.Columns)
+        //    //    {
+        //    //        c.Width = Math.Min(c.GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true), 250);
+        //    //        //TODO imposr un max
+        //    //    }
+        //    //}
+        //}
     }
 }
 

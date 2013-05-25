@@ -35,7 +35,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>potion_red.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ComponentFactory.Krypton.Toolkit, Version=4.4.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\KryptonOutlookGrid\Librairies\Debug\ComponentFactory.Krypton.Toolkit.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -67,6 +74,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -82,15 +90,14 @@
     <Content Include="invoices.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="potion_red.ico" />
+    <None Include="Resources\flag_germany.png" />
+    <None Include="Resources\flag_france.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Développement\JDH Software Krypton Components\Main\Source\JDHSoftware.Krypton.Toolkit\JDHSoftware.Krypton.Toolkit\JDHSoftware.Krypton.Toolkit.csproj">
-      <Project>{1f65178d-8dd1-480e-ac2a-8a17c684a260}</Project>
-      <Name>JDHSoftware.Krypton.Toolkit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Développement\Krypton Components\Main\Source\ComponentFactory.Krypton.Toolkit\ComponentFactory.Krypton.Toolkit 2010.csproj">
-      <Project>{96ecaecc-54f8-4aa5-8591-b443c2d9565f}</Project>
-      <Name>ComponentFactory.Krypton.Toolkit 2010</Name>
+    <ProjectReference Include="..\KryptonOutlookGrid\KryptonOutlookGrid.csproj">
+      <Project>{8532ca10-4c92-411e-99b4-65106628d131}</Project>
+      <Name>KryptonOutlookGrid</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
