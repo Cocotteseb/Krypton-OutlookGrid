@@ -101,28 +101,29 @@ namespace KryptonOutlookGrid.SandBox
             }
         }
 
-        //private void OutlookGrid1_Resize(object sender, EventArgs e)
-        //{
-        //    //int PreferredTotalWidth = 0;
-        //    //foreach (DataGridViewColumn c in OutlookGrid1.Columns)
-        //    //{
-        //    //    PreferredTotalWidth += Math.Min(c.GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true), 250);
-        //    //}
+        private void OutlookGrid1_Resize(object sender, EventArgs e)
+        {
+            int PreferredTotalWidth = 0;
+            //Calculate the total preferred width
+            foreach (DataGridViewColumn c in OutlookGrid1.Columns)
+            {
+                PreferredTotalWidth += Math.Min(c.GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true), 250);
+            }
 
-        //    //if (OutlookGrid1.Width > PreferredTotalWidth)
-        //    //{
-        //    //    OutlookGrid1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        //    //}
-        //    //else
-        //    //{
-        //    //    OutlookGrid1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-        //    //    foreach (DataGridViewColumn c in OutlookGrid1.Columns)
-        //    //    {
-        //    //        c.Width = Math.Min(c.GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true), 250);
-        //    //        //TODO imposr un max
-        //    //    }
-        //    //}
-        //}
+            if (OutlookGrid1.Width > PreferredTotalWidth)
+            {
+                OutlookGrid1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                OutlookGrid1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            }
+            else
+            {
+                OutlookGrid1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                foreach (DataGridViewColumn c in OutlookGrid1.Columns)
+                {
+                    c.Width = Math.Min(c.GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true), 250);
+                }
+            }
+        }
     }
 }
 

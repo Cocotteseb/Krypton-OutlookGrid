@@ -34,7 +34,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.panel1 = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
             this.kryptonHeaderGroup1 = new ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup();
-            this.kryptonManager1 = new ComponentFactory.Krypton.Toolkit.KryptonManager(this.components);
             this.OutlookGrid1 = new JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonOutlookGrid();
             this.ColumnCustomerID = new ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
             this.ColumnCustomerName = new ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
@@ -46,6 +45,7 @@
             this.ColumnPrice = new ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
             this.SatisfactionColumn = new JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonDataGridViewPercentageColumn();
             this.KryptonOutlookGridGroupBox1 = new JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonOutlookGridGroupBox();
+            this.kryptonManager1 = new ComponentFactory.Krypton.Toolkit.KryptonManager(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.panel1)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonHeaderGroup1)).BeginInit();
@@ -80,10 +80,6 @@
             this.kryptonHeaderGroup1.Size = new System.Drawing.Size(622, 335);
             this.kryptonHeaderGroup1.TabIndex = 2;
             // 
-            // kryptonManager1
-            // 
-            this.kryptonManager1.GlobalPaletteMode = ComponentFactory.Krypton.Toolkit.PaletteModeManager.SparkleBlue;
-            // 
             // OutlookGrid1
             // 
             this.OutlookGrid1.AllowDrop = true;
@@ -111,6 +107,7 @@
             this.OutlookGrid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.OutlookGrid1.Size = new System.Drawing.Size(620, 287);
             this.OutlookGrid1.TabIndex = 0;
+            this.OutlookGrid1.Resize += new System.EventHandler(this.OutlookGrid1_Resize);
             // 
             // ColumnCustomerID
             // 

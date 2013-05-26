@@ -171,7 +171,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 {
                     using (GraphicsPath path = grid.Renderer.RenderStandardBorder.GetBackPath(renderContext, myRowBounds, paletteBorder, VisualOrientation.Top, PaletteState.Normal))
                     {
-
+                        //Back
                         IDisposable unused = grid.Renderer.RenderStandardBack.DrawBack(renderContext,
                             myRowBounds,
                             path,
@@ -189,14 +189,30 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     }
                 }
 
-                // draw text, using the current grid font
-                int offsetText = rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + group.Level * 15;
-                //grid.GridPalette.GetContentShortTextFont(PaletteContentStyle.GridHeaderColumnList, state)
-                Font f = grid.GridPalette.GetContentShortTextFont(PaletteContentStyle.GridDataCellList, state);
-                f= new Font(f.FontFamily,f.Size, FontStyle.Bold);
-                TextRenderer.DrawText(graphics, group.Text, f, new Rectangle(offsetText, rowBounds.Bottom - 20, rowBounds.Width - offsetText, rowBounds.Height), grid.GridPalette.GetContentShortTextColor1(PaletteContentStyle.GridHeaderColumnList, state),
-                               TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine | TextFormatFlags.PreserveGraphicsClipping);
-                //TODO image
+                //Set the icon and lines according to the renderer
+                if (group.Collapsed)
+                {
+                    if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010)
+                    {
+                        graphics.DrawImage(Properties.Resources.collapseIcon2010, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
+                    }
+                    else
+                    {
+                        graphics.DrawImage(Properties.Resources.expandIcon, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
+                    }
+                }
+                else
+                {
+                    if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010)
+                    {
+                        graphics.DrawImage(Properties.Resources.expandIcon2010, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
+                    }
+                    else
+                    {
+                        graphics.DrawImage(Properties.Resources.collapseIcon, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
+                    }
+                }
+
                 // Draw the botton : solid line for 2007 palettes or dot line for 2010 palettes
                 if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010)
                 {
@@ -223,29 +239,19 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     }
                 }
 
-                //Set the icon and lines according to the renderer
-                if (group.Collapsed)
+                //Draw image group
+                int imageoffset = 0;
+                if (this.group.GroupImage != null)
                 {
-                    if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010)
-                    {
-                        graphics.DrawImage(Properties.Resources.expandIcon2010, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
-                    }
-                    else
-                    {
-                        graphics.DrawImage(Properties.Resources.expandIcon, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
-                    }
+                    graphics.DrawImage(this.group.GroupImage, rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + group.Level * 15, rowBounds.Bottom - 22, 16, 16);
+                    imageoffset = 18;
                 }
-                else
-                {
-                    if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010)
-                    {
-                        graphics.DrawImage(Properties.Resources.collapseIcon2010, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
-                    }
-                    else
-                    {
-                        graphics.DrawImage(Properties.Resources.collapseIcon, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
-                    }
-                }
+
+                //Draw text, using the current grid font
+                int offsetText = rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + imageoffset + group.Level * 15;
+                //grid.GridPalette.GetContentShortTextFont(PaletteContentStyle.GridHeaderColumnList, state)
+                TextRenderer.DrawText(graphics, group.Text, grid.GridPalette.GetContentShortTextFont(PaletteContentStyle.LabelBoldControl, state), new Rectangle(offsetText, rowBounds.Bottom - 20, rowBounds.Width - offsetText, rowBounds.Height), grid.GridPalette.GetContentShortTextColor1(PaletteContentStyle.LabelNormalControl, state),
+                               TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine | TextFormatFlags.PreserveGraphicsClipping);
             }
             else
             {
@@ -269,7 +275,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             if (!this.isGroupRow)
                 base.PaintCells(graphics, clipBounds, rowBounds, rowIndex, rowState, isFirstDisplayedRow, isLastVisibleRow, paintParts);
         }
-       
+
         #endregion
 
         #region "Public methods"
@@ -333,6 +339,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             //System.Diagnostics.Debug.WriteLine(e.ColumnIndex);
         }
 
-        #endregion  
+        #endregion
     }
 }
