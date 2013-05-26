@@ -34,6 +34,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public KryptonDataGridViewPercentageColumn()
             : base(new DataGridViewPercentageCell())
         {
+            this.DefaultCellStyle.Format = "P";
         }
 
         /// <summary>
@@ -101,7 +102,7 @@ public class DataGridViewPercentageCell : KryptonDataGridViewTextBoxCell
     /// </summary>
     public override Type ValueType
     {
-        get { return typeof(int); }
+        get { return typeof(double); }
     }
 
     /// <summary>
@@ -129,21 +130,21 @@ public class DataGridViewPercentageCell : KryptonDataGridViewTextBoxCell
     protected override void Paint(System.Drawing.Graphics graphics, System.Drawing.Rectangle clipBounds, System.Drawing.Rectangle cellBounds, int rowIndex, System.Windows.Forms.DataGridViewElementStates cellState, object value, object formattedValue, string errorText, System.Windows.Forms.DataGridViewCellStyle cellStyle, System.Windows.Forms.DataGridViewAdvancedBorderStyle advancedBorderStyle,
     System.Windows.Forms.DataGridViewPaintParts paintParts)
     {
-        Double p = 0;
+        //Double p = 0;
         //Single percentage = 0f;
-        if (value != null && Double.TryParse((string)value, out p))
-        {
-            //p = Convert.ToDouble(value);
-            //percentage = (Convert.ToSingle(value) / 100f);
-            formattedValue = value + "%";
-        }
+        //if (value != null && Double.TryParse((string)value, out p))
+        //{
+        //p = Convert.ToDouble(value);
+        //percentage = (Convert.ToSingle(value) / 100f);
+        //formattedValue = value + "%";
+        //}
 
         //Draw the bar
-        int barWidth = (int)((cellBounds.Width - 10) * p / 100);
-        if (p > 0 && barWidth > 0)
+        int barWidth = (int)((cellBounds.Width - 10) * (double)value);
+        if ((double)value > 0 && barWidth > 0)
         {
             Rectangle r = new Rectangle(cellBounds.X + 5, cellBounds.Y + 3, barWidth, cellBounds.Height - 8);
-          
+
             using (LinearGradientBrush linearBrush = new LinearGradientBrush(r, KryptonManager.CurrentGlobalPalette.GetBackColor1(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), KryptonManager.CurrentGlobalPalette.GetBackColor2(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), LinearGradientMode.Vertical))
             {
                 graphics.FillRectangle(linearBrush, r);
@@ -152,6 +153,7 @@ public class DataGridViewPercentageCell : KryptonDataGridViewTextBoxCell
             using (Pen pen = new Pen(KryptonManager.CurrentGlobalPalette.GetBackColor2(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal)))
             {
                 graphics.DrawRectangle(pen, r);
+                // graphics.DrawRectangle(Pens.DimGray, r);
             }
         }
 

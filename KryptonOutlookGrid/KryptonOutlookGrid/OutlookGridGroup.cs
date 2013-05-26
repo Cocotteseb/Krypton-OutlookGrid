@@ -24,6 +24,8 @@ using System.Text;
 using System.Windows.Forms;
 using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
 using JDHSoftware.Krypton.Toolkit.Utils;
+using System.Drawing;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -77,6 +79,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// The children groups
         /// </summary>
         protected OutlookGridGroupCollection children;
+        /// <summary>
+        /// The string to format the value of the group
+        /// </summary>
+        protected string formatStyle;
+        /// <summary>
+        /// The picture associated to the group
+        /// </summary>
+        protected Image groupImage;
         #endregion
 
         #region "Constructor"
@@ -87,11 +97,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public OutlookgGridDefaultGroup(IOutlookGridGroup parentGroup)
         {
             val = null;
-
             this.column = null;
             height = 34; // default height
             rows = new List<OutlookGridRow>();
             children = new OutlookGridGroupCollection(parentGroup);
+            formatStyle = "";
         }
         #endregion
 
@@ -167,11 +177,49 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             get
             {
-                if (column == null)
-                    return string.Format("Unbound group: {0} ({1})", Value.ToString(), itemCount == 1 ? "1 item" : itemCount.ToString() + " items");
+                //if (column == null)
+                //    return string.Format("Unbound group: {0} ({1})", Value.ToString(), itemCount == 1 ? "1 item" : itemCount.ToString() + " items");
+                //else
+                //return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? "1 item" : itemCount.ToString() + " items");
+                string formattedValue = "";
+                //For formatting number we need to cast the object value to the number before applying formatting
+                if (!String.IsNullOrEmpty(formatStyle))
+                {
+                    if (val is string)
+                    {
+                        formattedValue = string.Format(formatStyle, Value.ToString());
+                    }
+                    else if (val is DateTime)
+                    {
+                        formattedValue = ((DateTime)Value).ToString(formatStyle);
+                    }
+                    else if (val is int)
+                    {
+                        formattedValue = ((int)Value).ToString(formatStyle);
+                    }
+                    else if (val is float)
+                    {
+
+                        formattedValue = ((float)Value).ToString(formatStyle);
+                    }
+                    else if (val is double)
+                    {
+                        formattedValue = ((double)Value).ToString(formatStyle);
+                    }
+                    else if (val is long)
+                    {
+                        formattedValue = ((long)Value).ToString(formatStyle);
+                    }
+                    else
+                    {
+                        formattedValue = Value.ToString();
+                    }
+                }
                 else
-                    //  return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? "1 item" : itemCount.ToString() + " items");
-                    return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
+                {
+                    formattedValue = Value.ToString();
+                }
+                return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, formattedValue, itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
             }
             set
             {
@@ -254,6 +302,36 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
+        /// <summary>
+        /// Gets or sets the Format Info.
+        /// </summary>
+        public virtual string FormatStyle
+        {
+            get
+            {
+                return formatStyle;
+            }
+            set
+            {
+                formatStyle = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the picture.
+        /// </summary>
+        public virtual Image GroupImage
+        {
+            get
+            {
+                return groupImage;
+            }
+            set
+            {
+                groupImage = value;
+            }
+        }
+
         #endregion
 
         #region ICloneable Members
@@ -270,6 +348,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             gr.collapsed = this.collapsed;
             gr.text = this.text;
             gr.height = this.height;
+            gr.groupImage = this.groupImage;
+            gr.formatStyle = this.formatStyle;
             return gr;
         }
 
@@ -278,15 +358,59 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         #region IComparable Members
 
         /// <summary>
-        /// this is a basic string comparison operation. 
-        /// all items are grouped and categorised based on their string-appearance.
+        /// This is a comparison operation based on the type of the value. 
         /// </summary>
         /// <param name="obj">the value in the related column of the item to compare to</param>
         /// <returns></returns>
         public virtual int CompareTo(object obj)
         {
             int orderModifier = (Column.SortDirection == SortOrder.Ascending ? 1 : -1);
-            return string.Compare(val.ToString(), obj.ToString()) * orderModifier;
+            //return string.Compare(val.ToString(), ((OutlookgGridDefaultGroup)obj).Value.ToString()) * orderModifier;
+            int compareResult = 0;
+            object o2 = ((OutlookgGridDefaultGroup)obj).Value;
+            {
+                if (val is string)
+                {
+                    compareResult = string.Compare(val.ToString(), o2.ToString()) * orderModifier;
+                }
+                else if (val is DateTime)
+                {
+                    compareResult = ((DateTime)val).CompareTo((DateTime)o2) * orderModifier;
+                }
+                else if (val is int)
+                {
+                    compareResult = ((int)val).CompareTo((int)o2) * orderModifier;
+                }
+                else if (val is bool)
+                {
+                    bool b1 = (bool)val;
+                    bool b2 = (bool)o2;
+                    compareResult = (b1 == b2 ? 0 : b1 == true ? 1 : -1) * orderModifier;
+                }
+                else if (val is float)
+                {
+                    float n1 = (float)val;
+                    float n2 = (float)o2;
+                    compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
+                }
+                else if (val is double)
+                {
+                    double n1 = (double)val;
+                    double n2 = (double)o2;
+                    compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
+                }
+                else if (val is long)
+                {
+                    long n1 = (long)val;
+                    long n2 = (long)o2;
+                    compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
+                }
+                else if (val is TextAndImage)
+                {
+                    compareResult = string.Compare(((TextAndImage)val).ToString(), ((TextAndImage)o2).ToString()) * orderModifier;
+                }
+            }
+            return compareResult;
         }
         #endregion
     }
@@ -357,6 +481,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             gr.collapsed = this.collapsed;
             gr.text = this.text;
             gr.height = this.height;
+            gr.groupImage = this.groupImage;
+            gr.formatStyle = this.formatStyle;
             return gr;
         }
 
@@ -460,6 +586,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             gr.collapsed = this.collapsed;
             gr.text = this.text;
             gr.height = this.height;
+            gr.groupImage = this.groupImage;
+            gr.formatStyle = this.formatStyle;
             return gr;
         }
 
@@ -568,6 +696,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             gr.collapsed = this.collapsed;
             gr.text = this.text;
             gr.height = this.height;
+            gr.groupImage = this.groupImage;
+            gr.formatStyle = this.formatStyle;
             return gr;
         }
 

@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using ComponentFactory.Krypton.Toolkit;
 using System.Diagnostics;
 using JDHSoftware.Krypton.Toolkit.Utils;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -1342,6 +1343,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                                 gr.ParentGroup = grParent;
                                 gr.Column = groupedColumns[i];
                                 gr.Value = value;
+                                gr.FormatStyle = groupedColumns[i].DataGridViewColumn.DefaultCellStyle.Format; //We can the formatting applied to the cell to the group
+                                if (value is TextAndImage)
+                                    gr.GroupImage = ((TextAndImage)value).Image;
                                 gr.Level = i;
                                 children.Add(gr);
                             }

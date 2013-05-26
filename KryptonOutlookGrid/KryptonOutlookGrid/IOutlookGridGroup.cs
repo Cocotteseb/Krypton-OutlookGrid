@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -92,5 +93,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// The children groups
         /// </summary>
         OutlookGridGroupCollection Children { get; set; }
+
+        /// <summary>
+        /// Format style
+        /// </summary>
+        string FormatStyle { get; set; }
+
+        /// <summary>
+        /// Image associated to the group if any
+        /// </summary>
+        Image GroupImage { get; set; }
     }
 }

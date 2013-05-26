@@ -28,6 +28,7 @@ using System.Drawing.Drawing2D;
 using ComponentFactory.Krypton.Toolkit;
 using System.Diagnostics;
 using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
+using System.Globalization;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -69,39 +70,39 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     {
                         compareResult = string.Compare(o1.ToString(), o2.ToString()) * orderModifier;
                     }
-                    if (o1 is DateTime)
+                    else if (o1 is DateTime)
                     {
                         compareResult = ((DateTime)o1).CompareTo((DateTime)o2) * orderModifier;
                     }
-                    if (o1 is int)
+                    else if (o1 is int)
                     {
                         compareResult = ((int)o1).CompareTo((int)o2) * orderModifier;
                     }
-                    if (o1 is bool)
+                    else if (o1 is bool)
                     {
                         bool b1 = (bool)o1;
                         bool b2 = (bool)o2;
                         compareResult = (b1 == b2 ? 0 : b1 == true ? 1 : -1) * orderModifier;
                     }
-                    if (o1 is float)
+                    else if (o1 is float)
                     {
                         float n1 = (float)o1;
                         float n2 = (float)o2;
                         compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
                     }
-                    if (o1 is double)
+                    else if (o1 is double)
                     {
                         double n1 = (double)o1;
                         double n2 = (double)o2;
                         compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
                     }
-                    if (o1 is long)
+                    else if (o1 is long)
                     {
                         long n1 = (long)o1;
                         long n2 = (long)o2;
                         compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
                     }
-                    if (o1 is TextAndImage)
+                    else if (o1 is TextAndImage)
                     {
                         compareResult = string.Compare(((TextAndImage)o1).ToString(), ((TextAndImage)o2).ToString()) * orderModifier;
                     }

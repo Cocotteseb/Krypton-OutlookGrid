@@ -73,8 +73,8 @@ namespace KryptonOutlookGrid.SandBox
                     new TextAndImage(customer["Country"].InnerText,GetFlag(customer["Country"].InnerText)),
                     DateTime.Parse(customer["OrderDate"].InnerText,culture),
                     customer["ProductName"].InnerText,  
-                    double.Parse(customer["Price"].InnerText, CultureInfo.InvariantCulture).ToString("C", CultureInfo.CurrentCulture),
-                    random.Next(100).ToString()
+                    double.Parse(customer["Price"].InnerText, CultureInfo.InvariantCulture), //We put a float the formatting in design does the rest
+                    (double)random.Next(101) /100
                 });
                     l.Add(row);
                 }

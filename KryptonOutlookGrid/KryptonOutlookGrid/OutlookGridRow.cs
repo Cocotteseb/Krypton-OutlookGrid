@@ -191,9 +191,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
                 // draw text, using the current grid font
                 int offsetText = rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + group.Level * 15;
-                TextRenderer.DrawText(graphics, group.Text, grid.GridPalette.GetContentShortTextFont(PaletteContentStyle.GridHeaderColumnList, state), new Rectangle(offsetText, rowBounds.Bottom - 20, rowBounds.Width - offsetText, rowBounds.Height), grid.GridPalette.GetContentShortTextColor1(PaletteContentStyle.GridHeaderColumnList, state),
+                //grid.GridPalette.GetContentShortTextFont(PaletteContentStyle.GridHeaderColumnList, state)
+                Font f = grid.GridPalette.GetContentShortTextFont(PaletteContentStyle.GridDataCellList, state);
+                f= new Font(f.FontFamily,f.Size, FontStyle.Bold);
+                TextRenderer.DrawText(graphics, group.Text, f, new Rectangle(offsetText, rowBounds.Bottom - 20, rowBounds.Width - offsetText, rowBounds.Height), grid.GridPalette.GetContentShortTextColor1(PaletteContentStyle.GridHeaderColumnList, state),
                                TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine | TextFormatFlags.PreserveGraphicsClipping);
-
+                //TODO image
                 // Draw the botton : solid line for 2007 palettes or dot line for 2010 palettes
                 if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010)
                 {
