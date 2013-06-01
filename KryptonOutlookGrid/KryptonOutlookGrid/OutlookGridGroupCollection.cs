@@ -126,6 +126,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         internal void Clear()
         {
             parentGroup = null;
+            //If a group is collapsed the rows will not appear. Then if we clear the group the rows should not remain "collapsed"
+            for (int i = 0; i < groupList.Count; i++)
+            {
+                groupList[i].Collapsed = false;
+            }
             groupList.Clear();
         }
 

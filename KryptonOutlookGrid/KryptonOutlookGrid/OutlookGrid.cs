@@ -963,6 +963,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             internalColumns[columnName].GroupOrder = 0;
             internalColumns[columnName].SortDirection = SortOrder.None;
             internalColumns[columnName].DataGridViewColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
+            internalColumns[columnName].GroupingType.Collapsed = false;
         }
 
         /// <summary>
@@ -1015,10 +1016,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         public void ClearGroups()
         {
+            //reset groups and collapsed statuses
             groupCollection.Clear();
+            //reset groups in columns
+            internalColumns.MaxGroupOrder = 0;
             for (int i = 0; i < this.internalColumns.Count; i++)
             {
                 internalColumns[i].IsGrouped = false;
+                internalColumns[i].GroupOrder = 0;
             }
             Fill();
         }
