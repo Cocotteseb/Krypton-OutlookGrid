@@ -593,6 +593,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     // this will also invalidate the control, so it will redraw itself
                     row.Visible = false;
                     row.Visible = true;
+                    //When collapsing the first row still seeing it.
+                    if (row.Index < this.FirstDisplayedScrollingRowIndex)
+                        this.FirstDisplayedScrollingRowIndex = row.Index;
                 }
                 else
                 {
