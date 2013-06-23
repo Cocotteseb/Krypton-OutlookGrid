@@ -1019,6 +1019,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         public void ClearGroups()
         {
+            ClearGroupsWithoutFilling();
+            Fill();
+        }
+
+        /// <summary>
+        /// Clear all groups. No FillGrid calls.
+        /// </summary>
+        public void ClearGroupsWithoutFilling()
+        {
             //reset groups and collapsed statuses
             groupCollection.Clear();
             //reset groups in columns
@@ -1028,7 +1037,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 internalColumns[i].IsGrouped = false;
                 internalColumns[i].GroupOrder = 0;
             }
-            Fill();
         }
 
         /// <summary>
