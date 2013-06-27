@@ -315,7 +315,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         protected override void Paint(Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
         {
             //TODO : improve we assume it is a 16x16 image 
-            if (((TextAndImage)this.Value).Image != null)
+            if (this.Value != null && ((TextAndImage)this.Value).Image != null)
             {
                 Padding inheritedPadding = this.InheritedStyle.Padding;
                 this.Style.Padding = new Padding(18, inheritedPadding.Top, inheritedPadding.Right, inheritedPadding.Bottom);
