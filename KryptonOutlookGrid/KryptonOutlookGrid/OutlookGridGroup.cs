@@ -8,6 +8,9 @@
 // LIABILITY FOR ANY DATA DAMAGE/LOSS THAT THIS PRODUCT MAY CAUSE.
 //-----------------------------------------------------------------------
 
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
+using JDHSoftware.Krypton.Toolkit.Utils;
 //--------------------------------------------------------------------------------
 // Copyright (C) 2013 JDH Software - <support@jdhsoftware.com>
 //
@@ -20,12 +23,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
-using JDHSoftware.Krypton.Toolkit.Utils;
-using System.Drawing;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -87,6 +87,17 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// The picture associated to the group
         /// </summary>
         protected Image groupImage;
+        
+        /// <summary>
+        /// The text associated for the group text (1 item)
+        /// </summary>
+        protected string oneItemText;
+
+        /// <summary>
+        /// The text associated for the group text (XXX items)
+        /// </summary>
+        protected string xXXItemsText;
+
         #endregion
 
         #region "Constructor"
@@ -102,6 +113,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             rows = new List<OutlookGridRow>();
             children = new OutlookGridGroupCollection(parentGroup);
             formatStyle = "";
+            oneItemText = LangManager.Instance.GetString("OneItem");
+            XXXItemsText = LangManager.Instance.GetString("XXXItems");
         }
         #endregion
 
@@ -219,7 +232,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 {
                     formattedValue = Value.ToString();
                 }
-                return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, formattedValue, itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
+                return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, formattedValue, itemCount == 1 ? oneItemText : itemCount.ToString() + XXXItemsText);
             }
             set
             {
@@ -332,6 +345,17 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
+        public virtual string OneItemText
+        {
+            get { return oneItemText; }
+            set { oneItemText = value; }
+        }
+
+        public virtual string XXXItemsText
+        {
+            get { return xXXItemsText; }
+            set { xXXItemsText = value; }
+        }
         #endregion
 
         #region ICloneable Members
@@ -350,6 +374,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             gr.height = this.height;
             gr.groupImage = this.groupImage;
             gr.formatStyle = this.formatStyle;
+            gr.XXXItemsText = this.XXXItemsText;
+            gr.oneItemText = this.XXXItemsText;
             return gr;
         }
 
@@ -443,8 +469,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             get
             {
                 //return string.Format("{0}: {1} ({2})", LangManager.Instance.GetString("AlphabeticGroupText"), Value.ToString(), itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
-                return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
-
+                return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? OneItemText : itemCount.ToString() + XXXItemsText);
             }
             set
             {
@@ -539,7 +564,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             get
             {
-                return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
+                return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? OneItemText : itemCount.ToString() + XXXItemsText);
                 //return string.Format("{0}: {1} ({2})", LangManager.Instance.GetString("DateGroupText"), column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
             }
             set
@@ -648,7 +673,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             get
             {
-                return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
+                return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? OneItemText : itemCount.ToString() + XXXItemsText);
                 //return string.Format("{0}: {1} ({2})", LangManager.Instance.GetString("YearGroupText"), column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
             }
             set

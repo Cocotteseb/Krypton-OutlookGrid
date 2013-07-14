@@ -95,7 +95,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         OutlookGridGroupCollection Children { get; set; }
 
         /// <summary>
-        /// Format style
+        /// Format style of the cell
         /// </summary>
         string FormatStyle { get; set; }
 
@@ -103,5 +103,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Image associated to the group if any
         /// </summary>
         Image GroupImage { get; set; }
+
+        /// <summary>
+        /// The text associated for the group text (1 item)
+        /// </summary>
+        string OneItemText { get; set; }
+
+        /// <summary>
+        /// The text associated for the group text (XXX items)
+        /// </summary>
+        string XXXItemsText { get; set; }
     }
 }

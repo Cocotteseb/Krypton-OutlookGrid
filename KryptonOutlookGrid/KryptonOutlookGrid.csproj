@@ -79,6 +79,7 @@
     <Compile Include="KryptonOutlookGrid\OutlookGridGroup.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridGroupBoxColumn.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridGroupCollection.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGridGroupImageEventArgs.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridRow.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridRowComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

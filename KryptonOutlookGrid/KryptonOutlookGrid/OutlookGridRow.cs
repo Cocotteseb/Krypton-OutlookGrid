@@ -339,6 +339,27 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             //System.Diagnostics.Debug.WriteLine(e.ColumnIndex);
         }
 
+        internal bool IsGroupImageHit(DataGridViewCellMouseEventArgs e)
+        {
+            if (this.group.GroupImage == null) return false;
+            if (e.ColumnIndex < 0) return false;
+            
+            KryptonOutlookGrid grid = (KryptonOutlookGrid)this.DataGridView;
+            Rectangle rowBounds = grid.GetRowDisplayRectangle(this.Index, false);
+
+            int rowHeadersWidth = grid.RowHeadersVisible ? grid.RowHeadersWidth : 0;
+            int l = e.X + grid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false).Left;
+
+            if (this.isGroupRow &&
+                (l >= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + group.Level * 15) &&
+                (l <= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + group.Level * 15 + 16) &&
+                (e.Y >= rowBounds.Height - 22) &&
+                (e.Y <= rowBounds.Height - 6))
+                return true;
+
+            return false;
+        }
+
         #endregion
     }
 }

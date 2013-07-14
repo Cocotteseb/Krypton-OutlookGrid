@@ -41,7 +41,7 @@ namespace KryptonOutlookGrid.SandBox
             OutlookGrid1.AddInternalColumn(ColumnCity, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
             OutlookGrid1.AddInternalColumn(ColumnCountry, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
             OutlookGrid1.AddInternalColumn(ColumnOrderDate, new OutlookGridDateTimeGroup(null), SortOrder.None, false);
-            OutlookGrid1.AddInternalColumn(ColumnProduct, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
+            OutlookGrid1.AddInternalColumn(ColumnProduct, new OutlookgGridDefaultGroup(null) { OneItemText = "1 product", XXXItemsText = " products"}, SortOrder.None, false);
             OutlookGrid1.AddInternalColumn(ColumnPrice, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
             OutlookGrid1.AddInternalColumn(SatisfactionColumn, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
 
@@ -53,9 +53,6 @@ namespace KryptonOutlookGrid.SandBox
      
 
             Random random = new Random();
-            int rndnbr = 0;
-            string tt = null;
-
             //.Next permet de retourner un nombre aléatoire contenu dans la plage spécifiée entre parenthèses.
             XmlDocument doc = new XmlDocument();
             doc.Load("invoices.xml");
@@ -123,6 +120,11 @@ namespace KryptonOutlookGrid.SandBox
                     c.Width = Math.Min(c.GetPreferredWidth(DataGridViewAutoSizeColumnMode.DisplayedCells, true), 250);
                 }
             }
+        }
+
+        private void OutlookGrid1_GroupImageClick(object sender, OutlookGridGroupImageEventArgs e)
+        {
+            MessageBox.Show("Group Image clicked for group row : " + e.Row.Group.Text);
         }
     }
 }

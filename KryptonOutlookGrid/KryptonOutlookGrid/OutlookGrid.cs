@@ -74,6 +74,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private int DragDropCurrentIndex = -1;
         private int DragDropType; //0=column, 1=row
 
+        /// <summary>
+        /// Group Image Click Event
+        /// </summary>
+        public event EventHandler<OutlookGridGroupImageEventArgs> GroupImageClick;
+
         #region OutlookGrid constructor
 
         /// <summary>
@@ -596,6 +601,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     //When collapsing the first row still seeing it.
                     if (row.Index < this.FirstDisplayedScrollingRowIndex)
                         this.FirstDisplayedScrollingRowIndex = row.Index;
+                }
+                else if (row.IsGroupImageHit(e))
+                {
+                    OnGroupImageClick(new OutlookGridGroupImageEventArgs(row));
                 }
                 else
                 {
@@ -1500,6 +1509,16 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         #endregion Grid Fill functions
+
+        /// <summary>
+        /// Raises the GroupImageClick event.
+        /// </summary>
+        /// <param name="e">A OutlookGridGroupImageEventArgs that contains the event data.</param>
+        protected virtual void OnGroupImageClick(OutlookGridGroupImageEventArgs e)
+        {
+            if (GroupImageClick != null)
+                GroupImageClick(this, e);
+        }
 
         #endregion OutlookGrid methods
     }
