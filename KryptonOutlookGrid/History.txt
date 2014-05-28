@@ -1,0 +1,26 @@
+﻿Version 1.2.0
++ Added autohide column when grouped option
++ Added ability to sort groups by count value
++ Added function to expand/collapse only one group
++ Added date interval for DateTime GridGroup
++ Added month, quarter and day support for the OutlookGridDateTimeGroup
++ Added the group order is now taken into account when grouping a column by dragging it inside the groupBox
++ Added group sort order changed when dragging columns in the groupBox
++ Added column chooser in the integrated context menu (visible)
++ Added unlimted multi-column sorting by code or by clicking on column header with mouse left + holding shift key. Ungroup is done with holding Ctrl key
+unsort by using Ctrl key
++ Added persistence configuration (save / restore -sort of)
++ Added Group Image Click event
++ Added custom (x elements) text for group row
+* Fixed severe bug when intial group order was not taken into account
+* Fixed bug where unsused/wrong loops were done when sorting groups
+* Fixed issue #1471 "Adding TextImage column throws an null reference exceptions"
+* Various bug fixes
+- Removed OutlookGridYearGroup as it is now included in OutlookGridDateTimeGroup
+
+Version 1.0.1
+*Fixed Issue #1431
+*Fixed Collapsing the first group row makes it no longer visible due to scrolling
+
+Version 1.0.0
++Initial public release

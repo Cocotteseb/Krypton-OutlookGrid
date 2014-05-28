@@ -110,6 +110,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
+        /// Sorts the groups
+        /// </summary>
+        internal void Sort(OutlookGridGroupCountComparer comparer)
+        {
+            groupList.Sort(comparer);
+        }
+
+        /// <summary>
         /// Find a group by its value
         /// </summary>
         /// <param name="value">The value of the group</param>

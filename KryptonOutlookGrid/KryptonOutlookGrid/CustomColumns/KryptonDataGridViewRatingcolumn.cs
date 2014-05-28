@@ -164,11 +164,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             starHotImages = new Image[6];
             // load normal stars 
             for (int i = 0; i <= 5; i++)
-                starImages[i] = (Image)JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Properties.Resources.ResourceManager.GetObject("star" + i.ToString());
+                starImages[i] = (Image)Properties.Resources.ResourceManager.GetObject("star" + i.ToString());
 
             // load hot normal stars 
             for (int i = 0; i <= 5; i++)
-                starHotImages[i] = (Image)JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Properties.Resources.ResourceManager.GetObject("starhot" + i.ToString());
+                starHotImages[i] = (Image)Properties.Resources.ResourceManager.GetObject("starhot" + i.ToString());
         }
         #endregion
 

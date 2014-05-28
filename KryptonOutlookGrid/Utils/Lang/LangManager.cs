@@ -7,7 +7,7 @@ using System.Resources;
 using System.Text;
 using System.Threading;
 
-namespace JDHSoftware.Krypton.Toolkit.Utils
+namespace JDHSoftware.Krypton.Toolkit.Utils.Lang
 {
     /// <summary>
     /// Handle localization (singleton)
@@ -41,6 +41,9 @@ namespace JDHSoftware.Krypton.Toolkit.Utils
             set { this.locker = value; }
         }
 
+        /// <summary>
+        /// Gets the instance of the singleton.
+        /// </summary>
         public static LangManager Instance
         {
             get

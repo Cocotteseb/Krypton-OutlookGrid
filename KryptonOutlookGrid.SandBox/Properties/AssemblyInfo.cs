@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
 [assembly: AssemblyTitle("KryptonOutlookGrid.SandBox")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("SandBox for the Krypton OutlookGrid component")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("JDH Software")]
 [assembly: AssemblyProduct("KryptonOutlookGrid.SandBox")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyCopyright("Copyright © 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

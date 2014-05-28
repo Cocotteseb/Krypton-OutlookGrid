@@ -34,29 +34,21 @@ namespace KryptonOutlookGrid.SandBox
             OutlookGrid1.GroupBox = KryptonOutlookGridGroupBox1;
             OutlookGrid1.RegisterGroupBoxEvents();
 
-            //Setup Columns
-            OutlookGrid1.AddInternalColumn(ColumnCustomerID, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
-            OutlookGrid1.AddInternalColumn(ColumnCustomerName, new OutlookGridAlphabeticGroup(null), SortOrder.None, false);
-            OutlookGrid1.AddInternalColumn(ColumnAddress, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
-            OutlookGrid1.AddInternalColumn(ColumnCity, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
-            OutlookGrid1.AddInternalColumn(ColumnCountry, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
-            OutlookGrid1.AddInternalColumn(ColumnOrderDate, new OutlookGridDateTimeGroup(null), SortOrder.None, false);
-            OutlookGrid1.AddInternalColumn(ColumnProduct, new OutlookgGridDefaultGroup(null) { OneItemText = "1 product", XXXItemsText = " products"}, SortOrder.None, false);
-            OutlookGrid1.AddInternalColumn(ColumnPrice, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
-            OutlookGrid1.AddInternalColumn(SatisfactionColumn, new OutlookgGridDefaultGroup(null), SortOrder.None, false);
+            DataGridViewSetup setup = new DataGridViewSetup();
+            setup.SetupDataGridView(this.OutlookGrid1, true);
 
             //Setup Rows
             OutlookGridRow row = new OutlookGridRow();
             List<OutlookGridRow> l = new List<OutlookGridRow>();
             OutlookGrid1.SuspendLayout();
             OutlookGrid1.ClearInternalRows();
-     
+
 
             Random random = new Random();
             //.Next permet de retourner un nombre aléatoire contenu dans la plage spécifiée entre parenthèses.
             XmlDocument doc = new XmlDocument();
             doc.Load("invoices.xml");
-            IFormatProvider  culture  = new CultureInfo("en-US", true);
+            IFormatProvider culture = new CultureInfo("en-US", true);
             foreach (XmlNode customer in doc.SelectNodes("//invoice"))
             {
                 try
@@ -75,7 +67,8 @@ namespace KryptonOutlookGrid.SandBox
                 });
                     l.Add(row);
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     MessageBox.Show("Gasp...Something went wrong ! " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -88,7 +81,7 @@ namespace KryptonOutlookGrid.SandBox
         private Image GetFlag(string country)
         {
             switch (country)
-            { 
+            {
                 case "France":
                     return Properties.Resources.flag_france;
                 case "Germany":
@@ -125,6 +118,17 @@ namespace KryptonOutlookGrid.SandBox
         private void OutlookGrid1_GroupImageClick(object sender, OutlookGridGroupImageEventArgs e)
         {
             MessageBox.Show("Group Image clicked for group row : " + e.Row.Group.Text);
+        }
+
+        private void buttonSpecHeaderGroup1_Click(object sender, EventArgs e)
+        {
+            DataGridViewSetup setup = new DataGridViewSetup();
+            setup.SetupDataGridView(this.OutlookGrid1, true);
+        }
+
+        private void buttonSpecHeaderGroup2_Click(object sender, EventArgs e)
+        {
+            OutlookGrid1.PersistConfiguration(Application.StartupPath + "grid.xml");
         }
     }
 }

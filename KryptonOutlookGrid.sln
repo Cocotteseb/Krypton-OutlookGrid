@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KryptonOutlookGrid.SandBox", "KryptonOutlookGrid.SandBox\KryptonOutlookGrid.SandBox.csproj", "{07D41E03-A98F-401A-9D4E-E1C5A04ED843}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KryptonOutlookGrid", "KryptonOutlookGrid\KryptonOutlookGrid.csproj", "{8532CA10-4C92-411E-99B4-65106628D131}"
 EndProject
+Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Documentation", "Documentation\Documentation.shfbproj", "{BDEECD3C-40EA-493B-B9F1-66E091D9CD89}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
+		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs25
 		SccLocalPath0 = .
@@ -17,6 +21,9 @@ Global
 		SccProjectUniqueName2 = KryptonOutlookGrid\\KryptonOutlookGrid.csproj
 		SccProjectName2 = KryptonOutlookGrid
 		SccLocalPath2 = KryptonOutlookGrid
+		SccProjectUniqueName3 = Documentation\\Documentation.shfbproj
+		SccProjectName3 = Documentation
+		SccLocalPath3 = Documentation
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +38,10 @@ Global
 		{8532CA10-4C92-411E-99B4-65106628D131}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8532CA10-4C92-411E-99B4-65106628D131}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8532CA10-4C92-411E-99B4-65106628D131}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDEECD3C-40EA-493B-B9F1-66E091D9CD89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDEECD3C-40EA-493B-B9F1-66E091D9CD89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDEECD3C-40EA-493B-B9F1-66E091D9CD89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDEECD3C-40EA-493B-B9F1-66E091D9CD89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

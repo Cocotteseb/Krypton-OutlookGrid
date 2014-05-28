@@ -96,6 +96,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                         double n2 = (double)o2;
                         compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
                     }
+                    else if (o1 is decimal)
+                    {
+                        decimal d1 = (decimal)o1;
+                        decimal d2 = (decimal)o2;
+                        compareResult = (d1 > d2 ? 1 : d1 < d2 ? -1 : 0) * orderModifier;
+                    }
                     else if (o1 is long)
                     {
                         long n1 = (long)o1;

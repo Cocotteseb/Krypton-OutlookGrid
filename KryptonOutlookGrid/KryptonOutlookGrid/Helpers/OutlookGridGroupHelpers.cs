@@ -11,7 +11,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using JDHSoftware.Krypton.Toolkit.Utils;
+using JDHSoftware.Krypton.Toolkit.Utils.Lang;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -170,7 +170,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             a[0] = char.ToUpper(a[0]);
             return new string(a);
         }
-        
+
         /// <summary>
         /// Returns the first day of the week that the specified date is in using the current culture.
         /// </summary>
@@ -206,6 +206,44 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             int difference = ((int)dayInWeek.DayOfWeek) - ((int)firstDay);
             difference = (7 + difference) % 7;
             return dayInWeek.AddDays(-difference).Date;
+        }
+
+        /// <summary>
+        /// Gets the user-friendly and localized text of quarter
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        public static string GetQuarterAsString(DateTime dateTime)
+        {
+            switch (GetQuarter(dateTime))
+            {
+                case 1:
+                    return LangManager.Instance.GetString("Q1");
+                case 2:
+                    return LangManager.Instance.GetString("Q2");
+                case 3:
+                    return LangManager.Instance.GetString("Q3");
+                case 4:
+                    return LangManager.Instance.GetString("Q4");
+                default:
+                    return "";
+            }
+        }
+
+        /// <summary>
+        /// Gets the quarter according to the month.
+        /// </summary>
+        /// <param name="dateTime">The date DateTime</param>
+        /// <returns>The quarter number.</returns>
+        public static int GetQuarter(DateTime dateTime)
+        {
+            if (dateTime.Month <= 3)
+                return 1;
+            if (dateTime.Month <= 6)
+                return 2;
+            if (dateTime.Month <= 9)
+                return 3;
+            return 4;
         }
     }
 }

@@ -20,19 +20,20 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Xml;
 using ComponentFactory.Krypton.Toolkit;
-using System.Diagnostics;
-using JDHSoftware.Krypton.Toolkit.Utils;
+using JDHSoftware.Krypton.Toolkit.Utils.Lang;
 using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
     /// <summary>
-    /// Krypton DataGridView allowing nested grouping
+    /// Krypton DataGridView allowing nested grouping and unlimited sorting
     /// </summary>
     public partial class KryptonOutlookGrid : KryptonDataGridView
     {
@@ -48,7 +49,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private OutlookGridGroupCollection groupCollection;     // List of Groups (of rows)
         private List<OutlookGridRow> internalRows;              // List of Rows in order to keep them as is (without grouping,...)
         private OutlookGridColumnCollection internalColumns;    // List of columns in order to know if sorted, Grouped, types,...
-        
         private int _previousGroupRowSelected = -1; //Useful to allow the selection of a group row or not when on mouse down 
 
         //Krypton ContextMenu for the columns header
@@ -65,6 +65,13 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private KryptonContextMenuSeparator _menuSeparator2;
         private KryptonContextMenuItem _menuBestFitColumn;
         private KryptonContextMenuItem _menuBestFitAllColumns;
+        private KryptonContextMenuSeparator _menuSeparator3;
+        private KryptonContextMenuItem _menuVisibleColumns;
+        private KryptonContextMenuItem _menuGroupInterval;
+        private KryptonContextMenuItem _menuSortBySummary;
+        private KryptonContextMenuItem _menuExpand;
+        private KryptonContextMenuItem _menuCollapse;
+        private KryptonContextMenuSeparator _menuSeparator4;
         private int colSelected = 1;         //for menu
 
         //For the Drag and drop of columns
@@ -73,6 +80,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private int DragDropTargetIndex;
         private int DragDropCurrentIndex = -1;
         private int DragDropType; //0=column, 1=row
+
+        private bool _hideColumnOnGrouping;
 
         /// <summary>
         /// Group Image Click Event
@@ -114,6 +123,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             //_paletteContent = new PaletteContentInheritRedirect(_paletteRedirect);
 
             this.AllowUserToOrderColumns = false;  //we will handle it ourselves
+            _hideColumnOnGrouping = false;
         }
 
         /// <summary>
@@ -229,6 +239,26 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 this.groupCollection = value;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the HideColumnOnGrouping property.
+        /// </summary>
+        /// <value>True if the column should be hidden when it is grouped, false otherwise.</value>
+        [Category("Behavior")]
+        [Description("Hide the column when it is grouped.")]
+        [DefaultValue(false)]
+        public bool HideColumnOnGrouping
+        {
+            get
+            {
+                return _hideColumnOnGrouping;
+            }
+            set
+            {
+                this._hideColumnOnGrouping = value;
+            }
+        }
+
         #endregion OutlookGrid property definitions
 
         #region OutlookGrid Overrides
@@ -266,6 +296,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     groupBox.ClearGrouping -= ClearGroupingEvent;
                     groupBox.FullCollapse -= FullCollapseEvent;
                     groupBox.FullExpand -= FullExpandEvent;
+                    groupBox.ColumnGroupOrderChanged -= ColumnGroupIndexChangedEvent;
+                    groupBox.GroupExpand -= GridGroupExpandEvent;
+                    groupBox.GroupCollapse -= GridGroupCollapseEvent;
+                    groupBox.GroupIntervalClick -= GroupIntervalClickEvent;
+                    groupBox.SortBySummaryCount -= SortBySummaryCountEvent;
                 }
             }
 
@@ -357,7 +392,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 else
                 {
                     DragDropRectangle = Rectangle.Empty;
-                } 
+                }
             }
             else
             {
@@ -382,8 +417,20 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     {
                         if (DragDropType == 0)
                         {
+                            OutlookGridColumn col = internalColumns.FindFromColumnIndex(DragDropSourceIndex);
+                            string groupInterval = "";
+                            string groupType = "";
+                            string groupSortBySummaryCount = "";
+
+                            if (col.GroupingType != null)
+                            {
+                                groupType = col.GroupingType.GetType().Name.ToString();
+                                if (groupType == typeof(OutlookGridDateTimeGroup).Name)
+                                    groupInterval = ((OutlookGridDateTimeGroup)col.GroupingType).Interval.ToString();
+                                groupSortBySummaryCount = CommonHelper.BoolToString(col.GroupingType.SortBySummaryCount);
+                            }
                             //column drag/drop
-                            string info = String.Format("{0}|{1}|{2}", this.Columns[DragDropSourceIndex].Name.ToString(), this.Columns[DragDropSourceIndex].HeaderText.ToString(), this.SortOrder.ToString());
+                            string info = String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}", col.Name.ToString(), col.DataGridViewColumn.HeaderText.ToString(), col.DataGridViewColumn.HeaderCell.SortGlyphDirection.ToString(), col.DataGridViewColumn.SortMode.ToString(), groupType, groupInterval, groupSortBySummaryCount);
                             DragDropEffects DropEffect = this.DoDragDrop(info, DragDropEffects.Move);
                             dragdropdone = true;
                         }
@@ -417,7 +464,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     this.Invalidate();
                 }
                 else
-                { 
+                {
                     DragDropCurrentIndex = -1;
                 }
             }
@@ -511,14 +558,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                             this.Rows.Insert(DragDropTargetIndex, SourceRow);
                             this.Rows[DragDropTargetIndex].Selected = true;
                             this.CurrentCell = this[0, DragDropTargetIndex];
-                        } 
-                    } 
-                } 
-            } 
+                        }
+                    }
+                }
+            }
             DragDropCurrentIndex = -1;
             this.Invalidate();
             base.OnDragDrop(drgevent);
-        } 
+        }
 
         /// <summary>
         /// Overrides OnCellPainting - Drawing a line for drag and drop
@@ -552,7 +599,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                         {
                             e.Graphics.DrawLine(p, e.CellBounds.Left, e.CellBounds.Top - 1, e.CellBounds.Right, e.CellBounds.Top - 1);
                         }
-                    } 
+                    }
                 }
             }
             base.OnCellPainting(e);
@@ -637,24 +684,45 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     if (col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable)
                     {
                         SortOrder previousSort = col.SortDirection;
-                        ResetSortingColumns();
-                        if (previousSort == SortOrder.None)
+                        //Reset all sorting column only if not Ctrl or Shift or the column is grouped
+                        if (Control.ModifierKeys != Keys.Shift && Control.ModifierKeys != Keys.Control && !col.IsGrouped)
                         {
-                            SortColumn(col, SortOrder.Ascending);
-                        }
-                        else
-                        {
-                            SortColumn(col, (previousSort == SortOrder.Ascending) ? SortOrder.Descending : SortOrder.Ascending);
+                            ResetAllSortingColumns();
                         }
 
+                        //Remove this SortIndex
+                        if (Control.ModifierKeys == Keys.Control)
+                        {
+                            UnSortColum(col);
+                        }
+                        //Add the first or a new SortIndex
+                        else
+                        {
+                            if (previousSort == SortOrder.None)
+                            {
+                                SortColumn(col, SortOrder.Ascending);
+                            }
+                            else
+                            {
+                                SortColumn(col, (previousSort == SortOrder.Ascending) ? SortOrder.Descending : SortOrder.Ascending);
+                            }
+                        }
+
+#if DEBUG
+                        internalColumns.DebugOutput();
+#endif
+
+                        //Refresh the groupBox if the column is grouped
                         if (col.IsGrouped)
                         {
                             ForceRefreshGroupBox();
                         }
+
+                        //Apply the changes
                         Fill();
                     }
                 }
-            } 
+            }
             base.OnColumnHeaderMouseClick(e);
         }
 
@@ -702,6 +770,18 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             _palette = KryptonManager.CurrentGlobalPalette;
             _paletteRedirect.Target = _palette; //!!!!!! important
 
+            //Reflect changes for the grouped heights
+            int h = StaticValues._defaultGroupRowHeight; // default height
+            if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
+                h = StaticValues._2013GroupRowHeight; // special height for office 2013         
+            
+            //For each outlookgridcolumn
+            for (int j = 0; j < internalColumns.Count; j++)
+            {
+                if (internalColumns[j].GroupingType != null)
+                    internalColumns[j].GroupingType.Height = h;
+            }
+
             // (7) Hook into events for the new palette
             if (_palette != null)
                 _palette.PalettePaint += new EventHandler<PaletteLayoutEventArgs>(OnPalettePaint);
@@ -720,10 +800,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             if (colSelected > -1)
             {
                 OutlookGridColumn col = internalColumns.FindFromColumnIndex(colSelected);
-                if (!col.IsGrouped)
-                {
-                    SortColumn(col, SortOrder.None);
-                }
+                UnSortColum(col);
                 Fill();
             }
         }
@@ -776,7 +853,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             if (colSelected > -1)
             {
                 OutlookGridColumn col = internalColumns.FindFromColumnIndex(colSelected);
-                GroupColumn(col.Name, SortOrder.Ascending, col.GroupingType);
+                GroupColumn(col, SortOrder.Ascending, null);
                 ForceRefreshGroupBox();
                 Fill();
             }
@@ -796,6 +873,43 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 ForceRefreshGroupBox();
                 Fill();
             }
+        }
+
+        private void OnGroupCollapse(object sender, EventArgs e)
+        {
+            OutlookGridColumn col = internalColumns.FindFromColumnIndex(colSelected);
+            Collapse(col.Name);
+        }
+
+        private void OnGroupExpand(object sender, EventArgs e)
+        {
+            OutlookGridColumn col = internalColumns.FindFromColumnIndex(colSelected);
+            Expand(col.Name);
+        }
+
+        private void OnSortBySummary(object sender, EventArgs e)
+        {
+
+            KryptonContextMenuItem item = (KryptonContextMenuItem)sender;
+            OutlookGridColumn col = internalColumns.FindFromColumnIndex(colSelected);
+            col.GroupingType.SortBySummaryCount = item.Checked;
+            ForceRefreshGroupBox();
+            Fill();
+        }
+
+        private void OnGroupIntervalClick(object sender, EventArgs e)
+        {
+            KryptonContextMenuItem item = (KryptonContextMenuItem)sender;
+            OutlookGridColumn col = internalColumns.FindFromColumnIndex(colSelected);
+            ((OutlookGridDateTimeGroup)col.GroupingType).Interval = (OutlookGridDateTimeGroup.DateInterval)Enum.Parse(typeof(OutlookGridDateTimeGroup.DateInterval), item.Tag.ToString());
+            ForceRefreshGroupBox();
+            Fill();
+        }
+
+        private void OnColumnVisibleCheckedChanged(object sender, EventArgs e)
+        {
+            KryptonContextMenuCheckBox item = (KryptonContextMenuCheckBox)sender;
+            this.Columns[(int)item.Tag].Visible = item.Checked;
         }
 
         /// <summary>
@@ -870,7 +984,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="e">A OutlookGridColumnEventArgs that contains the event data.</param>
         private void ColumnGroupAddedEvent(object sender, OutlookGridColumnEventArgs e)
         {
-            GroupColumn(e.Column.Name, SortOrder.Ascending, null);
+            GroupColumn(e.Column.Name, e.Column.SortDirection, null);
             //We fill again the grid with the new Grouping info
             Fill();
 #if (DEBUG)
@@ -932,6 +1046,58 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 #endif
         }
 
+        /// <summary>
+        /// Handles the GroupExpandEvent event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GridGroupExpandEvent(object sender, OutlookGridColumnEventArgs e)
+        {
+            Expand(e.Column.Name);
+#if (DEBUG)
+            Console.WriteLine("OutlookGrid - Receives GridGroupExpandEvent");
+#endif
+        }
+
+        private void GridGroupCollapseEvent(object sender, OutlookGridColumnEventArgs e)
+        {
+            Collapse(e.Column.Name);
+#if (DEBUG)
+            Console.WriteLine("OutlookGrid - Receives GridGroupCollapseEvent");
+#endif
+        }
+
+        private void ColumnGroupIndexChangedEvent(object sender, OutlookGridColumnEventArgs e)
+        {
+            //TODO 25/01/2014
+            internalColumns.ChangeGroupIndex(e.Column);
+            Fill(); //to reflect the changes
+            ForceRefreshGroupBox();
+#if (DEBUG)
+            Console.WriteLine("OutlookGrid - Receives ColumnGroupIndexChangedEvent");
+#endif
+        }
+
+        private void GroupIntervalClickEvent(object sender, OutlookGridColumnEventArgs e)
+        {
+            OutlookGridColumn col = internalColumns.FindFromColumnName(e.Column.Name);
+            ((OutlookGridDateTimeGroup)col.GroupingType).Interval = ((OutlookGridDateTimeGroup)e.Column.GroupingType).Interval;
+            Fill();
+#if (DEBUG)
+            Console.WriteLine("OutlookGrid - Receives GroupIntervalClickEvent");
+#endif
+        }
+
+        private void SortBySummaryCountEvent(object sender, OutlookGridColumnEventArgs e)
+        {
+            OutlookGridColumn col = internalColumns.FindFromColumnName(e.Column.Name);
+            col.GroupingType.SortBySummaryCount = e.Column.GroupingType.SortBySummaryCount;
+            Fill();
+#if (DEBUG)
+            Console.WriteLine("OutlookGrid - Receives SortBySummaryCountEvent");
+#endif
+        }
+
         #endregion
 
         #region OutlookGrid methods
@@ -939,43 +1105,115 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <summary>
         /// Add a column for internal uses of the OutlookGrid. The column must already exists in the datagridview. Do this *BEFORE* using the grid (sorting and grouping, filling,...)
         /// </summary>
-        /// <param name="col">The DataGridView Column.</param>
-        /// <param name="group">The group associated to this column.</param>
-        /// <param name="sort">The sort order.</param>
-        /// <param name="grouped">True if grouped by default, False otherwise.</param>
-        public void AddInternalColumn(DataGridViewColumn col, IOutlookGridGroup group, SortOrder sort, bool grouped)
+        /// <param name="col">The DataGridViewColumn.</param>
+        /// <param name="group">The group type for the column.</param>
+        /// <param name="sortDirection">The sort direction.</param>
+        /// <param name="groupIndex">The column's position in grouping and at which level.</param>
+        /// <param name="sortIndex">the column's position among sorted columns.</param>
+        public void AddInternalColumn(DataGridViewColumn col, IOutlookGridGroup group, SortOrder sortDirection, int groupIndex, int sortIndex)
         {
-            internalColumns.Add(new OutlookGridColumn(col, group, sort, grouped));
+            AddInternalColumn(new OutlookGridColumn(col, group, sortDirection, groupIndex, sortIndex));
+            //internalColumns.Add(new OutlookGridColumn(col, group, sortDirection, groupIndex, sortIndex));
+            ////Already reflect the SortOrder on the column
+            //col.HeaderCell.SortGlyphDirection = sortDirection;
+            //if (this._hideColumnOnGrouping && groupIndex > -1 && group.AllowHiddenWhenGrouped)
+            //    col.Visible = false;
+        }
+
+        /// <summary>
+        /// Add a column for internal uses of the OutlookGrid. The column must already exists in the datagridview. Do this *BEFORE* using the grid (sorting and grouping, filling,...)
+        /// </summary>
+        /// <param name="col">The configured OutlookGridColumn.</param>
+        public void AddInternalColumn(OutlookGridColumn col)
+        {
+            Debug.Assert(col != null);
+            if (col != null)
+            {
+                internalColumns.Add(col);
+                //Already reflect the SortOrder on the column
+                col.DataGridViewColumn.HeaderCell.SortGlyphDirection = col.SortDirection;
+                if (this._hideColumnOnGrouping && col.GroupIndex > -1 && col.GroupingType.AllowHiddenWhenGrouped)
+                    col.DataGridViewColumn.Visible = false;
+            }
+        }
+
+        /// <summary>
+        /// Add an array of OutlookGridColumns for internal use of OutlookGrid. The columns must already exist in the datagridview. Do this *BEFORE* using the grid (sorting and grouping, filling,...)
+        /// </summary>
+        /// <param name="cols"></param>
+        public void AddRangeInternalColumns(params OutlookGridColumn[] cols)
+        {
+            Debug.Assert(cols != null);
+            // All columns with DisplayIndex != -1 are put into the initialColumns array
+            foreach (OutlookGridColumn col in cols)
+            {
+                AddInternalColumn(col);
+            }
         }
 
         /// <summary>
         /// Group a column
         /// </summary>
         /// <param name="columnName">The name of the column.</param>
-        /// <param name="sort">The sort order of the group./</param>
+        /// <param name="sortDirection">The sort direction of the group./</param>
         /// <param name="gr">The IOutlookGridGroup object.</param>
-        public void GroupColumn(string columnName, SortOrder sort, IOutlookGridGroup gr)
+        public void GroupColumn(string columnName, SortOrder sortDirection, IOutlookGridGroup gr)
         {
-            internalColumns[columnName].IsGrouped = true;
-            internalColumns[columnName].GroupOrder = ++internalColumns.MaxGroupOrder;
-            internalColumns[columnName].SortDirection = sort;
-            internalColumns[columnName].DataGridViewColumn.HeaderCell.SortGlyphDirection = sort;
-            if (gr != null)
-                internalColumns[columnName].GroupingType = gr;
+            GroupColumn(internalColumns[columnName], sortDirection, gr);
+        }
+
+        /// <summary>
+        /// Group a column
+        /// </summary>
+        /// <param name="col">The name of the column.</param>
+        /// <param name="sortDirection">The sort direction of the group./</param>
+        /// <param name="gr">The IOutlookGridGroup object.</param>
+        public void GroupColumn(OutlookGridColumn col, SortOrder sortDirection, IOutlookGridGroup gr)
+        {
+            if (!col.IsGrouped)
+            {
+                col.GroupIndex = ++internalColumns.MaxGroupIndex;
+                if (col.SortIndex > -1)
+                    internalColumns.RemoveSortIndex(col);
+                col.SortDirection = sortDirection;
+                col.DataGridViewColumn.HeaderCell.SortGlyphDirection = sortDirection;
+                if (gr != null)
+                    col.GroupingType = gr;
+                if (_hideColumnOnGrouping && col.GroupingType.AllowHiddenWhenGrouped)
+                    col.DataGridViewColumn.Visible = false;
+            }
+#if DEBUG
+            internalColumns.DebugOutput();
+#endif
         }
 
         /// <summary>
         /// Ungroup a column
         /// </summary>
-        /// <param name="columnName">The name of the column.</param>
+        /// <param name="columnName">The OutlookGridColumn.</param>
         public void UnGroupColumn(string columnName)
         {
-            internalColumns[columnName].IsGrouped = false;
-            internalColumns.RemoveGroupOrder(internalColumns[columnName].GroupOrder);
-            internalColumns[columnName].GroupOrder = 0;
-            internalColumns[columnName].SortDirection = SortOrder.None;
-            internalColumns[columnName].DataGridViewColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
-            internalColumns[columnName].GroupingType.Collapsed = false;
+            UnGroupColumn(internalColumns[columnName]);
+        }
+
+        /// <summary>
+        /// Ungroup a column
+        /// </summary>
+        /// <param name="col">The OutlookGridColumn.</param>
+        public void UnGroupColumn(OutlookGridColumn col)
+        {
+            if (col.IsGrouped)
+            {
+                internalColumns.RemoveGroupIndex(col);
+                col.SortDirection = SortOrder.None;
+                col.DataGridViewColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
+                col.GroupingType.Collapsed = false;
+                if (_hideColumnOnGrouping && col.GroupingType.AllowHiddenWhenGrouped)
+                    col.DataGridViewColumn.Visible = true;
+            }
+#if DEBUG
+            internalColumns.DebugOutput();
+#endif
         }
 
         /// <summary>
@@ -985,8 +1223,33 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="sort">The new SortOrder.</param>
         public void SortColumn(OutlookGridColumn col, SortOrder sort)
         {
+            //Change the SortIndex and MaxSortIndex only if it is not a grouped column
+            if (!col.IsGrouped && col.SortIndex == -1)
+                col.SortIndex = ++internalColumns.MaxSortIndex;
+            //Change the order in all cases
             col.SortDirection = sort;
             col.DataGridViewColumn.HeaderCell.SortGlyphDirection = sort;
+#if DEBUG
+            internalColumns.DebugOutput();
+#endif
+        }
+
+        /// <summary>
+        /// UnSort the column. Call Fill after to make the changes
+        /// </summary>
+        /// <param name="col">The outlookGridColumn.</param>
+        public void UnSortColum(OutlookGridColumn col)
+        {
+            //Remove the SortIndex and rearrange the SortIndexes only if the column is not grouped
+            if (!col.IsGrouped)
+            {
+                internalColumns.RemoveSortIndex(col);
+                col.SortDirection = System.Windows.Forms.SortOrder.None;
+                col.DataGridViewColumn.HeaderCell.SortGlyphDirection = System.Windows.Forms.SortOrder.None;
+            }
+#if DEBUG
+            internalColumns.DebugOutput();
+#endif
         }
 
         /// <summary>
@@ -1003,6 +1266,24 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public void ExpandAll()
         {
             SetGroupCollapse(false);
+        }
+
+        /// <summary>
+        /// Expand all groups associated to a specific column
+        /// </summary>
+        /// <param name="col">The DataGridViewColumn</param>
+        public void Expand(string col)
+        {
+            SetGroupCollapse(col, false);
+        }
+
+        /// <summary>
+        /// Collapse all groups associated to a specific column
+        /// </summary>
+        /// <param name="col">The DataGridViewColumn</param>
+        public void Collapse(string col)
+        {
+            SetGroupCollapse(col, true);
         }
 
         /// <summary>
@@ -1037,14 +1318,16 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         public void ClearGroupsWithoutFilling()
         {
+            //TODO check that
             //reset groups and collapsed statuses
             groupCollection.Clear();
             //reset groups in columns
-            internalColumns.MaxGroupOrder = 0;
+            internalColumns.MaxGroupIndex = -1;
             for (int i = 0; i < this.internalColumns.Count; i++)
             {
-                internalColumns[i].IsGrouped = false;
-                internalColumns[i].GroupOrder = 0;
+                if (internalColumns[i].IsGrouped)
+                    internalColumns[i].DataGridViewColumn.Visible = true;
+                internalColumns[i].GroupIndex = -1;
             }
         }
 
@@ -1067,10 +1350,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
-        /// Gets all the subrows of a grouprow
+        /// Gets all the subrows of a grouprow (recursive)
         /// </summary>
-        /// <param name="row"></param>
-        /// <returns>A list of OutlookGridrows</returns>
+        /// <param name="list">The result list of OutlookGridRows</param>
+        /// <param name="grouprow">The IOutlookGridGroup that contains rows to inspect.</param>
+        /// <returns>A list of OutlookGridRows</returns>
         public List<OutlookGridRow> GetSubRows(ref List<OutlookGridRow> list, IOutlookGridGroup grouprow)
         {
             list.AddRange(grouprow.Rows);
@@ -1097,6 +1381,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 groupBox.ClearGrouping += ClearGroupingEvent;
                 groupBox.FullCollapse += FullCollapseEvent;
                 groupBox.FullExpand += FullExpandEvent;
+                groupBox.ColumnGroupOrderChanged += ColumnGroupIndexChangedEvent;
+                groupBox.GroupCollapse += GridGroupCollapseEvent;
+                groupBox.GroupExpand += GridGroupExpandEvent;
+                groupBox.GroupIntervalClick += GroupIntervalClickEvent;
+                groupBox.SortBySummaryCount += SortBySummaryCountEvent;
             }
         }
 
@@ -1106,7 +1395,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public void ForceRefreshGroupBox()
         {
             if (groupBox != null)
-                groupBox.UpdateGroupingColumns(internalColumns);
+                groupBox.UpdateGroupingColumns(internalColumns.FindGroupedColumns());
         }
 
         /// <summary>
@@ -1124,6 +1413,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 _menuSortDescending = new KryptonContextMenuItem(LangManager.Instance.GetString("SORTDESCENDING"), Properties.Resources.sort_descending, new EventHandler(OnColumnSortDescending));
                 _menuClearSorting = new KryptonContextMenuItem(LangManager.Instance.GetString("CLEARSORTING"), Properties.Resources.sort_up_down_delete_16, new EventHandler(OnColumnClearSorting));
                 _menuSeparator1 = new KryptonContextMenuSeparator();
+                _menuExpand = new KryptonContextMenuItem(LangManager.Instance.GetString("EXPAND"), Properties.Resources.element_plus_16, new EventHandler(OnGroupExpand));
+                _menuCollapse = new KryptonContextMenuItem(LangManager.Instance.GetString("COLLAPSE"), Properties.Resources.element_minus_16, new EventHandler(OnGroupCollapse));
+                _menuSeparator4 = new KryptonContextMenuSeparator();
                 _menuGroupByThisColumn = new KryptonContextMenuItem(LangManager.Instance.GetString("GROUP"), Properties.Resources.element, new EventHandler(OnGroupByThisColumn));
                 _menuUngroupByThisColumn = new KryptonContextMenuItem(LangManager.Instance.GetString("UNGROUP"), Properties.Resources.element_delete, new EventHandler(OnUnGroupByThisColumn));
                 _menuShowGroupBox = new KryptonContextMenuItem(LangManager.Instance.GetString("SHOWGROUPBOX"), null, new EventHandler(OnShowGroupBox));
@@ -1131,19 +1423,59 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 _menuSeparator2 = new KryptonContextMenuSeparator();
                 _menuBestFitColumn = new KryptonContextMenuItem(LangManager.Instance.GetString("BESTFIT"), null, new EventHandler(OnBestFitColumn));
                 _menuBestFitAllColumns = new KryptonContextMenuItem(LangManager.Instance.GetString("BESTFITALL"), Properties.Resources.fit_to_size, new EventHandler(OnBestFitAllColumns));
+                _menuSeparator3 = new KryptonContextMenuSeparator();
+                _menuVisibleColumns = new KryptonContextMenuItem(LangManager.Instance.GetString("COLUMNS"), Properties.Resources.table2_selection_column, null);
+                _menuGroupInterval = new KryptonContextMenuItem(LangManager.Instance.GetString("GROUPINTERVAL"));
+                _menuSortBySummary = new KryptonContextMenuItem(LangManager.Instance.GetString("SORTBYSUMMARYCOUNT"), null, new EventHandler(OnSortBySummary));
+                _menuSortBySummary.CheckOnClick = true;
+
+                //Group Interval
+                KryptonContextMenuItems _GroupIntervalItems;
+                KryptonContextMenuItem it = null;
+                string[] names = Enum.GetNames(typeof(OutlookGridDateTimeGroup.DateInterval));
+                KryptonContextMenuItemBase[] arrayOptions = new KryptonContextMenuItemBase[names.Length];
+                for (int i = 0; i < names.Length; i++)
+                {
+                    it = new KryptonContextMenuItem(LangManager.Instance.GetString(names[i]));
+                    it.Tag = names[i];
+                    it.Click += OnGroupIntervalClick;
+                    arrayOptions[i] = it;
+                }
+                _GroupIntervalItems = new KryptonContextMenuItems(arrayOptions);
+                _menuGroupInterval.Items.Add(_GroupIntervalItems);
+
+                //Visible Columns
+                KryptonContextMenuCheckBox it2 = null;
+                KryptonContextMenuItemBase[] arrayCols = new KryptonContextMenuItemBase[this.Columns.Count];
+                for (int i = 0; i < this.Columns.Count; i++)
+                {
+                    it2 = new KryptonContextMenuCheckBox(this.Columns[i].HeaderText);
+                    it2.Checked = this.Columns[i].Visible;
+                    it2.Tag = this.Columns[i].Index;
+                    it2.CheckedChanged += OnColumnVisibleCheckedChanged;
+                    arrayCols[i] = it2;
+                }
+                _menuVisibleColumns.Items.AddRange(arrayCols);
 
                 //Add items inside an items collection (apart from separator1 which is only added if required)
                 _menuItems = new KryptonContextMenuItems(new KryptonContextMenuItemBase[] { _menuSortAscending,
-                                                                                                _menuSortDescending,
-                                                                                                _menuClearSorting,
-                                                                                                _menuSeparator1,
-                                                                                                _menuGroupByThisColumn,
-                                                                                                _menuUngroupByThisColumn,
-                                                                                                _menuShowGroupBox,
-                                                                                                _menuHideGroupBox,
-                                                                                                _menuSeparator2,
-                                                                                                _menuBestFitColumn,
-                                                                                                _menuBestFitAllColumns});
+                                                                                            _menuSortDescending,
+                                                                                            _menuSortBySummary,
+                                                                                            _menuClearSorting,
+                                                                                            _menuSeparator1,
+                                                                                            _menuExpand,
+                                                                                            _menuCollapse,
+                                                                                            _menuSeparator4,
+                                                                                            _menuGroupByThisColumn,
+                                                                                            _menuGroupInterval,
+                                                                                            _menuUngroupByThisColumn,
+                                                                                            _menuShowGroupBox,
+                                                                                            _menuHideGroupBox,
+                                                                                            _menuSeparator2,
+                                                                                            _menuBestFitColumn,
+                                                                                            _menuBestFitAllColumns,
+                                                                                            _menuSeparator3,
+                                                                                            _menuVisibleColumns});
             }
 
             // Ensure we have a krypton context menu if not already present
@@ -1153,14 +1485,28 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             // Update the individual menu options
             if (col != null)
             {
-                _menuSortAscending.Visible = col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable ;
+                _menuSortAscending.Visible = col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable;
                 _menuSortAscending.Checked = col.SortDirection == SortOrder.Ascending ? true : false;
                 _menuSortDescending.Checked = col.SortDirection == SortOrder.Descending ? true : false;
                 _menuSortDescending.Visible = col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable;
+                _menuSortBySummary.Visible = col.IsGrouped;
+                _menuSortBySummary.Checked = col.GroupingType.SortBySummaryCount;
                 _menuClearSorting.Enabled = col.SortDirection != SortOrder.None && !col.IsGrouped;
                 _menuClearSorting.Visible = col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable;
                 _menuSeparator1.Visible = (_menuSortAscending.Visible || _menuSortDescending.Visible || _menuClearSorting.Visible);
+                _menuExpand.Visible = col.IsGrouped;
+                _menuCollapse.Visible = col.IsGrouped;
+                _menuSeparator4.Visible = (_menuExpand.Visible || _menuCollapse.Visible);
                 _menuGroupByThisColumn.Visible = !col.IsGrouped && col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable;
+                _menuGroupInterval.Visible = col.IsGrouped && col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable && col.GroupingType.GetType() == typeof(OutlookGridDateTimeGroup);
+                if (_menuGroupInterval.Visible)
+                {
+                    string currentInterval = Enum.GetName(typeof(OutlookGridDateTimeGroup.DateInterval), ((OutlookGridDateTimeGroup)col.GroupingType).Interval);
+                    foreach (KryptonContextMenuItem item in ((KryptonContextMenuItems)_menuGroupInterval.Items[0]).Items)
+                    {
+                        item.Checked = item.Tag.ToString() == currentInterval;
+                    }
+                }
                 _menuUngroupByThisColumn.Visible = col.IsGrouped && col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable;
                 _menuShowGroupBox.Visible = (groupBox != null) && !groupBox.Visible;
                 _menuHideGroupBox.Visible = (groupBox != null) && groupBox.Visible;
@@ -1171,9 +1517,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             {
                 _menuSortAscending.Visible = false;
                 _menuSortDescending.Visible = false;
+                _menuSortBySummary.Visible = false;
                 _menuClearSorting.Visible = false;
                 _menuSeparator1.Visible = (_menuSortAscending.Visible || _menuSortDescending.Visible || _menuClearSorting.Visible);
+                _menuExpand.Visible = false;
+                _menuCollapse.Visible = false;
+                _menuSeparator4.Visible = (_menuExpand.Visible || _menuCollapse.Visible);
                 _menuGroupByThisColumn.Visible = false;
+                _menuGroupInterval.Visible = false;
                 _menuUngroupByThisColumn.Visible = false;
                 _menuShowGroupBox.Visible = (groupBox != null) && !groupBox.Visible;
                 _menuHideGroupBox.Visible = (groupBox != null) && groupBox.Visible;
@@ -1191,26 +1542,31 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <summary>
         /// Clear all sorting columns only (not the grouped ones)
         /// </summary>
-        private void ResetSortingColumns()
+        public void ResetAllSortingColumns()
         {
-            for (int i = 0; i < internalColumns.Count; i++)
+            internalColumns.MaxSortIndex = -1;
+            foreach (OutlookGridColumn col in internalColumns)
             {
-                if (!internalColumns[i].IsGrouped && internalColumns[i].SortDirection != SortOrder.None)
+                if (!col.IsGrouped && col.SortDirection != SortOrder.None)
                 {
-                    internalColumns[i].DataGridViewColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
-                    internalColumns[i].SortDirection = SortOrder.None;
+                    col.DataGridViewColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
+                    col.SortDirection = SortOrder.None;
+                    col.SortIndex = -1;
                 }
             }
+#if DEBUG
+            internalColumns.DebugOutput();
+#endif
         }
 
-        /// <summary>
-        /// Sort the grid
-        /// </summary>
-        /// <param name="comparer">The IComparer object.</param>
-        public void Sort(IComparer<OutlookGridRow> comparer)
-        {
-            Fill();
-        }
+        ///// <summary>
+        ///// Sort the grid
+        ///// </summary>
+        ///// <param name="comparer">The IComparer object.</param>
+        //public void Sort(IComparer<OutlookGridRow> comparer)
+        //{
+        //    Fill();
+        //}
 
         /// <summary>
         /// Clear the internal Rows
@@ -1248,18 +1604,63 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             if (!IsGridGrouped || internalRows.Count == 0)
                 return;
 
-            // loop through all rows to find the GroupRows
-            for (int i = 0; i < this.Rows.Count; i++)
-            {
-                if (((OutlookGridRow)this.Rows[i]).IsGroupRow)
-                    ((OutlookGridRow)this.Rows[i]).Group.Collapsed = collapsed;
-            }
+            //// loop through all rows to find the GroupRows
+            //for (int i = 0; i < this.Rows.Count; i++)
+            //{
+            //    if (((OutlookGridRow)this.Rows[i]).IsGroupRow)
+            //        ((OutlookGridRow)this.Rows[i]).Group.Collapsed = collapsed;
+            //}
+            RecursiveSetGroupCollapse(this.groupCollection, collapsed);
 
             // workaround, make the grid refresh properly
             this.Rows[0].Visible = !this.Rows[0].Visible;
             this.Rows[0].Visible = !this.Rows[0].Visible;
+
+            //When collapsing the first row still seeing it.
+            if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
+                this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
         }
 
+        private void RecursiveSetGroupCollapse(OutlookGridGroupCollection col, bool collapsed)
+        {
+            for (int i = 0; i < col.Count; i++)
+            {
+                col[i].Collapsed = collapsed;
+                RecursiveSetGroupCollapse(col[i].Children, collapsed);
+            }
+        }
+
+        private void SetGroupCollapse(string c, bool collapsed)
+        {
+            if (!IsGridGrouped || internalRows.Count == 0)
+                return;
+
+            // loop through all rows to find the GroupRows
+            //for (int i = 0; i < this.Rows.Count; i++)
+            //{
+            //    if (((OutlookGridRow)this.Rows[i]).IsGroupRow && ((OutlookGridRow)this.Rows[i]).Group.Column.DataGridViewColumn.Name == c.Name)
+            //        ((OutlookGridRow)this.Rows[i]).Group.Collapsed = collapsed;
+            //}
+            RecursiveSetGroupCollapse(c, this.groupCollection, collapsed);
+
+            // workaround, make the grid refresh properly
+            this.Rows[0].Visible = !this.Rows[0].Visible;
+            this.Rows[0].Visible = !this.Rows[0].Visible;
+
+            //When collapsing the first row still seeing it.
+            if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
+                this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
+        }
+
+        private void RecursiveSetGroupCollapse(string c, OutlookGridGroupCollection col, bool collapsed)
+        {
+            for (int i = 0; i < col.Count; i++)
+            {
+                if (col[i].Column.Name == c)
+                    col[i].Collapsed = collapsed;
+                RecursiveSetGroupCollapse(c, col[i].Children, collapsed);
+            }
+        }
 
         /// <summary>
         /// Collapse/Expand a group row
@@ -1281,6 +1682,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 // this will also invalidate the control, so it will redraw itself
                 row.Visible = false;
                 row.Visible = true;
+
+                //When collapsing the first row still seeing it.
+                if (row.Index < this.FirstDisplayedScrollingRowIndex)
+                    this.FirstDisplayedScrollingRowIndex = row.Index;
             }
         }
 
@@ -1313,11 +1718,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 //Applying sort
                 try
                 {
-                    for (int i = 0; i < internalColumns.Count; i++)
-                    {
-                        if (internalColumns[i].SortDirection != SortOrder.None)
-                            list.Sort(new OutlookGridRowComparer(internalColumns[i].DataGridViewColumn.Index, internalColumns[i].SortDirection));
-                    }
+                    list.Sort(new OutlookGridRowComparer2(internalColumns.GetIndexAndSortSortedOnlyColumns()));
                 }
                 catch (Exception e)
                 {
@@ -1338,7 +1739,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 try
                 {
                     //We get the columns that are grouped
-                    List<OutlookGridColumn> groupedColumns = internalColumns.GroupedColumns();
+                    List<OutlookGridColumn> groupedColumns = internalColumns.FindGroupedColumns();
 
                     //For each outlookgrid row in the grid
                     for (int j = 0; j < list.Count; j++)
@@ -1346,7 +1747,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                         //Reload the groups collection for each rows !!
                         OutlookGridGroupCollection children = this.groupCollection;
 
-                        //For each columns "grouped"
+                        //For each grouped column (ordered by GroupIndex)
                         for (int i = 0; i < groupedColumns.Count; i++)
                         {
                             if (i == 0)
@@ -1400,11 +1801,17 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                                    MessageBoxIcon.Error);
                 }
 
-                //Sorting part : sort non grouped columns
+                //Sorting part : sort the groups between them and sort the rows inside the groups
                 try
                 {
-                    int index = internalColumns.FindSortedColumnNotgrouped();
-                    RecursiveSort(this.groupCollection, index, (index == -1) ? SortOrder.None : internalColumns.FindFromColumnIndex(index).SortDirection);
+                    //int index = internalColumns.FindSortedColumnNotgrouped();
+                    //RecursiveSort(this.groupCollection, index, (index == -1) ? SortOrder.None : internalColumns.FindFromColumnIndex(index).SortDirection);
+                    List<Tuple<int, SortOrder>> sortList;
+                    sortList = internalColumns.GetIndexAndSortSortedOnlyColumns();
+                    if (sortList.Count > 0)
+                        RecursiveSort(this.groupCollection, sortList);
+                    else
+                        RecursiveSort(this.groupCollection, internalColumns.GetIndexAndSortGroupedColumns());
                 }
                 catch (Exception e)
                 {
@@ -1430,32 +1837,38 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <summary>
         /// Sort recursively the OutlookGridRows within groups
         /// </summary>
-        /// <param name="col">The OutlookGridGroupCollection.</param>
-        /// <param name="colSort">The index of column to sort.</param>
-        /// <param name="order">The sort order.</param>
-        private void RecursiveSort(OutlookGridGroupCollection col, int colSort, SortOrder order)
+        /// <param name="groupCollection">The OutlookGridGroupCollection.</param>
+        /// <param name="sortList">The list of sorted columns</param>
+        private void RecursiveSort(OutlookGridGroupCollection groupCollection, List<Tuple<int, SortOrder>> sortList)
         {
-            OutlookGridGroupCollection currentCol = col;
-            //We sort the child groups
-            currentCol.Sort();
-            //Sort the rows inside each group
-            for (int i = 0; i < currentCol.Count; i++)
+            //We sort the groups
+            if (groupCollection.Count > 0)
             {
-                //if (currentCol[i].Column.SortDirection != SortOrder.None)
-                //If there is no child group we search if there is another column (not grouped) that is sorted...
-                if ((currentCol[i].Children.Count == 0) && (colSort != -1))
-                {
-                    //We sort the rows according to the unique column sort
-                    currentCol[i].Rows.Sort(new OutlookGridRowComparer(colSort, order));
-                }
+                if (groupCollection[0].Column.GroupingType.SortBySummaryCount)
+                    groupCollection.Sort(new OutlookGridGroupCountComparer());
                 else
+                    groupCollection.Sort();
+            }
+
+            //Sort the rows inside each group
+            for (int i = 0; i < groupCollection.Count; i++)
+            {
+                //If there is no child group then we have only rows...
+                if ((groupCollection[i].Children.Count == 0) && sortList.Count > 0)
                 {
-                    //We sort the rows according to the group sort
-                    currentCol[i].Rows.Sort(new OutlookGridRowComparer(currentCol[i].Column.DataGridViewColumn.Index, internalColumns[currentCol[i].Column.DataGridViewColumn.Name].SortDirection));
+                    //We sort the rows according to the sorted only columns
+                    Console.WriteLine("groupCollection[i].Rows" + groupCollection[i].Rows.Count.ToString());
+                    groupCollection[i].Rows.Sort(new OutlookGridRowComparer2(sortList));
                 }
+                //else
+                //{
+                //    Console.WriteLine("groupCollection[i].Rows" + groupCollection[i].Rows.Count.ToString());
+                //    //We sort the rows according to the group sort (useful for alphbetics for example)
+                //    groupCollection[i].Rows.Sort(new OutlookGridRowComparer(groupCollection[i].Column.DataGridViewColumn.Index, internalColumns[groupCollection[i].Column.DataGridViewColumn.Name].SortDirection));
+                //}
 
                 //Recursive call for children
-                RecursiveSort(currentCol[i].Children, colSort, order);
+                RecursiveSort(groupCollection[i].Children, sortList);
             }
         }
 
@@ -1520,6 +1933,66 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 GroupImageClick(this, e);
         }
 
+        /// <summary>
+        /// Persist the configuration of the KryptonOutlookGrid
+        /// </summary>
+        /// <param name="path">The path where the .xml file will be saved.</param>
+        public void PersistConfiguration(string path)
+        {
+            OutlookGridColumn col = null;
+            using (XmlWriter writer = XmlWriter.Create(path, new XmlWriterSettings { Indent = true }))
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("OutlookGrid");
+                writer.WriteAttributeString("V", "1");
+                writer.WriteElementString("GroupBox", groupBox.Visible.ToString());
+                writer.WriteElementString("HideColumnOnGrouping", CommonHelper.BoolToString(this.HideColumnOnGrouping));
+                writer.WriteStartElement("Columns");
+                for (int i = 0; i < this.internalColumns.Count; i++)
+                {
+                    col = this.internalColumns[i];
+                    writer.WriteStartElement("Column");
+                    writer.WriteElementString("Name", col.Name);
+                    writer.WriteStartElement("GroupingType");
+                    if (col.GroupingType != null)
+                    {
+                        writer.WriteElementString("Name", col.GroupingType.GetType().Name.ToString());
+                        writer.WriteElementString("OneItemText", col.GroupingType.OneItemText);
+                        writer.WriteElementString("XXXItemsText", col.GroupingType.XXXItemsText);
+                        writer.WriteElementString("SortBySummaryCount", CommonHelper.BoolToString(col.GroupingType.SortBySummaryCount));
+                        if (col.GroupingType.GetType() == typeof(OutlookGridDateTimeGroup))
+                        {
+                            writer.WriteElementString("GroupDateInterval", ((OutlookGridDateTimeGroup)col.GroupingType).Interval.ToString());
+                        }
+                    }
+                    writer.WriteEndElement();
+                    writer.WriteElementString("SortDirection", col.SortDirection.ToString());
+                    writer.WriteElementString("GroupIndex", col.GroupIndex.ToString());
+                    writer.WriteElementString("SortIndex", col.SortIndex.ToString());
+                    writer.WriteElementString("Visible", col.DataGridViewColumn.Visible.ToString());
+                    writer.WriteElementString("Width", col.DataGridViewColumn.Width.ToString());
+                    writer.WriteElementString("Index", col.DataGridViewColumn.Index.ToString());
+                    writer.WriteElementString("DisplayIndex", col.DataGridViewColumn.DisplayIndex.ToString());
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
+                writer.Flush();
+            }
+        }
+
+        /// <summary>
+        /// Clears everything in the OutlookGrid (groups, rows, columns, DataGridViewColumns). Ready for a completely new start.
+        /// </summary>
+        public void ClearEverything()
+        {
+            this.groupCollection.Clear();
+            this.internalRows.Clear();
+            this.internalColumns.Clear();
+            this.Columns.Clear();
+            //Snif everything is gone ! Ready for a new start !
+        }
         #endregion OutlookGrid methods
     }
 }

@@ -20,31 +20,32 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     /// <summary>
     /// Column for the OutlookGrid
     /// </summary>
-    public class OutlookGridColumn :IEquatable <OutlookGridColumn>
+    public class OutlookGridColumn : IEquatable<OutlookGridColumn>
     {
         private IOutlookGridGroup groupingType;
         private DataGridViewColumn column;
         private SortOrder sortDirection;
-        private bool isGrouped;
-        private int groupOrder;
+        private int groupIndex;
+        private int sortIndex;
         private string name;
 
         #region Constructor
-
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="col">The DataGridViewColumn.</param>
-        /// <param name="group">The group chosen for the column.</param>
-        /// <param name="sort">The sort.</param>
-        /// <param name="grouped">true if grouped, false otherwise.</param>
-        public OutlookGridColumn(DataGridViewColumn col, IOutlookGridGroup group, SortOrder sort, bool grouped)
+        /// <param name="group">The group type for the column.</param>
+        /// <param name="sortDirection">The sort direction.</param>
+        /// <param name="groupIndex">The column's position in grouping and at which level.</param>
+        /// <param name="sortIndex">the column's position among sorted columns.</param>
+        public OutlookGridColumn(DataGridViewColumn col, IOutlookGridGroup group, SortOrder sortDirection, int groupIndex, int sortIndex)
         {
             this.column = col;
+            this.name = col.Name;
             this.groupingType = group;
-            sortDirection = sort;
-            isGrouped = grouped;
-            this.name = col.Name; 
+            this.sortDirection = sortDirection;
+            this.groupIndex = groupIndex;
+            this.sortIndex = sortIndex;
         }
 
         /// <summary>
@@ -52,16 +53,18 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         /// <param name="columnName">The name.</param>
         /// <param name="col">The DataGridViewColumn.</param>
-        /// <param name="group">The group chosen for the column.</param>
-        /// <param name="sort">The sort.</param>
-        /// <param name="grouped">true if grouped, false otherwise.</param>
-        public OutlookGridColumn(string columnName, DataGridViewColumn col, IOutlookGridGroup group, SortOrder sort, bool grouped)
+        /// <param name="group">The group type for the column.</param>
+        /// <param name="sortDirection">The sort direction.</param>
+        /// <param name="groupIndex">The column's position in grouping and at which level.</param>
+        /// <param name="sortIndex">the column's position among sorted columns.</param>
+        public OutlookGridColumn(string columnName, DataGridViewColumn col, IOutlookGridGroup group, SortOrder sortDirection, int groupIndex, int sortIndex)
         {
-            this.name = columnName;
             this.column = col;
+            this.name = columnName;
             this.groupingType = group;
-            sortDirection = sort;
-            isGrouped = grouped;
+            this.sortDirection = sortDirection;
+            this.groupIndex = groupIndex;
+            this.sortIndex = sortIndex;
         }
 
         #endregion
@@ -81,8 +84,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         public bool IsGrouped
         {
-            get { return isGrouped; }
-            set { isGrouped = value; }
+            get { return groupIndex > -1; }
         }
 
         /// <summary>
@@ -113,13 +115,23 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
-        /// Gets or sets the group order
+        /// Gets or sets the column's position in grouping and at which level
         /// </summary>
-        public int GroupOrder
+        public int GroupIndex
         {
-            get { return groupOrder; }
-            set { groupOrder = value; }
+            get { return groupIndex; }
+            set { groupIndex = value; }
         }
+
+        /// <summary>
+        /// Gets or sets the column's position among sorted columns
+        /// </summary>
+        public int SortIndex
+        {
+            get { return sortIndex; }
+            set { sortIndex = value; }
+        }
+
         #endregion
 
         #region Implements

@@ -26,6 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -68,7 +69,7 @@
     </Compile>
     <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewRatingcolumn.cs" />
     <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewTextAndImageColumn.cs" />
-    <Compile Include="KryptonOutlookGrid\Helpers\GridGroupDateUtility.cs" />
+    <Compile Include="KryptonOutlookGrid\Helpers\OutlookGridGroupHelpers.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGrid.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGrid.designer.cs">
       <DependentUpon>OutlookGrid.cs</DependentUpon>
@@ -79,11 +80,14 @@
     <Compile Include="KryptonOutlookGrid\OutlookGridGroup.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridGroupBoxColumn.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridGroupCollection.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGridGroupCountComparer.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridGroupImageEventArgs.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridRow.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridRowComparer.cs" />
+    <Compile Include="KryptonOutlookGrid\OutlookGridRowComparer2.cs" />
+    <Compile Include="KryptonOutlookGrid\StaticValues.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\LangManager.cs" />
+    <Compile Include="Utils\Lang\LangManager.cs" />
     <EmbeddedResource Include="KryptonOutlookGrid\KryptonOutlookGridGroupBox.resx">
       <DependentUpon>KryptonOutlookGridGroupBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -110,8 +114,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="History.txt" />
     <Content Include="Librairies\Debug\ComponentFactory.Krypton.Toolkit.dll" />
     <Content Include="Librairies\Release\ComponentFactory.Krypton.Toolkit.dll" />
+    <None Include="Resources\table2_selection_column.png" />
+    <None Include="Resources\element_plus_16.png" />
+    <None Include="Resources\element_minus_16.png" />
+    <None Include="Resources\elements_plus_16.png" />
+    <None Include="Resources\elements_minus_16.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\element_selection_delete.png" />

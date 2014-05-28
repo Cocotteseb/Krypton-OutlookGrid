@@ -265,6 +265,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         {
             return this.Text.Equals(obj.ToString());
         }
+
+        /// <summary>
+        /// Overrides GetHashCode
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     /// <summary>

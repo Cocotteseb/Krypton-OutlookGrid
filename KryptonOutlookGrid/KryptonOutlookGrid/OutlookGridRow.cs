@@ -155,6 +155,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             {
                 KryptonOutlookGrid grid = (KryptonOutlookGrid)this.DataGridView;
                 int rowHeadersWidth = grid.RowHeadersVisible ? grid.RowHeadersWidth : 0;
+                int groupLevelIndentation = group.Level * StaticValues._groupLevelMultiplier;
 
                 int gridwidth = grid.Columns.GetColumnsWidth(DataGridViewElementStates.Visible);
                 Rectangle myRowBounds = rowBounds;
@@ -164,7 +165,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 IPaletteBorder paletteBorder = grid.StateNormal.DataCell.Border;
 
                 PaletteState state = PaletteState.Normal;
-                if (grid.PreviousSelectedGroupRow == rowIndex)
+                if (grid.PreviousSelectedGroupRow == rowIndex && (KryptonManager.CurrentGlobalPalette.GetRenderer() != KryptonManager.RenderOffice2013))
                     state = PaletteState.CheckedNormal;
 
                 using (RenderContext renderContext = new RenderContext(grid, graphics, myRowBounds, grid.Renderer))
@@ -189,37 +190,20 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     }
                 }
 
-                //Set the icon and lines according to the renderer
-                if (group.Collapsed)
-                {
-                    if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010)
-                    {
-                        graphics.DrawImage(Properties.Resources.collapseIcon2010, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
-                    }
-                    else
-                    {
-                        graphics.DrawImage(Properties.Resources.expandIcon, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
-                    }
-                }
-                else
-                {
-                    if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010)
-                    {
-                        graphics.DrawImage(Properties.Resources.expandIcon2010, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
-                    }
-                    else
-                    {
-                        graphics.DrawImage(Properties.Resources.collapseIcon, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11);
-                    }
-                }
-
-                // Draw the botton : solid line for 2007 palettes or dot line for 2010 palettes
+                // Draw the botton : solid line for 2007 palettes or dot line for 2010 palettes, full background for 2013
                 if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010)
                 {
                     using (Pen focusPen = new Pen(Color.Gray))
                     {
                         focusPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
                         graphics.DrawLine(focusPen, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset, rowBounds.Bottom - 1, gridwidth + 1, rowBounds.Bottom - 1);
+                    }
+                }
+                else if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
+                {
+                    using (SolidBrush br = new SolidBrush(Color.FromArgb(225, 225, 225)))
+                    {
+                        graphics.FillRectangle(br, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset, rowBounds.Bottom - StaticValues._2013GroupRowHeight, gridwidth + 1, StaticValues._2013GroupRowHeight - 1);
                     }
                 }
                 else
@@ -239,19 +223,67 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     }
                 }
 
+                //Set the icon and lines according to the renderer
+                if (group.Collapsed)
+                {
+                    if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010 || KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
+                    {
+                        graphics.DrawImage(Properties.Resources.collapseIcon2010, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + groupLevelIndentation, rowBounds.Bottom - 18, 11, 11);
+                    }
+                    else
+                    {
+                        graphics.DrawImage(Properties.Resources.expandIcon, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + groupLevelIndentation, rowBounds.Bottom - 18, 11, 11);
+                    }
+                }
+                else
+                {
+                    if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010 || KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
+                    {
+                        graphics.DrawImage(Properties.Resources.expandIcon2010, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + groupLevelIndentation, rowBounds.Bottom - 18, 11, 11);
+                    }
+                    else
+                    {
+                        graphics.DrawImage(Properties.Resources.collapseIcon, rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + groupLevelIndentation, rowBounds.Bottom - 18, 11, 11);
+                    }
+                }
+
                 //Draw image group
                 int imageoffset = 0;
                 if (this.group.GroupImage != null)
                 {
-                    graphics.DrawImage(this.group.GroupImage, rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + group.Level * 15, rowBounds.Bottom - 22, 16, 16);
-                    imageoffset = 18;
+                    if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2010 || KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
+                    {
+                        graphics.DrawImage(this.group.GroupImage, rowHeadersWidth - grid.HorizontalScrollingOffset + StaticValues._ImageOffsetwidth + groupLevelIndentation, rowBounds.Bottom - StaticValues._2013OffsetHeight, StaticValues._groupImageSide, StaticValues._groupImageSide);
+                        imageoffset = StaticValues._ImageOffsetwidth;
+                    }
+                    else
+                    {
+                        graphics.DrawImage(this.group.GroupImage, rowHeadersWidth - grid.HorizontalScrollingOffset + StaticValues._ImageOffsetwidth + groupLevelIndentation, rowBounds.Bottom - StaticValues._defaultOffsetHeight, StaticValues._groupImageSide, StaticValues._groupImageSide);
+                        imageoffset = StaticValues._ImageOffsetwidth;
+                    }
                 }
 
                 //Draw text, using the current grid font
-                int offsetText = rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + imageoffset + group.Level * 15;
-                //grid.GridPalette.GetContentShortTextFont(PaletteContentStyle.GridHeaderColumnList, state)
-                TextRenderer.DrawText(graphics, group.Text, grid.GridPalette.GetContentShortTextFont(PaletteContentStyle.LabelBoldControl, state), new Rectangle(offsetText, rowBounds.Bottom - 20, rowBounds.Width - offsetText, rowBounds.Height), grid.GridPalette.GetContentShortTextColor1(PaletteContentStyle.LabelNormalControl, state),
-                               TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine | TextFormatFlags.PreserveGraphicsClipping);
+                int offsetText = rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + imageoffset + groupLevelIndentation;
+                if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
+                {
+                    TextRenderer.DrawText(graphics, group.Text, grid.GridPalette.GetContentShortTextFont(PaletteContentStyle.LabelBoldControl, state), new Rectangle(offsetText, rowBounds.Bottom - StaticValues._2013OffsetHeight, rowBounds.Width - offsetText, rowBounds.Height), grid.GridPalette.GetContentShortTextColor1(PaletteContentStyle.LabelNormalControl, state),
+                                 TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine | TextFormatFlags.PreserveGraphicsClipping);
+                }
+                else
+                {
+                    TextRenderer.DrawText(graphics, group.Text, grid.GridPalette.GetContentShortTextFont(PaletteContentStyle.LabelBoldControl, state), new Rectangle(offsetText, rowBounds.Bottom - StaticValues._defaultOffsetHeight, rowBounds.Width - offsetText, rowBounds.Height), grid.GridPalette.GetContentShortTextColor1(PaletteContentStyle.LabelNormalControl, state),
+                                   TextFormatFlags.EndEllipsis | TextFormatFlags.SingleLine | TextFormatFlags.PreserveGraphicsClipping);
+                }
+
+                ////Debug Hits
+                ////ExpandCollaspe icon
+                //graphics.DrawRectangle(new Pen(Color.Red), new Rectangle(rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15, rowBounds.Bottom - 18, 11, 11));
+                ////Image
+                //if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
+                //    graphics.DrawRectangle(new Pen(Color.Blue), new Rectangle(rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + StaticValues._ImageOffsetwidth + groupLevelIndentation, rowBounds.Bottom - StaticValues._2013OffsetHeight, StaticValues._groupImageSide, StaticValues._groupImageSide));
+                //else
+                //    graphics.DrawRectangle(new Pen(Color.Blue), new Rectangle(rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + StaticValues._ImageOffsetwidth + groupLevelIndentation, rowBounds.Bottom - StaticValues._defaultOffsetHeight, StaticValues._groupImageSide, StaticValues._groupImageSide));
             }
             else
             {
@@ -308,6 +340,40 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
+        /// <summary>
+        /// Expand the group the row belongs to.
+        /// </summary>
+        public void ExpandGroup()
+        {
+            SetGroupCollapse(false);
+        }
+
+        /// <summary>
+        /// Collaspe the group the row belongs to.
+        /// </summary>
+        public void CollapseGroup()
+        {
+            SetGroupCollapse(true);
+        }
+
+        internal void SetGroupCollapse(bool collapsed)
+        {
+            if (this.IsGroupRow)
+            {
+                this.Group.Collapsed = collapsed;
+
+                //this is a workaround to make the grid re-calculate it's contents and backgroun bounds
+                // so the background is updated correctly.
+                // this will also invalidate the control, so it will redraw itself
+                this.Visible = false;
+                this.Visible = true;
+
+                //When collapsing the first row still seeing it.
+                if (this.Index < this.DataGridView.FirstDisplayedScrollingRowIndex)
+                    this.DataGridView.FirstDisplayedScrollingRowIndex = this.Index;
+            }
+        }
+
         #endregion
 
         #region "Private methods"
@@ -324,36 +390,38 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
             KryptonOutlookGrid grid = (KryptonOutlookGrid)this.DataGridView;
             Rectangle rowBounds = grid.GetRowDisplayRectangle(this.Index, false);
-
-            // DataGridViewColumn c = grid.Columns[e.ColumnIndex];
+       
             int rowHeadersWidth = grid.RowHeadersVisible ? grid.RowHeadersWidth : 0;
             int l = e.X + grid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false).Left;
             if (this.isGroupRow &&
-                (l >= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15) &&
-                (l <= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * 15 + 11) &&
+                (l >= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * StaticValues._groupLevelMultiplier) &&
+                (l <= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * StaticValues._groupLevelMultiplier + 11) &&
                 (e.Y >= rowBounds.Height - 18) &&
                 (e.Y <= rowBounds.Height - 7))
                 return true;
 
             return false;
-            //System.Diagnostics.Debug.WriteLine(e.ColumnIndex);
         }
 
         internal bool IsGroupImageHit(DataGridViewCellMouseEventArgs e)
         {
             if (this.group.GroupImage == null) return false;
             if (e.ColumnIndex < 0) return false;
-            
+
             KryptonOutlookGrid grid = (KryptonOutlookGrid)this.DataGridView;
             Rectangle rowBounds = grid.GetRowDisplayRectangle(this.Index, false);
 
             int rowHeadersWidth = grid.RowHeadersVisible ? grid.RowHeadersWidth : 0;
             int l = e.X + grid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false).Left;
-
+            int offsetHeight;
+            if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
+                offsetHeight = StaticValues._2013OffsetHeight;
+            else
+                offsetHeight = StaticValues._defaultOffsetHeight;
             if (this.isGroupRow &&
-                (l >= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + group.Level * 15) &&
-                (l <= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + group.Level * 15 + 16) &&
-                (e.Y >= rowBounds.Height - 22) &&
+                (l >= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + group.Level * StaticValues._groupLevelMultiplier) &&
+                (l <= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 18 + group.Level * StaticValues._groupLevelMultiplier + 16) &&
+                (e.Y >= rowBounds.Height - offsetHeight) &&
                 (e.Y <= rowBounds.Height - 6))
                 return true;
 

@@ -8,9 +8,6 @@
 // LIABILITY FOR ANY DATA DAMAGE/LOSS THAT THIS PRODUCT MAY CAUSE.
 //-----------------------------------------------------------------------
 
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
-using JDHSoftware.Krypton.Toolkit.Utils;
 //--------------------------------------------------------------------------------
 // Copyright (C) 2013 JDH Software - <support@jdhsoftware.com>
 //
@@ -23,9 +20,15 @@ using JDHSoftware.Krypton.Toolkit.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
+using JDHSoftware.Krypton.Toolkit.Utils.Lang;
+using System.Drawing;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
+using ComponentFactory.Krypton.Toolkit;
+using System.Globalization;
+using System.ComponentModel;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -36,7 +39,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     /// It uses the IComparable.CompareTo function to determine if the item is in the group.
     /// This class group the elements by default (string, int, ...)
     /// </summary>
-    public class OutlookgGridDefaultGroup : IOutlookGridGroup
+    public class OutlookGridDefaultGroup : IOutlookGridGroup
     {
         #region "Variables"
         /// <summary>
@@ -87,16 +90,22 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// The picture associated to the group
         /// </summary>
         protected Image groupImage;
-        
         /// <summary>
         /// The text associated for the group text (1 item)
         /// </summary>
         protected string oneItemText;
-
         /// <summary>
         /// The text associated for the group text (XXX items)
         /// </summary>
         protected string xXXItemsText;
+        /// <summary>
+        /// Allows the column to be hidden when it is grouped by
+        /// </summary>
+        protected bool allowHiddenWhenGrouped;
+        /// <summary>
+        /// Sort groups using count items value
+        /// </summary>
+        protected bool sortBySummaryCount;
 
         #endregion
 
@@ -105,16 +114,21 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Constructor
         /// </summary>
         /// <param name="parentGroup">The parent group if any.</param>
-        public OutlookgGridDefaultGroup(IOutlookGridGroup parentGroup)
+        public OutlookGridDefaultGroup(IOutlookGridGroup parentGroup)
         {
             val = null;
             this.column = null;
-            height = 34; // default height
+            if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
+                height = StaticValues._2013GroupRowHeight; // special height for office 2013
+            else
+                height = StaticValues._defaultGroupRowHeight; // default height
             rows = new List<OutlookGridRow>();
             children = new OutlookGridGroupCollection(parentGroup);
             formatStyle = "";
             oneItemText = LangManager.Instance.GetString("OneItem");
             XXXItemsText = LangManager.Instance.GetString("XXXItems");
+            allowHiddenWhenGrouped = true;
+            sortBySummaryCount = false;
         }
         #endregion
 
@@ -195,6 +209,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 //else
                 //return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? "1 item" : itemCount.ToString() + " items");
                 string formattedValue = "";
+                string res = "";
                 //For formatting number we need to cast the object value to the number before applying formatting
                 if (!String.IsNullOrEmpty(formatStyle))
                 {
@@ -212,12 +227,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     }
                     else if (val is float)
                     {
-
                         formattedValue = ((float)Value).ToString(formatStyle);
                     }
                     else if (val is double)
                     {
                         formattedValue = ((double)Value).ToString(formatStyle);
+                    }
+                    else if (val is decimal)
+                    {
+                        formattedValue = ((decimal)Value).ToString(formatStyle);
                     }
                     else if (val is long)
                     {
@@ -232,7 +250,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 {
                     formattedValue = Value.ToString();
                 }
-                return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, formattedValue, itemCount == 1 ? oneItemText : itemCount.ToString() + XXXItemsText);
+                res = string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, formattedValue, itemCount == 1 ? oneItemText : itemCount.ToString() + XXXItemsText);
+                //if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
+                //    return res.ToUpper();
+                //else
+                return res;
             }
             set
             {
@@ -345,17 +367,42 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
+        /// <summary>
+        /// Gets or sets the text associated to One Item
+        /// </summary>
         public virtual string OneItemText
         {
             get { return oneItemText; }
             set { oneItemText = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the text associated to several Items
+        /// </summary>
         public virtual string XXXItemsText
         {
             get { return xXXItemsText; }
             set { xXXItemsText = value; }
         }
+
+        /// <summary>
+        /// Gets or sets the boolean that hides the column automatically when grouped.
+        /// </summary>
+        public virtual bool AllowHiddenWhenGrouped
+        {
+            get { return allowHiddenWhenGrouped; }
+            set { allowHiddenWhenGrouped = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the boolean that sort groups by count value
+        /// </summary>
+        public virtual bool SortBySummaryCount
+        {
+            get { return sortBySummaryCount; }
+            set { sortBySummaryCount = value; }
+        }
+
         #endregion
 
         #region ICloneable Members
@@ -366,7 +413,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <returns>OutlookgGridDefaultGroup</returns>
         public virtual object Clone()
         {
-            OutlookgGridDefaultGroup gr = new OutlookgGridDefaultGroup(this.parentGroup);
+            OutlookGridDefaultGroup gr = new OutlookGridDefaultGroup(this.parentGroup);
             gr.column = this.column;
             gr.val = this.val;
             gr.collapsed = this.collapsed;
@@ -374,8 +421,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             gr.height = this.height;
             gr.groupImage = this.groupImage;
             gr.formatStyle = this.formatStyle;
-            gr.XXXItemsText = this.XXXItemsText;
-            gr.oneItemText = this.XXXItemsText;
+            gr.xXXItemsText = this.XXXItemsText;
+            gr.oneItemText = this.OneItemText;
+            gr.allowHiddenWhenGrouped = this.allowHiddenWhenGrouped;
+            gr.sortBySummaryCount = this.sortBySummaryCount;
+
             return gr;
         }
 
@@ -391,9 +441,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public virtual int CompareTo(object obj)
         {
             int orderModifier = (Column.SortDirection == SortOrder.Ascending ? 1 : -1);
-            //return string.Compare(val.ToString(), ((OutlookgGridDefaultGroup)obj).Value.ToString()) * orderModifier;
             int compareResult = 0;
-            object o2 = ((OutlookgGridDefaultGroup)obj).Value;
+            object o2 = ((OutlookGridDefaultGroup)obj).Value;
             {
                 if (val is string)
                 {
@@ -425,6 +474,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     double n2 = (double)o2;
                     compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
                 }
+                else if (val is decimal)
+                {
+                    decimal n1 = (decimal)val;
+                    decimal n2 = (decimal)o2;
+                    compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
+                }
                 else if (val is long)
                 {
                     long n1 = (long)val;
@@ -450,7 +505,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     /// Also the Clone method must be overriden, so this Group object can create clones of itself.
     /// Cloning of the group is used by the OutlookGrid
     /// </summary>
-    public class OutlookGridAlphabeticGroup : OutlookgGridDefaultGroup
+    public class OutlookGridAlphabeticGroup : OutlookGridDefaultGroup
     {
         /// <summary>
         /// Constructor.
@@ -459,6 +514,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public OutlookGridAlphabeticGroup(IOutlookGridGroup parentGroup)
             : base(parentGroup)
         {
+            allowHiddenWhenGrouped = false;
         }
 
         /// <summary>
@@ -488,7 +544,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
             set
             {
-                val = value.ToString().Substring(0, 1).ToUpper();
+                if (value != null && !string.IsNullOrEmpty(value.ToString())) //useful for textand image object
+                    val = value.ToString().Substring(0, 1).ToUpper();
+                else
+                    val = "";
             }
         }
 
@@ -501,6 +560,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public override object Clone()
         {
             OutlookGridAlphabeticGroup gr = new OutlookGridAlphabeticGroup(this.parentGroup);
+
             gr.column = this.column;
             gr.val = this.val;
             gr.collapsed = this.collapsed;
@@ -508,6 +568,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             gr.height = this.height;
             gr.groupImage = this.groupImage;
             gr.formatStyle = this.formatStyle;
+            gr.xXXItemsText = this.XXXItemsText;
+            gr.oneItemText = this.OneItemText;
+            gr.allowHiddenWhenGrouped = this.allowHiddenWhenGrouped;
+            gr.sortBySummaryCount = this.sortBySummaryCount;
             return gr;
         }
 
@@ -527,7 +591,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
             if (obj is OutlookGridAlphabeticGroup)
             {
-               return string.Compare(val.ToString(), ((OutlookGridAlphabeticGroup)obj).Value.ToString()) * orderModifier;
+                return string.Compare(val.ToString(), ((OutlookGridAlphabeticGroup)obj).Value.ToString()) * orderModifier;
             }
             else
             {
@@ -537,7 +601,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         #endregion IComparable Members
     }
 
-    /// 
     /// this group simple example of an implementation which groups the items into day categories
     /// based on, today, yesterday, last week etc
     /// 
@@ -546,8 +609,42 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     /// Also the Clone method must be overriden, so this Group object can create clones of itself.
     /// Cloning of the group is used by the OutlookGrid
     /// 
-    public class OutlookGridDateTimeGroup : OutlookgGridDefaultGroup
+    public class OutlookGridDateTimeGroup : OutlookGridDefaultGroup
     {
+        TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
+
+        /// <summary>
+        /// Enum of Date interval for the OutlookGridDateTimeGroup
+        /// </summary>
+        public enum DateInterval
+        {
+            /// <summary>
+            /// Day
+            /// </summary>
+            Day,
+            /// <summary>
+            /// Month
+            /// </summary>
+            Month,
+            /// <summary>
+            /// Quarter
+            /// </summary>
+            Quarter,
+            /// <summary>
+            /// Year
+            /// </summary>
+            Year,
+            /// <summary>
+            /// Smart : intelligent grouping like Outlook for dates
+            /// </summary>
+            Smart
+        }
+
+        /// <summary>
+        /// The Date Interval of OutlookGridDateTimeGroup
+        /// </summary>
+        public DateInterval Interval { get; set; }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -555,6 +652,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public OutlookGridDateTimeGroup(IOutlookGridGroup parentGroup)
             : base(parentGroup)
         {
+            allowHiddenWhenGrouped = true;
+            Interval = DateInterval.Smart;
         }
 
         /// <summary>
@@ -565,7 +664,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             get
             {
                 return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? OneItemText : itemCount.ToString() + XXXItemsText);
-                //return string.Format("{0}: {1} ({2})", LangManager.Instance.GetString("DateGroupText"), column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
             }
             set
             {
@@ -586,13 +684,72 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
             set
             {
-                //If no date Time let the valDateTime to the min value !
-                if (value != null && value != DBNull.Value)
-                    valDateTime = DateTime.Parse(value.ToString());
-                else
-                    valDateTime = DateTime.MinValue;
+                switch (Interval)
+                {
+                    case DateInterval.Smart:
+                        //If no date Time let the valDateTime to the min value !
+                        if (value != null && value != DBNull.Value)
+                            valDateTime = DateTime.Parse(value.ToString());
+                        else
+                            valDateTime = DateTime.MinValue;
 
-                val = OutlookGridGroupHelpers.GetDayText(valDateTime);
+                        val = OutlookGridGroupHelpers.GetDayText(valDateTime);
+                        break;
+                    case DateInterval.Year:
+                        //If no date Time let the valDateTime to the min value !
+                        if (value != null && value != DBNull.Value)
+                        {
+                            valDateTime = DateTime.Parse(value.ToString());
+                            val = valDateTime.Year;
+                        }
+                        else
+                        {
+                            valDateTime = DateTime.MinValue;
+                            val = LangManager.Instance.GetString("NODATE");
+                        }
+                        break;
+                    case DateInterval.Month:
+                        //If no date Time let the valDateTime to the min value !
+                        if (value != null && value != DBNull.Value)
+                        {
+                            valDateTime = DateTime.Parse(value.ToString());
+                            val = ti.ToTitleCase(valDateTime.ToString("MMMM")) + " " + valDateTime.Year;
+                        }
+                        else
+                        {
+                            valDateTime = DateTime.MinValue;
+                            val = LangManager.Instance.GetString("NODATE");
+                        }
+                        break;
+                    case DateInterval.Day:
+                        if (value != null && value != DBNull.Value)
+                        {
+                            valDateTime = DateTime.Parse(value.ToString());
+                            val = valDateTime.Date.ToShortDateString();
+                        }
+                        else
+                        {
+                            valDateTime = DateTime.MinValue;
+                            val = LangManager.Instance.GetString("NODATE");
+                        }
+                        break;
+                    case DateInterval.Quarter:
+                        if (value != null && value != DBNull.Value)
+                        {
+                            valDateTime = DateTime.Parse(value.ToString());
+                            val = OutlookGridGroupHelpers.GetQuarterAsString(valDateTime) + " " + valDateTime.Year;
+                        }
+                        else
+                        {
+                            valDateTime = DateTime.MinValue;
+                            val = LangManager.Instance.GetString("NODATE");
+                        }
+                        break;
+                    default:
+                        throw new Exception("Unknown Interval !");
+
+                }
+
             }
         }
 
@@ -607,12 +764,17 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             OutlookGridDateTimeGroup gr = new OutlookGridDateTimeGroup(this.parentGroup);
             gr.column = this.column;
             gr.val = this.val;
-            gr.valDateTime = this.valDateTime;
             gr.collapsed = this.collapsed;
             gr.text = this.text;
             gr.height = this.height;
             gr.groupImage = this.groupImage;
             gr.formatStyle = this.formatStyle;
+            gr.xXXItemsText = this.XXXItemsText;
+            gr.oneItemText = this.OneItemText;
+            gr.allowHiddenWhenGrouped = this.allowHiddenWhenGrouped;
+            gr.sortBySummaryCount = this.sortBySummaryCount;
+            gr.Interval = this.Interval;
+
             return gr;
         }
 
@@ -642,124 +804,56 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 val = new DateTime();
             }
 
-            if (OutlookGridGroupHelpers.GetDateCode(valDateTime.Date) == OutlookGridGroupHelpers.GetDateCode(val.Date))
+            switch (Interval)
             {
-                return 0;
-            }
-            else
-            {
-                return DateTime.Compare(valDateTime.Date, val.Date) * orderModifier ;
-            }
-        }
-        #endregion IComparable Members
-    }
+                case DateInterval.Smart:
+                    if (OutlookGridGroupHelpers.GetDateCode(valDateTime.Date) == OutlookGridGroupHelpers.GetDateCode(val.Date))
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return DateTime.Compare(valDateTime.Date, val.Date) * orderModifier;
+                    }
+                case DateInterval.Year:
+                    if (valDateTime.Year == val.Year)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return valDateTime.Year.CompareTo(val.Year) * orderModifier;
+                    }
+                case DateInterval.Month:
+                    if (valDateTime.Month == val.Month && valDateTime.Year == val.Year)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return valDateTime.Date.CompareTo(val.Date) * orderModifier;
+                    }
+                case DateInterval.Day:
+                    if (valDateTime.Date == val.Date)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return valDateTime.Date.CompareTo(val.Date) * orderModifier;
+                    }
+                case DateInterval.Quarter:
+                    if (OutlookGridGroupHelpers.GetQuarter(valDateTime) == OutlookGridGroupHelpers.GetQuarter(val) && valDateTime.Year == val.Year)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return valDateTime.Date.CompareTo(val.Date) * orderModifier;
+                    }
+                default:
+                    throw new Exception("Unknown Interval !");
 
-    /// 
-    /// this group simple example of an implementation which groups the items into years
-    /// 
-    /// for this we need to override the Value property (used for comparison)
-    /// and the CompareTo function.
-    /// Also the Clone method must be overriden, so this Group object can create clones of itself.
-    /// Cloning of the group is used by the OutlookGrid
-    /// 
-    public class OutlookGridYearGroup : OutlookgGridDefaultGroup
-    {
-        public OutlookGridYearGroup(IOutlookGridGroup parentGroup)
-            : base(parentGroup)
-        {
-        }
-
-        public override string Text
-        {
-            get
-            {
-                return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? OneItemText : itemCount.ToString() + XXXItemsText);
-                //return string.Format("{0}: {1} ({2})", LangManager.Instance.GetString("YearGroupText"), column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
-            }
-            set
-            {
-                text = value;
-            }
-        }
-
-        private DateTime valDateTime;
-
-        public override object Value
-        {
-            get
-            {
-                return val;
-            }
-            set
-            {
-                //If no date Time let the valDateTime to the min value !
-                if (value != null && value != DBNull.Value)
-                {
-                    valDateTime = DateTime.Parse(value.ToString());
-                    val = valDateTime.Year;
-                }
-                else
-                {
-                    valDateTime = DateTime.MinValue;
-                    val = LangManager.Instance.GetString("NODATE"); 
-                }
-            }
-        }
-
-        #region ICloneable Members
-
-        /// <summary>
-        /// Overrides the Clone() function
-        /// </summary>
-        /// <returns>OutlookGridYearGroup</returns>
-        public override object Clone()
-        {
-            OutlookGridYearGroup gr = new OutlookGridYearGroup(this.parentGroup);
-            gr.column = this.column;
-            gr.val = this.val;
-            gr.valDateTime = this.valDateTime;
-            gr.collapsed = this.collapsed;
-            gr.text = this.text;
-            gr.height = this.height;
-            gr.groupImage = this.groupImage;
-            gr.formatStyle = this.formatStyle;
-            return gr;
-        }
-
-        #endregion
-
-        #region IComparable Members
-
-        /// <summary>
-        /// Overrides compareTo
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override int CompareTo(object obj)
-        {
-            int orderModifier = (Column.SortDirection == SortOrder.Ascending ? 1 : -1);
-            DateTime val;
-            //obj is a proper datetime or it can be group itself, so select the proper conversion
-            if (obj is DateTime)
-            {
-                val = DateTime.Parse(obj.ToString());
-            }
-            else if (obj is OutlookGridYearGroup)
-            {
-                val = ((OutlookGridYearGroup)obj).valDateTime;
-            }
-            else
-            {
-                val = new DateTime();
-            }
-
-            if (valDateTime.Year == val.Year)
-            {
-                return 0;
-            }
-            else
-            {
-                return valDateTime.Year.CompareTo(val.Year) * orderModifier;
             }
         }
         #endregion IComparable Members

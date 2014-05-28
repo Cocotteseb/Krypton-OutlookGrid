@@ -34,23 +34,58 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="columnName">The column name.</param>
         /// <param name="columnText">The display text of the column.</param>
         /// <param name="sort">The column sort order.</param>
-        public OutlookGridGroupBoxColumn(string columnName, string columnText, SortOrder sort)
+        /// <param name="groupingType">The name of the used OutlookGridGroup mode.</param>
+        public OutlookGridGroupBoxColumn(string columnName, string columnText, SortOrder sort, string groupingType)
         {
             Text = columnText;
             ColumnName = columnName;
-            SortOrder = sort;
+            SortDirection = sort;
+            GroupingType = groupingType;
         }
         #endregion
 
         #region "Properties"
 
+        /// <summary>
+        /// Gets or sets the associated Rectangle that represents the column
+        /// </summary>
         public Rectangle Rect { get; set; }
-        public string Text { get; set;}
+        /// <summary>
+        /// Gets or sets the HeaderText of the column.
+        /// </summary>
+        public string Text { get; set; }
+        /// <summary>
+        /// Gets or sets the boolean that indicates if the column is in a pressed state.
+        /// </summary>
         public bool Pressed { get; set; }
-        public SortOrder SortOrder { get; set; }
+        /// <summary>
+        /// Gets or sets the Sort direction of the column.
+        /// </summary>
+        public SortOrder SortDirection { get; set; }
+        /// <summary>
+        /// Gets or sets the associated column name
+        /// </summary>
         public string ColumnName { get; set; }
+        /// <summary>
+        /// Gets or sets the boolean that indicates if the column is currently beeing dragged.
+        /// </summary>
         public bool IsMoving { get; set; }
+        /// <summary>
+        /// Gets or sets the boolean that indicates if the column is currently beeing hovered by the mouse.
+        /// </summary>
         public bool IsHovered { get; set; }
+        /// <summary>
+        /// Gets or sets a string that corresponds to the name of the OutlookGridGroup
+        /// </summary>
+        public string GroupingType { get; set; }
+        /// <summary>
+        /// Gets or sets the date interval if the grouping type is OutlookDateTimeGroup
+        /// </summary>
+        public string GroupInterval { get; set; }
+        /// <summary>
+        /// Gets or sets the boolean that indicates if the column should be grouped by using the count value
+        /// </summary>
+        public bool SortBySummaryCount { get; set; }
 
         #endregion
 

@@ -113,5 +113,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// The text associated for the group text (XXX items)
         /// </summary>
         string XXXItemsText { get; set; }
+
+        /// <summary>
+        /// Allows the column to be hidden when it is grouped by
+        /// </summary>
+        bool AllowHiddenWhenGrouped { get; set; }
+
+        /// <summary>
+        /// Sort groups using count items value
+        /// </summary>
+        bool SortBySummaryCount { get; set; }
     }
 }

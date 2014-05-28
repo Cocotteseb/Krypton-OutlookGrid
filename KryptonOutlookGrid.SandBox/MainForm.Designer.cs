@@ -29,23 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.panel1 = new ComponentFactory.Krypton.Toolkit.KryptonPanel();
             this.kryptonHeaderGroup1 = new ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup();
-            this.kryptonManager1 = new ComponentFactory.Krypton.Toolkit.KryptonManager(this.components);
+            this.buttonSpecHeaderGroup1 = new ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup();
+            this.buttonSpecHeaderGroup2 = new ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup();
             this.OutlookGrid1 = new JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonOutlookGrid();
-            this.ColumnCustomerID = new ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
-            this.ColumnCustomerName = new ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
-            this.ColumnAddress = new ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
-            this.ColumnCity = new ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
-            this.ColumnCountry = new JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns.KryptonDataGridViewTextAndImageColumn();
-            this.ColumnOrderDate = new ComponentFactory.Krypton.Toolkit.KryptonDataGridViewDateTimePickerColumn();
-            this.ColumnProduct = new ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
-            this.ColumnPrice = new ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn();
-            this.SatisfactionColumn = new JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonDataGridViewPercentageColumn();
             this.KryptonOutlookGridGroupBox1 = new JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonOutlookGridGroupBox();
+            this.kryptonManager1 = new ComponentFactory.Krypton.Toolkit.KryptonManager(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.panel1)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonHeaderGroup1)).BeginInit();
@@ -67,11 +58,17 @@
             // 
             // kryptonHeaderGroup1
             // 
+            this.kryptonHeaderGroup1.ButtonSpecs.AddRange(new ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup[] {
+            this.buttonSpecHeaderGroup1,
+            this.buttonSpecHeaderGroup2});
             this.kryptonHeaderGroup1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.kryptonHeaderGroup1.HeaderVisiblePrimary = false;
             this.kryptonHeaderGroup1.HeaderVisibleSecondary = false;
             this.kryptonHeaderGroup1.Location = new System.Drawing.Point(5, 5);
             this.kryptonHeaderGroup1.Name = "kryptonHeaderGroup1";
+            this.kryptonHeaderGroup1.Size = new System.Drawing.Size(622, 335);
+            this.kryptonHeaderGroup1.TabIndex = 2;
+            this.kryptonHeaderGroup1.ValuesPrimary.Heading = "Options";
+            this.kryptonHeaderGroup1.ValuesPrimary.Image = null;
             // 
             // kryptonHeaderGroup1.Panel
             // 
@@ -80,21 +77,23 @@
             this.kryptonHeaderGroup1.Size = new System.Drawing.Size(622, 335);
             this.kryptonHeaderGroup1.TabIndex = 2;
             // 
+            // buttonSpecHeaderGroup1
+            // 
+            this.buttonSpecHeaderGroup1.Text = "Load config";
+            this.buttonSpecHeaderGroup1.UniqueName = "B803E19DF9944F1593A01EF944CD3DCB";
+            this.buttonSpecHeaderGroup1.Click += new System.EventHandler(this.buttonSpecHeaderGroup1_Click);
+            // 
+            // buttonSpecHeaderGroup2
+            // 
+            this.buttonSpecHeaderGroup2.Text = "Save config";
+            this.buttonSpecHeaderGroup2.UniqueName = "8759F4DBDA4544F62EA5239B1C0DEC24";
+            this.buttonSpecHeaderGroup2.Click += new System.EventHandler(this.buttonSpecHeaderGroup2_Click);
+            // 
             // OutlookGrid1
             // 
             this.OutlookGrid1.AllowDrop = true;
             this.OutlookGrid1.AllowUserToAddRows = false;
             this.OutlookGrid1.AllowUserToResizeRows = false;
-            this.OutlookGrid1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.ColumnCustomerID,
-            this.ColumnCustomerName,
-            this.ColumnAddress,
-            this.ColumnCity,
-            this.ColumnCountry,
-            this.ColumnOrderDate,
-            this.ColumnProduct,
-            this.ColumnPrice,
-            this.SatisfactionColumn});
             this.OutlookGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.OutlookGrid1.GridStyles.Style = ComponentFactory.Krypton.Toolkit.DataGridViewStyle.Mixed;
             this.OutlookGrid1.GridStyles.StyleBackground = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.ControlClient;
@@ -105,83 +104,10 @@
             this.OutlookGrid1.PreviousSelectedGroupRow = -1;
             this.OutlookGrid1.RowHeadersVisible = false;
             this.OutlookGrid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.OutlookGrid1.Size = new System.Drawing.Size(620, 287);
+            this.OutlookGrid1.Size = new System.Drawing.Size(620, 257);
             this.OutlookGrid1.TabIndex = 0;
             this.OutlookGrid1.GroupImageClick += new System.EventHandler<JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.OutlookGridGroupImageEventArgs>(this.OutlookGrid1_GroupImageClick);
             this.OutlookGrid1.Resize += new System.EventHandler(this.OutlookGrid1_Resize);
-            // 
-            // ColumnCustomerID
-            // 
-            this.ColumnCustomerID.HeaderText = "Customer ID";
-            this.ColumnCustomerID.Name = "ColumnCustomerID";
-            this.ColumnCustomerID.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.ColumnCustomerID.Width = 79;
-            // 
-            // ColumnCustomerName
-            // 
-            this.ColumnCustomerName.HeaderText = "Name";
-            this.ColumnCustomerName.Name = "ColumnCustomerName";
-            this.ColumnCustomerName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.ColumnCustomerName.Width = 79;
-            // 
-            // ColumnAddress
-            // 
-            this.ColumnAddress.HeaderText = "Address";
-            this.ColumnAddress.Name = "ColumnAddress";
-            this.ColumnAddress.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.ColumnAddress.Width = 79;
-            // 
-            // ColumnCity
-            // 
-            this.ColumnCity.HeaderText = "City";
-            this.ColumnCity.Name = "ColumnCity";
-            this.ColumnCity.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.ColumnCity.Width = 79;
-            // 
-            // ColumnCountry
-            // 
-            this.ColumnCountry.HeaderText = "Country";
-            this.ColumnCountry.Image = null;
-            this.ColumnCountry.Name = "ColumnCountry";
-            this.ColumnCountry.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.ColumnCountry.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.ColumnCountry.Width = 78;
-            // 
-            // ColumnOrderDate
-            // 
-            this.ColumnOrderDate.CalendarTodayDate = new System.DateTime(2013, 5, 11, 0, 0, 0, 0);
-            this.ColumnOrderDate.Checked = false;
-            this.ColumnOrderDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.ColumnOrderDate.HeaderText = "Order Date";
-            this.ColumnOrderDate.Name = "ColumnOrderDate";
-            this.ColumnOrderDate.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.ColumnOrderDate.Width = 79;
-            // 
-            // ColumnProduct
-            // 
-            this.ColumnProduct.HeaderText = "Product";
-            this.ColumnProduct.Name = "ColumnProduct";
-            this.ColumnProduct.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.ColumnProduct.Width = 79;
-            // 
-            // ColumnPrice
-            // 
-            dataGridViewCellStyle1.Format = "C2";
-            dataGridViewCellStyle1.NullValue = null;
-            this.ColumnPrice.DefaultCellStyle = dataGridViewCellStyle1;
-            this.ColumnPrice.HeaderText = "Price";
-            this.ColumnPrice.Name = "ColumnPrice";
-            this.ColumnPrice.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.ColumnPrice.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.ColumnPrice.Width = 79;
-            // 
-            // SatisfactionColumn
-            // 
-            dataGridViewCellStyle2.Format = "0%";
-            this.SatisfactionColumn.DefaultCellStyle = dataGridViewCellStyle2;
-            this.SatisfactionColumn.HeaderText = "Satisfaction";
-            this.SatisfactionColumn.Name = "SatisfactionColumn";
-            this.SatisfactionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
             // 
             // KryptonOutlookGridGroupBox1
             // 
@@ -223,15 +149,8 @@
         private ComponentFactory.Krypton.Toolkit.KryptonPanel panel1;
         private ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup kryptonHeaderGroup1;
         private ComponentFactory.Krypton.Toolkit.KryptonManager kryptonManager1;
-        private ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn ColumnCustomerID;
-        private ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn ColumnCustomerName;
-        private ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn ColumnAddress;
-        private ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn ColumnCity;
-        private JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns.KryptonDataGridViewTextAndImageColumn ColumnCountry;
-        private ComponentFactory.Krypton.Toolkit.KryptonDataGridViewDateTimePickerColumn ColumnOrderDate;
-        private ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn ColumnProduct;
-        private ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn ColumnPrice;
-        private JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonDataGridViewPercentageColumn SatisfactionColumn;
+        private ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup buttonSpecHeaderGroup1;
+        private ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup buttonSpecHeaderGroup2;
 
     }
 }
