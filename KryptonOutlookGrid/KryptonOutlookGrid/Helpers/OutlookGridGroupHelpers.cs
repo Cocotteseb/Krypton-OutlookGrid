@@ -245,6 +245,16 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 return 3;
             return 4;
         }
+
+        /// <summary>
+        /// Returns a fully qualified type name without the version, culture, or token
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static string SimpleQualifiedName(Type t)
+        {
+            return string.Concat(t.FullName, ", ", t.Assembly.GetName().Name);
+        }
     }
 }
 

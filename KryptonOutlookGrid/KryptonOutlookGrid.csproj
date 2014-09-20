@@ -114,9 +114,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Design.dll" />
+    <Content Include="Librairies\Release\ComponentFactory.Krypton.Toolkit.dll" />
     <None Include="History.txt" />
     <Content Include="Librairies\Debug\ComponentFactory.Krypton.Toolkit.dll" />
-    <Content Include="Librairies\Release\ComponentFactory.Krypton.Toolkit.dll" />
     <None Include="Resources\table2_selection_column.png" />
     <None Include="Resources\element_plus_16.png" />
     <None Include="Resources\element_minus_16.png" />

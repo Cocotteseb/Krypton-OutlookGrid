@@ -219,25 +219,17 @@
   <data name="YearGroupText" xml:space="preserve">
     <value>Année</value>
   </data>
-  <data name="COLLAPSE" xml:space="preserve">
-    <value>Réduire</value>
-  </data>
   <data name="COLUMNS" xml:space="preserve">
     <value>Colonnes</value>
   </data>
-  <data name="Day" xml:space="preserve">
-    <value>Jour</value>
-    <comment>Enum</comment>
+  <data name="COLLAPSE" xml:space="preserve">
+    <value>Réduire</value>
   </data>
   <data name="EXPAND" xml:space="preserve">
     <value>Etendre</value>
   </data>
   <data name="GROUPINTERVAL" xml:space="preserve">
     <value>Intervalle de regroupement</value>
-  </data>
-  <data name="Month" xml:space="preserve">
-    <value>Mois</value>
-    <comment>Enum</comment>
   </data>
   <data name="Q1" xml:space="preserve">
     <value>Trim. 1</value>
@@ -251,6 +243,14 @@
   <data name="Q4" xml:space="preserve">
     <value>Trim. 4</value>
   </data>
+  <data name="Day" xml:space="preserve">
+    <value>Jour</value>
+    <comment>Enum</comment>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>Mois</value>
+    <comment>Enum</comment>
+  </data>
   <data name="Quarter" xml:space="preserve">
     <value>Trimestre</value>
     <comment>Enum</comment>
@@ -262,5 +262,11 @@
   <data name="Year" xml:space="preserve">
     <value>Année</value>
     <comment>Enum</comment>
+  </data>
+  <data name="SORTBYSUMMARYCOUNT" xml:space="preserve">
+    <value>Trier par nombre d'éléments</value>
+  </data>
+  <data name="UNKNOWN" xml:space="preserve">
+    <value>Inconnu</value>
   </data>
 </root>

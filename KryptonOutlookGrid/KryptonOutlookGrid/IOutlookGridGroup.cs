@@ -19,6 +19,7 @@
 //--------------------------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <summary>
         /// the text to be displayed in the group row
         /// </summary>
-        string Text { get; set; }
+        string Text { get; } //set; }
 
         /// <summary>
         /// determines the value of the current group. this is used to compare the group value
@@ -123,5 +124,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Sort groups using count items value
         /// </summary>
         bool SortBySummaryCount { get; set; }
+
+        IComparer ItemsComparer { get; set; }
     }
 }

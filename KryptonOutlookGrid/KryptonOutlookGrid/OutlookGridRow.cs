@@ -325,7 +325,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             {
                 //if it is not the original group but it is one parent and if it is collapsed just stop here
                 //no need to look further to the parents (one of the parents can be expanded...)
-                if (i > 1 && gr.Collapsed)
+                //if (i > 1 && gr.Collapsed)
+                if (gr.ParentGroup.Collapsed)
                     return true;
                 else
                     return IsAParentCollapsed(gr.ParentGroup, i);

@@ -9,6 +9,7 @@
 //--------------------------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -113,14 +114,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Gets a list of columns which are sorted and not grouped.
         /// </summary>
         /// <returns>List of Column indexes and SortDirection ordered by SortIndex.</returns>
-        public List<Tuple<int, SortOrder>> GetIndexAndSortGroupedColumns()
+        public List<Tuple<int, SortOrder, IComparer>> GetIndexAndSortGroupedColumns()
         {
-            List<Tuple<int, SortOrder>> res = new List<Tuple<int, SortOrder>>();
+            List<Tuple<int, SortOrder, IComparer>> res = new List<Tuple<int, SortOrder, IComparer>>();
             var tmp = this.OrderBy(x => x.GroupIndex);
             foreach (OutlookGridColumn col in tmp)
             {
                 if (col.IsGrouped && col.GroupIndex > -1)
-                    res.Add(Tuple.Create<int, SortOrder>(col.DataGridViewColumn.Index, col.SortDirection));
+                    res.Add(Tuple.Create<int, SortOrder, IComparer>(col.DataGridViewColumn.Index, col.SortDirection, col.GroupingType.ItemsComparer));
             }
             return res;
         }
@@ -149,14 +150,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Gets a list of columns which are sorted and not grouped.
         /// </summary>
         /// <returns>List of Column indexes and SortDirection ordered by SortIndex.</returns>
-        public List<Tuple<int, SortOrder>> GetIndexAndSortSortedOnlyColumns()
+        public List<Tuple<int, SortOrder, IComparer>> GetIndexAndSortSortedOnlyColumns()
         {
-            List<Tuple<int, SortOrder>> res = new List<Tuple<int, SortOrder>>();
+            List<Tuple<int, SortOrder, IComparer>> res = new List<Tuple<int, SortOrder, IComparer>>();
             var tmp = this.OrderBy(x => x.SortIndex);
             foreach (OutlookGridColumn col in tmp)
             {
                 if (!col.IsGrouped && col.SortIndex > -1)
-                    res.Add(Tuple.Create<int, SortOrder>(col.DataGridViewColumn.Index, col.SortDirection));
+                    res.Add(Tuple.Create<int, SortOrder, IComparer>(col.DataGridViewColumn.Index, col.SortDirection, col.GroupingType.ItemsComparer));
             }
             return res;
         }

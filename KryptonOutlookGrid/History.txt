@@ -12,6 +12,7 @@ unsort by using Ctrl key
 + Added persistence configuration (save / restore -sort of)
 + Added Group Image Click event
 + Added custom (x elements) text for group row
++ Added CustomComparer for sorting
 * Fixed severe bug when intial group order was not taken into account
 * Fixed bug where unsused/wrong loops were done when sorting groups
 * Fixed issue #1471 "Adding TextImage column throws an null reference exceptions"

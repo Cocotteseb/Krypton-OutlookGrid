@@ -219,25 +219,17 @@
   <data name="YearGroupText" xml:space="preserve">
     <value>Year</value>
   </data>
-  <data name="COLLAPSE" xml:space="preserve">
-    <value>Collapse</value>
-  </data>
   <data name="COLUMNS" xml:space="preserve">
     <value>Columns</value>
   </data>
-  <data name="Day" xml:space="preserve">
-    <value>Day</value>
-    <comment>Enum</comment>
+  <data name="COLLAPSE" xml:space="preserve">
+    <value>Collapse</value>
   </data>
   <data name="EXPAND" xml:space="preserve">
     <value>Expand</value>
   </data>
   <data name="GROUPINTERVAL" xml:space="preserve">
     <value>Group interval</value>
-  </data>
-  <data name="Month" xml:space="preserve">
-    <value>Month</value>
-    <comment>Enum</comment>
   </data>
   <data name="Q1" xml:space="preserve">
     <value>Q1</value>
@@ -251,6 +243,14 @@
   <data name="Q4" xml:space="preserve">
     <value>Q4</value>
   </data>
+  <data name="Day" xml:space="preserve">
+    <value>Day</value>
+    <comment>Enum</comment>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>Month</value>
+    <comment>Enum</comment>
+  </data>
   <data name="Quarter" xml:space="preserve">
     <value>Quarter</value>
     <comment>Enum</comment>
@@ -259,11 +259,14 @@
     <value>Smart</value>
     <comment>Enum</comment>
   </data>
-  <data name="SORTBYSUMMARYCOUNT" xml:space="preserve">
-    <value>Sort by summary count</value>
-  </data>
   <data name="Year" xml:space="preserve">
     <value>Year</value>
     <comment>Enum</comment>
+  </data>
+  <data name="SORTBYSUMMARYCOUNT" xml:space="preserve">
+    <value>Sort by summary count</value>
+  </data>
+  <data name="UNKNOWN" xml:space="preserve">
+    <value>Unknown</value>
   </data>
 </root>

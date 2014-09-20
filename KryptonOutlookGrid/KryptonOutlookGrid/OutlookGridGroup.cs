@@ -49,7 +49,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <summary>
         /// The displayed text
         /// </summary>
-        protected string text;
+        //protected string text;
         /// <summary>
         /// Boolean if the group is collapsed or not
         /// </summary>
@@ -106,15 +106,17 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Sort groups using count items value
         /// </summary>
         protected bool sortBySummaryCount;
+        /// <summary>
+        /// Specific Comparer object for items in the group, if needed
+        /// </summary>
+        protected IComparer itemsComparer;
+
 
         #endregion
 
         #region "Constructor"
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="parentGroup">The parent group if any.</param>
-        public OutlookGridDefaultGroup(IOutlookGridGroup parentGroup)
+
+        public OutlookGridDefaultGroup()
         {
             val = null;
             this.column = null;
@@ -123,12 +125,22 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             else
                 height = StaticValues._defaultGroupRowHeight; // default height
             rows = new List<OutlookGridRow>();
-            children = new OutlookGridGroupCollection(parentGroup);
+            children = new OutlookGridGroupCollection();
             formatStyle = "";
             oneItemText = LangManager.Instance.GetString("OneItem");
             XXXItemsText = LangManager.Instance.GetString("XXXItems");
             allowHiddenWhenGrouped = true;
-            sortBySummaryCount = false;
+            sortBySummaryCount = false; 
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="parentGroup">The parent group if any.</param>
+        public OutlookGridDefaultGroup(IOutlookGridGroup parentGroup): this()
+        {
+            if (parentGroup != null)
+                children.ParentGroup = parentGroup;
         }
         #endregion
 
@@ -204,14 +216,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             get
             {
-                //if (column == null)
-                //    return string.Format("Unbound group: {0} ({1})", Value.ToString(), itemCount == 1 ? "1 item" : itemCount.ToString() + " items");
-                //else
-                //return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? "1 item" : itemCount.ToString() + " items");
                 string formattedValue = "";
                 string res = "";
                 //For formatting number we need to cast the object value to the number before applying formatting
-                if (!String.IsNullOrEmpty(formatStyle))
+                if (string.IsNullOrEmpty(val.ToString()))
+                {
+                    formattedValue = LangManager.Instance.GetString("UNKNOWN");
+                }
+                else if (!String.IsNullOrEmpty(formatStyle))
                 {
                     if (val is string)
                     {
@@ -250,16 +262,17 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 {
                     formattedValue = Value.ToString();
                 }
+           
                 res = string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, formattedValue, itemCount == 1 ? oneItemText : itemCount.ToString() + XXXItemsText);
                 //if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
                 //    return res.ToUpper();
                 //else
                 return res;
             }
-            set
-            {
-                text = value;
-            }
+            //set
+            //{
+            //    text = value;
+            //}
         }
 
         /// <summary>
@@ -403,6 +416,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             set { sortBySummaryCount = value; }
         }
 
+        public virtual IComparer ItemsComparer
+        {
+            get { return itemsComparer; }
+            set { itemsComparer = value; }
+        }
+
         #endregion
 
         #region ICloneable Members
@@ -417,7 +436,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             gr.column = this.column;
             gr.val = this.val;
             gr.collapsed = this.collapsed;
-            gr.text = this.text;
+            //gr.text = this.text;
             gr.height = this.height;
             gr.groupImage = this.groupImage;
             gr.formatStyle = this.formatStyle;
@@ -507,6 +526,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     /// </summary>
     public class OutlookGridAlphabeticGroup : OutlookGridDefaultGroup
     {
+        public OutlookGridAlphabeticGroup()
+            : base()
+        {
+            allowHiddenWhenGrouped = false;
+        }
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -527,10 +552,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 //return string.Format("{0}: {1} ({2})", LangManager.Instance.GetString("AlphabeticGroupText"), Value.ToString(), itemCount == 1 ? LangManager.Instance.GetString("OneItem") : itemCount.ToString() + LangManager.Instance.GetString("XXXItems"));
                 return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? OneItemText : itemCount.ToString() + XXXItemsText);
             }
-            set
-            {
-                text = value;
-            }
+            //set
+            //{
+            //    text = value;
+            //}
         }
 
         /// <summary>
@@ -564,7 +589,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             gr.column = this.column;
             gr.val = this.val;
             gr.collapsed = this.collapsed;
-            gr.text = this.text;
+            //gr.text = this.text;
             gr.height = this.height;
             gr.groupImage = this.groupImage;
             gr.formatStyle = this.formatStyle;
@@ -645,6 +670,13 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         public DateInterval Interval { get; set; }
 
+        public OutlookGridDateTimeGroup()
+            : base()
+        {
+            allowHiddenWhenGrouped = true;
+            Interval = DateInterval.Smart;
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -656,19 +688,19 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             Interval = DateInterval.Smart;
         }
 
-        /// <summary>
-        /// Gets or sets the displayed text.
-        /// </summary>
+        ///<summary>
+        ///Gets or sets the displayed text.
+        ///</summary>
         public override string Text
         {
             get
             {
                 return string.Format("{0}: {1} ({2})", column.DataGridViewColumn.HeaderText, Value.ToString(), itemCount == 1 ? OneItemText : itemCount.ToString() + XXXItemsText);
             }
-            set
-            {
-                text = value;
-            }
+            //set
+            //{
+            //    text = value;
+            //}
         }
 
         private DateTime valDateTime;
@@ -765,7 +797,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             gr.column = this.column;
             gr.val = this.val;
             gr.collapsed = this.collapsed;
-            gr.text = this.text;
+            //gr.text = this.text;
             gr.height = this.height;
             gr.groupImage = this.groupImage;
             gr.formatStyle = this.formatStyle;
@@ -793,6 +825,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             DateTime val;
             if (obj is DateTime)
             {
+                //TODO necessary ??? 
                 val = DateTime.Parse(obj.ToString());
             }
             else if (obj is OutlookGridDateTimeGroup)

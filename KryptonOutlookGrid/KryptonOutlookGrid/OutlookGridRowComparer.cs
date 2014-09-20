@@ -56,7 +56,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
                 object o1 = obj1.Cells[this.sortColumnIndex].Value;
                 object o2 = obj2.Cells[this.sortColumnIndex].Value;
-                if ((o1 == null || o1 == DBNull.Value) && (o2 != null && o2 == DBNull.Value))
+                if ((o1 == null || o1 == DBNull.Value) && (o2 != null && o2 != DBNull.Value))
                 {
                     compareResult = 1;
                 }

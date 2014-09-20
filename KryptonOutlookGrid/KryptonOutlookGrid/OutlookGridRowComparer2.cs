@@ -34,9 +34,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
     internal class OutlookGridRowComparer2 : IComparer<OutlookGridRow>
     {
-        List<Tuple<int, SortOrder>> sortColumnIndexAndOrder;
+        List<Tuple<int, SortOrder, IComparer>> sortColumnIndexAndOrder;
 
-        public OutlookGridRowComparer2(List<Tuple<int, SortOrder>> sortList)
+        public OutlookGridRowComparer2(List<Tuple<int, SortOrder, IComparer>> sortList)
         {
             this.sortColumnIndexAndOrder = sortList;
         }
@@ -57,61 +57,68 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
                         object o1 = x.Cells[sortColumnIndexAndOrder[i].Item1].Value;
                         object o2 = y.Cells[sortColumnIndexAndOrder[i].Item1].Value;
-                        if ((o1 == null || o1 == DBNull.Value) && (o2 != null && o2 == DBNull.Value))
+                        if (sortColumnIndexAndOrder[i].Item3 != null)
                         {
-                            compareResult = 1;
-                        }
-                        else if ((o1 != null && o1 != DBNull.Value) && (o2 == null || o2 == DBNull.Value))
-                        {
-                            compareResult = -1;
+                           return sortColumnIndexAndOrder[i].Item3.Compare(o1, o2) * orderModifier;
                         }
                         else
                         {
-                            if (o1 is string)
+                            if ((o1 == null || o1 == DBNull.Value) && (o2 != null && o2 != DBNull.Value))
                             {
-                                compareResult = string.Compare(o1.ToString(), o2.ToString()) * orderModifier;
+                                compareResult = 1;
                             }
-                            else if (o1 is DateTime)
+                            else if ((o1 != null && o1 != DBNull.Value) && (o2 == null || o2 == DBNull.Value))
                             {
-                                compareResult = ((DateTime)o1).CompareTo((DateTime)o2) * orderModifier;
+                                compareResult = -1;
                             }
-                            else if (o1 is int)
+                            else
                             {
-                                compareResult = ((int)o1).CompareTo((int)o2) * orderModifier;
-                            }
-                            else if (o1 is bool)
-                            {
-                                bool b1 = (bool)o1;
-                                bool b2 = (bool)o2;
-                                compareResult = (b1 == b2 ? 0 : b1 == true ? 1 : -1) * orderModifier;
-                            }
-                            else if (o1 is float)
-                            {
-                                float n1 = (float)o1;
-                                float n2 = (float)o2;
-                                compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
-                            }
-                            else if (o1 is double)
-                            {
-                                double n1 = (double)o1;
-                                double n2 = (double)o2;
-                                compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
-                            }
-                            else if (o1 is decimal)
-                            {
-                                decimal d1 = (decimal)o1;
-                                decimal d2 = (decimal)o2;
-                                compareResult = (d1 > d2 ? 1 : d1 < d2 ? -1 : 0) * orderModifier;
-                            }
-                            else if (o1 is long)
-                            {
-                                long n1 = (long)o1;
-                                long n2 = (long)o2;
-                                compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
-                            }
-                            else if (o1 is TextAndImage)
-                            {
-                                compareResult = string.Compare(((TextAndImage)o1).ToString(), ((TextAndImage)o2).ToString()) * orderModifier;
+                                if (o1 is string)
+                                {
+                                    compareResult = string.Compare(o1.ToString(), o2.ToString()) * orderModifier;
+                                }
+                                else if (o1 is DateTime)
+                                {
+                                    compareResult = ((DateTime)o1).CompareTo((DateTime)o2) * orderModifier;
+                                }
+                                else if (o1 is int)
+                                {
+                                    compareResult = ((int)o1).CompareTo((int)o2) * orderModifier;
+                                }
+                                else if (o1 is bool)
+                                {
+                                    bool b1 = (bool)o1;
+                                    bool b2 = (bool)o2;
+                                    compareResult = (b1 == b2 ? 0 : b1 == true ? 1 : -1) * orderModifier;
+                                }
+                                else if (o1 is float)
+                                {
+                                    float n1 = (float)o1;
+                                    float n2 = (float)o2;
+                                    compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
+                                }
+                                else if (o1 is double)
+                                {
+                                    double n1 = (double)o1;
+                                    double n2 = (double)o2;
+                                    compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
+                                }
+                                else if (o1 is decimal)
+                                {
+                                    decimal d1 = (decimal)o1;
+                                    decimal d2 = (decimal)o2;
+                                    compareResult = (d1 > d2 ? 1 : d1 < d2 ? -1 : 0) * orderModifier;
+                                }
+                                else if (o1 is long)
+                                {
+                                    long n1 = (long)o1;
+                                    long n2 = (long)o2;
+                                    compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
+                                }
+                                else if (o1 is TextAndImage)
+                                {
+                                    compareResult = string.Compare(((TextAndImage)o1).ToString(), ((TextAndImage)o2).ToString()) * orderModifier;
+                                }
                             }
                         }
                     }

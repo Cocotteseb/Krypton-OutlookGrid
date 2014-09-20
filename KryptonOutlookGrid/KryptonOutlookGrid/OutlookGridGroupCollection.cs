@@ -30,9 +30,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Constructor
         /// </summary>
         /// <param name="parentGroup">Parent group , if any</param>
+        public OutlookGridGroupCollection()
+        {
+            groupList = new List<IOutlookGridGroup>();
+        }
+
         public OutlookGridGroupCollection(IOutlookGridGroup parentGroup)
         {
             groupList = new List<IOutlookGridGroup>();
+            this.parentGroup = parentGroup;
         }
         #endregion
 

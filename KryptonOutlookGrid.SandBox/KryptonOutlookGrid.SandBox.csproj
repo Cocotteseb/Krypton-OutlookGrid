@@ -57,6 +57,7 @@
     <Reference Include="ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\KryptonOutlookGrid\Librairies\Debug\ComponentFactory.Krypton.Toolkit.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -106,7 +107,6 @@
     <Content Include="invoices.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="NuGet.exe" />
     <Content Include="potion_red.ico" />
     <None Include="Resources\flag_germany.png" />
     <None Include="Resources\flag_france.png" />

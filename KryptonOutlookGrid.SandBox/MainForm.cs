@@ -29,14 +29,8 @@ namespace KryptonOutlookGrid.SandBox
             return dtStart.AddDays(rand.NextDouble() * cdayRange);
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private void LoadData()
         {
-            OutlookGrid1.GroupBox = KryptonOutlookGridGroupBox1;
-            OutlookGrid1.RegisterGroupBoxEvents();
-
-            DataGridViewSetup setup = new DataGridViewSetup();
-            setup.SetupDataGridView(this.OutlookGrid1, true);
-
             //Setup Rows
             OutlookGridRow row = new OutlookGridRow();
             List<OutlookGridRow> l = new List<OutlookGridRow>();
@@ -76,6 +70,17 @@ namespace KryptonOutlookGrid.SandBox
             OutlookGrid1.AssignRows(l);
             OutlookGrid1.ForceRefreshGroupBox();
             OutlookGrid1.Fill();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            OutlookGrid1.GroupBox = KryptonOutlookGridGroupBox1;
+            OutlookGrid1.RegisterGroupBoxEvents();
+
+            DataGridViewSetup setup = new DataGridViewSetup();
+            setup.SetupDataGridView(this.OutlookGrid1, true);
+
+            LoadData();
         }
 
         private Image GetFlag(string country)
@@ -124,6 +129,8 @@ namespace KryptonOutlookGrid.SandBox
         {
             DataGridViewSetup setup = new DataGridViewSetup();
             setup.SetupDataGridView(this.OutlookGrid1, true);
+            LoadData();
+
         }
 
         private void buttonSpecHeaderGroup2_Click(object sender, EventArgs e)

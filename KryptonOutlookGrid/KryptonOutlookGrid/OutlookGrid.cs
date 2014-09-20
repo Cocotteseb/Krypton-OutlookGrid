@@ -29,6 +29,7 @@ using System.Xml;
 using ComponentFactory.Krypton.Toolkit;
 using JDHSoftware.Krypton.Toolkit.Utils.Lang;
 using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
+using System.Collections;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -1806,8 +1807,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 {
                     //int index = internalColumns.FindSortedColumnNotgrouped();
                     //RecursiveSort(this.groupCollection, index, (index == -1) ? SortOrder.None : internalColumns.FindFromColumnIndex(index).SortDirection);
-                    List<Tuple<int, SortOrder>> sortList;
-                    sortList = internalColumns.GetIndexAndSortSortedOnlyColumns();
+                    List<Tuple<int, SortOrder, IComparer>> sortList = internalColumns.GetIndexAndSortSortedOnlyColumns();
                     if (sortList.Count > 0)
                         RecursiveSort(this.groupCollection, sortList);
                     else
@@ -1839,7 +1839,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         /// <param name="groupCollection">The OutlookGridGroupCollection.</param>
         /// <param name="sortList">The list of sorted columns</param>
-        private void RecursiveSort(OutlookGridGroupCollection groupCollection, List<Tuple<int, SortOrder>> sortList)
+        private void RecursiveSort(OutlookGridGroupCollection groupCollection, List<Tuple<int, SortOrder, IComparer>> sortList)
         {
             //We sort the groups
             if (groupCollection.Count > 0)
@@ -1857,7 +1857,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 if ((groupCollection[i].Children.Count == 0) && sortList.Count > 0)
                 {
                     //We sort the rows according to the sorted only columns
-                    Console.WriteLine("groupCollection[i].Rows" + groupCollection[i].Rows.Count.ToString());
                     groupCollection[i].Rows.Sort(new OutlookGridRowComparer2(sortList));
                 }
                 //else
@@ -1956,10 +1955,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     writer.WriteStartElement("GroupingType");
                     if (col.GroupingType != null)
                     {
-                        writer.WriteElementString("Name", col.GroupingType.GetType().Name.ToString());
+                        writer.WriteElementString("Name",col.GroupingType.GetType().AssemblyQualifiedName); //.GetType().Name.ToString());
                         writer.WriteElementString("OneItemText", col.GroupingType.OneItemText);
                         writer.WriteElementString("XXXItemsText", col.GroupingType.XXXItemsText);
                         writer.WriteElementString("SortBySummaryCount", CommonHelper.BoolToString(col.GroupingType.SortBySummaryCount));
+                        writer.WriteElementString("ItemsComparer", (col.GroupingType.ItemsComparer == null) ? "" : col.GroupingType.ItemsComparer.GetType().AssemblyQualifiedName);
                         if (col.GroupingType.GetType() == typeof(OutlookGridDateTimeGroup))
                         {
                             writer.WriteElementString("GroupDateInterval", ((OutlookGridDateTimeGroup)col.GroupingType).Interval.ToString());
