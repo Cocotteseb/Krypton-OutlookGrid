@@ -28,6 +28,7 @@ using System.Drawing.Drawing2D;
 using ComponentFactory.Krypton.Toolkit;
 using System.Diagnostics;
 using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -45,26 +46,13 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
         private bool isGroupRow;
         private IOutlookGridGroup group;
-        private int Indent;
-
+        private bool _collapsed; //For TreeNode
+        private OutlookGridRowNodeCollection nodeCollection; //For TreeNode
+        private int _nodeLevel; //For TreeNode
+        private OutlookGridRow _parentNode; //for TreeNode
         #endregion
 
         #region "Properties"
-        /// <summary>
-        /// Gets or sets the indent factor of the row (when it is a Group row).
-        /// </summary>
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int PIndent
-        {
-            get
-            {
-                return this.Indent;
-            }
-            set
-            {
-                this.Indent = value;
-            }
-        }
 
         /// <summary>
         /// Gets or sets the group to the row belongs
@@ -85,6 +73,82 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             get { return isGroupRow; }
             set { isGroupRow = value; }
         }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool Collapsed
+        {
+            get { return _collapsed; }
+            set { _collapsed = value; }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public OutlookGridRowNodeCollection Nodes
+        {
+            get { return nodeCollection; }
+            set { nodeCollection = value; }
+        }
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool IsFirstSibling
+        {
+            get
+            {
+                return (this.NodeIndex == 0);
+            }
+        }
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool IsLastSibling
+        {
+            get
+            {
+                OutlookGridRow parent = this._parentNode;
+                if (parent != null && parent.HasChildren)
+                {
+                    return (this.NodeIndex == parent.Nodes.Count - 1);
+                }
+                else
+                    return true;
+            }
+        }
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool HasChildren
+        {
+            get
+            {
+                return nodeCollection.Count > 0;
+            }
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int NodeLevel
+        {
+            get { return _nodeLevel; }
+            set { _nodeLevel = value; }
+        }
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public OutlookGridRow ParentNode
+        {
+            get { return _parentNode; }
+            set { _parentNode = value; }
+        }
+
+        public int NodeIndex
+        {
+            get
+            {
+                if (_parentNode != null)
+                    return _parentNode.Nodes.IndexOf(this);
+                else
+                    return 0;
+            }
+        }
         #endregion
 
         #region "Constructors"
@@ -95,6 +159,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public OutlookGridRow()
             : this(null, false)
         {
+            //nodeCollection = new OutlookGridRowNodeCollection(this);
+            //NodeLevel = 0;
+            //Collapsed = true;
         }
 
         /// <summary>
@@ -104,6 +171,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public OutlookGridRow(IOutlookGridGroup group)
             : this(group, false)
         {
+            //nodeCollection = new OutlookGridRowNodeCollection(this);
+            //NodeLevel = 0;
+            //Collapsed = true;
         }
 
         /// <summary>
@@ -116,6 +186,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             this.group = group;
             this.isGroupRow = isGroupRow;
+            nodeCollection = new OutlookGridRowNodeCollection(this);
+            NodeLevel = 0;
+            Collapsed = true;
         }
 
         #endregion
@@ -129,12 +202,17 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <returns></returns>
         public override DataGridViewElementStates GetState(int rowIndex)
         {
-            //yes its readable ;)
-            if ((IsGroupRow && IsAParentCollapsed(group, 0)) || (!IsGroupRow && group != null && (group.Collapsed || IsAParentCollapsed(group, 0))))
+            //yes its readable at least it was ;)
+            if ((IsGroupRow && IsAParentCollapsed(group, 0)) || (!IsGroupRow && group != null && (group.Collapsed || IsAParentCollapsed(group, 0))) || (!IsGroupRow && IsAParentNodeCollapsed(this, 0)))
             {
                 return base.GetState(rowIndex) & DataGridViewElementStates.Selected;
             }
-            return base.GetState(rowIndex);
+            //For the TreeGridView project if the selection mode is FullRow subnodes that where collapsed disappear when parent collapse/expands
+            //because for an unknown reason the state becomes None instead of at least visible.
+            if (base.GetState(rowIndex) == DataGridViewElementStates.None)
+                return DataGridViewElementStates.Visible;
+            else
+                return base.GetState(rowIndex);
         }
 
         /// <summary>
@@ -308,6 +386,22 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 base.PaintCells(graphics, clipBounds, rowBounds, rowIndex, rowState, isFirstDisplayedRow, isLastVisibleRow, paintParts);
         }
 
+        public override string ToString()
+        {
+            string res = "";
+            try
+            {
+                res += "OutlookGridRow ";
+                foreach (DataGridViewCell c in this.Cells)
+                {
+                    if (c.Value != null)
+                        res += c.Value.ToString() ?? string.Empty;
+                }
+            }
+            catch { }
+            return res;
+        }
+
         #endregion
 
         #region "Public methods"
@@ -338,6 +432,29 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     return false;
                 else
                     return gr.Collapsed;
+            }
+        }
+
+
+        public bool IsAParentNodeCollapsed(OutlookGridRow row, int i)
+        {
+            i++;
+            //Console.WriteLine(row.ToString());
+            if (row.ParentNode != null)
+            {
+                //if it is not the original group but it is one parent and if it is collapsed just stop here
+                //no need to look further to the parents (one of the parents can be expanded...)
+                if (row.ParentNode.Collapsed)
+                    return true;
+                else
+                    return IsAParentNodeCollapsed(row.ParentNode, i);
+            }
+            else //no parent
+            {
+                if (i == 1) //if 1 that means there is no parent
+                    return false;
+                else //return the final parent collapsed state
+                    return row.Collapsed;
             }
         }
 
@@ -375,6 +492,26 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
+        internal void SetNodeCollapse(bool collapsed)
+        {
+            if (this.HasChildren)
+            {
+                this.Collapsed = collapsed;
+
+                //this is a workaround to make the grid re-calculate it's contents and backgroun bounds
+                // so the background is updated correctly.
+                // this will also invalidate the control, so it will redraw itself
+                this.Visible = false;
+                this.Visible = true;
+
+                //When collapsing the first row still seeing it.
+                if (this.Index < this.DataGridView.FirstDisplayedScrollingRowIndex)
+                    this.DataGridView.FirstDisplayedScrollingRowIndex = this.Index;
+            }
+        }
+
+
+
         #endregion
 
         #region "Private methods"
@@ -388,10 +525,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         internal bool IsIconHit(DataGridViewCellMouseEventArgs e)
         {
             if (e.ColumnIndex < 0) return false;
+            if (!this.isGroupRow) return false;
 
             KryptonOutlookGrid grid = (KryptonOutlookGrid)this.DataGridView;
             Rectangle rowBounds = grid.GetRowDisplayRectangle(this.Index, false);
-       
+
             int rowHeadersWidth = grid.RowHeadersVisible ? grid.RowHeadersWidth : 0;
             int l = e.X + grid.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false).Left;
             if (this.isGroupRow &&
@@ -404,10 +542,41 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             return false;
         }
 
+        //internal bool IsNodeIconHit(DataGridViewCellMouseEventArgs e)
+        //{
+        //    if (e.ColumnIndex < 0) return false;
+        //    if (!this.HasChildren) return false;
+
+        //    DataGridViewCell cell = this.Cells[e.ColumnIndex];
+        //    if (cell.GetType() is KryptonDataGridViewTreeTextCell) {
+        //    cell.
+        //    }
+        //    KryptonOutlookGrid grid = (KryptonOutlookGrid)this.DataGridView;
+
+
+        //    Rectangle glyphRect = new Rectangle(rect.X + this.GlyphMargin, rect.ContentBounds.Y, INDENT_WIDTH, this.ContentBounds.Height - 1);
+
+        //    if ((e.X <= glyphRect.X + 11) &&
+        //        (e.X >= glyphRect.X) &&
+        //       (e.Y >= glyphRect.Y + (glyphRect.Height / 2) - 4) &&
+        //     (e.Y <= glyphRect.Y + (glyphRect.Height / 2) - 4 + 11))
+
+
+        //    if (this.isGroupRow &&
+        //        (l >= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * StaticValues._groupLevelMultiplier) &&
+        //        (l <= rowBounds.Left + rowHeadersWidth - grid.HorizontalScrollingOffset + 4 + group.Level * StaticValues._groupLevelMultiplier + 11) &&
+        //        (e.Y >= rowBounds.Height - 18) &&
+        //        (e.Y <= rowBounds.Height - 7))
+        //        return true;
+
+        //    return false;
+        //}
+
         internal bool IsGroupImageHit(DataGridViewCellMouseEventArgs e)
         {
-            if (this.group.GroupImage == null) return false;
             if (e.ColumnIndex < 0) return false;
+            if (this.isGroupRow || this.group.GroupImage == null) return false;
+
 
             KryptonOutlookGrid grid = (KryptonOutlookGrid)this.DataGridView;
             Rectangle rowBounds = grid.GetRowDisplayRectangle(this.Index, false);
@@ -430,5 +599,24 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         #endregion
+
+        public void Collapse()
+        {
+            ((KryptonOutlookGrid)this.DataGridView).CollapseNode(this);
+            //if (!this.Collapsed)
+            //{
+            //    SetNodeCollapse(true);
+            //}
+        }
+
+
+        public void Expand()
+        {
+            ((KryptonOutlookGrid)this.DataGridView).ExpandNode(this);
+            //if (this.Collapsed)
+            //{
+            //    SetNodeCollapse(false);
+            //}
+        }
     }
 }

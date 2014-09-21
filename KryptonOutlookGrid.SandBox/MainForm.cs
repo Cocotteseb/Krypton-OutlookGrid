@@ -59,6 +59,19 @@ namespace KryptonOutlookGrid.SandBox
                     double.Parse(customer["Price"].InnerText, CultureInfo.InvariantCulture), //We put a float the formatting in design does the rest
                     (double)random.Next(101) /100
                 });
+
+                    OutlookGridRow row2 = new OutlookGridRow();
+                    row2.CreateCells(OutlookGrid1, new object[] {"1","test","11 test avenue","TestCity",  new TextAndImage("test",null),
+                    DateTime.Now,
+                    "Por",
+                    double.Parse("11.5", CultureInfo.InvariantCulture),
+                     (double)random.Next(101) /100
+                });
+                    ((KryptonDataGridViewTreeTextCell)row2.Cells[1]).UpdateStyle();
+                    row.Nodes.Add(row2);
+
+                    //TODO improve that
+                    ((KryptonDataGridViewTreeTextCell)row.Cells[1]).UpdateStyle();
                     l.Add(row);
                 }
                 catch (Exception ex)
@@ -136,6 +149,11 @@ namespace KryptonOutlookGrid.SandBox
         private void buttonSpecHeaderGroup2_Click(object sender, EventArgs e)
         {
             OutlookGrid1.PersistConfiguration(Application.StartupPath + "grid.xml");
+        }
+
+        private void buttonSpecHeaderGroup3_Click(object sender, EventArgs e)
+        {
+            OutlookGrid1.ExpandNodeAll();
         }
     }
 }

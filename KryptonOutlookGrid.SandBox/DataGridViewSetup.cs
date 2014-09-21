@@ -47,7 +47,7 @@ namespace KryptonOutlookGrid.SandBox
                     column.Width = 79;
                     return column;
                 case SandBoxGridColumn.ColumnCustomerName:
-                    column = new KryptonDataGridViewTextBoxColumn();
+                    column = new KryptonDataGridViewTreeTextColumn();// KryptonDataGridViewTextBoxColumn();
                     column.HeaderText = "Name";
                     column.Name = "ColumnCustomerName";
                     column.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
@@ -121,11 +121,11 @@ namespace KryptonOutlookGrid.SandBox
 
         public void SetupDataGridView(JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonOutlookGrid Grid, bool RestoreIfPossible)
         {
-            if (File.Exists(Application.StartupPath + "grid.xml") & RestoreIfPossible)
+            if (File.Exists(Application.StartupPath + "/grid.xml") & RestoreIfPossible)
             {
                 try
                 {
-                    LoadConfigFromFile(Application.StartupPath + "grid.xml", Grid);
+                    LoadConfigFromFile(Application.StartupPath + "/grid.xml", Grid);
                 }
                 catch (Exception ex)
                 {

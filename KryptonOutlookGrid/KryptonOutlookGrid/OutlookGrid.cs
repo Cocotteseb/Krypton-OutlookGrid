@@ -84,10 +84,30 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
         private bool _hideColumnOnGrouping;
 
+        //Nodes
+        private bool _showLines;
+        internal bool _inExpandCollapseMouseCapture = false;
+
         /// <summary>
         /// Group Image Click Event
         /// </summary>
         public event EventHandler<OutlookGridGroupImageEventArgs> GroupImageClick;
+        /// <summary>
+        /// Node expanding event
+        /// </summary>
+        public event EventHandler<ExpandingEventArgs> NodeExpanding;
+        /// <summary>
+        /// Node Expanded event
+        /// </summary>
+        public event EventHandler<ExpandedEventArgs> NodeExpanded;
+        /// <summary>
+        /// Node Collapsing Event
+        /// </summary>
+        public event EventHandler<CollapsingEventArgs> NodeCollapsing;
+        /// <summary>
+        /// Node Collapsed event
+        /// </summary>
+        public event EventHandler<CollapsedEventArgs> NodeCollapsed;
 
         #region OutlookGrid constructor
 
@@ -260,6 +280,20 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
+        [DefaultValue(true)]
+        public bool ShowLines
+        {
+            get { return this._showLines; }
+            set
+            {
+                if (value != this._showLines)
+                {
+                    this._showLines = value;
+                    this.Invalidate();
+                }
+            }
+        }
+
         #endregion OutlookGrid property definitions
 
         #region OutlookGrid Overrides
@@ -350,6 +384,13 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             base.OnCellDoubleClick(e);
         }
 
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            // used to keep extra mouse moves from selecting more rows when collapsing
+            base.OnMouseUp(e);
+            this._inExpandCollapseMouseCapture = false;
+        }
+
         /// <summary>
         /// Overrides OnMouseDown
         /// </summary>
@@ -408,45 +449,50 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="e">MouseEventArgs</param>
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            bool dragdropdone = false;
-            //handles drag/drop operations
-            if (this.AllowDrop)
+            // while we are expanding and collapsing a node mouse moves are
+            // supressed to keep selections from being messed up.
+            if (!this._inExpandCollapseMouseCapture)
             {
-                if ((e.Button & MouseButtons.Left) == MouseButtons.Left && Cursor.Current != Cursors.SizeWE)
+                bool dragdropdone = false;
+                //handles drag/drop operations
+                if (this.AllowDrop)
                 {
-                    if (DragDropRectangle != Rectangle.Empty && !DragDropRectangle.Contains(e.X, e.Y))
+                    if ((e.Button & MouseButtons.Left) == MouseButtons.Left && Cursor.Current != Cursors.SizeWE)
                     {
-                        if (DragDropType == 0)
+                        if (DragDropRectangle != Rectangle.Empty && !DragDropRectangle.Contains(e.X, e.Y))
                         {
-                            OutlookGridColumn col = internalColumns.FindFromColumnIndex(DragDropSourceIndex);
-                            string groupInterval = "";
-                            string groupType = "";
-                            string groupSortBySummaryCount = "";
-
-                            if (col.GroupingType != null)
+                            if (DragDropType == 0)
                             {
-                                groupType = col.GroupingType.GetType().Name.ToString();
-                                if (groupType == typeof(OutlookGridDateTimeGroup).Name)
-                                    groupInterval = ((OutlookGridDateTimeGroup)col.GroupingType).Interval.ToString();
-                                groupSortBySummaryCount = CommonHelper.BoolToString(col.GroupingType.SortBySummaryCount);
+                                OutlookGridColumn col = internalColumns.FindFromColumnIndex(DragDropSourceIndex);
+                                string groupInterval = "";
+                                string groupType = "";
+                                string groupSortBySummaryCount = "";
+
+                                if (col.GroupingType != null)
+                                {
+                                    groupType = col.GroupingType.GetType().Name.ToString();
+                                    if (groupType == typeof(OutlookGridDateTimeGroup).Name)
+                                        groupInterval = ((OutlookGridDateTimeGroup)col.GroupingType).Interval.ToString();
+                                    groupSortBySummaryCount = CommonHelper.BoolToString(col.GroupingType.SortBySummaryCount);
+                                }
+                                //column drag/drop
+                                string info = String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}", col.Name.ToString(), col.DataGridViewColumn.HeaderText.ToString(), col.DataGridViewColumn.HeaderCell.SortGlyphDirection.ToString(), col.DataGridViewColumn.SortMode.ToString(), groupType, groupInterval, groupSortBySummaryCount);
+                                DragDropEffects DropEffect = this.DoDragDrop(info, DragDropEffects.Move);
+                                dragdropdone = true;
                             }
-                            //column drag/drop
-                            string info = String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}", col.Name.ToString(), col.DataGridViewColumn.HeaderText.ToString(), col.DataGridViewColumn.HeaderCell.SortGlyphDirection.ToString(), col.DataGridViewColumn.SortMode.ToString(), groupType, groupInterval, groupSortBySummaryCount);
-                            DragDropEffects DropEffect = this.DoDragDrop(info, DragDropEffects.Move);
-                            dragdropdone = true;
-                        }
-                        else if (DragDropType == 1)
-                        {
-                            //row drag/drop
-                            DragDropEffects DropEffect = this.DoDragDrop(this.Rows[DragDropSourceIndex], DragDropEffects.Move);
-                            dragdropdone = true;
+                            else if (DragDropType == 1)
+                            {
+                                //row drag/drop
+                                DragDropEffects DropEffect = this.DoDragDrop(this.Rows[DragDropSourceIndex], DragDropEffects.Move);
+                                dragdropdone = true;
+                            }
                         }
                     }
                 }
+                base.OnMouseMove(e);
+                if (dragdropdone)
+                    this.CellOver = new Point(-2, -2);//To avoid that the column header appears in a pressed state - Modification of ToolKit
             }
-            base.OnMouseMove(e);
-            if (dragdropdone)
-                this.CellOver = new Point(-2, -2);//To avoid that the column header appears in a pressed state - Modification of ToolKit
         }
 
         /// <summary>
@@ -621,7 +667,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="e"></param>
         protected override void OnCellMouseDown(DataGridViewCellMouseEventArgs e)
         {
-            base.OnCellMouseDown(e); //needed.
+            //base.OnCellMouseDown(e); //needed.
             if (e.RowIndex < 0)
             {
                 base.OnCellMouseDown(e); // To allow column resizing
@@ -1099,6 +1145,65 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 #endif
         }
 
+        /// <summary>
+        /// Raises the GroupImageClick event.
+        /// </summary>
+        /// <param name="e">A OutlookGridGroupImageEventArgs that contains the event data.</param>
+        protected virtual void OnGroupImageClick(OutlookGridGroupImageEventArgs e)
+        {
+            if (GroupImageClick != null)
+                GroupImageClick(this, e);
+        }
+
+        /// <summary>
+        /// Raises the NodeExpanding event.
+        /// </summary>
+        /// <param name="e">A ExpandingEventArgs that contains the event data.</param>
+        protected virtual void OnNodeExpanding(ExpandingEventArgs e)
+        {
+            if (this.NodeExpanding != null)
+            {
+                NodeExpanding(this, e);
+            }
+        }
+
+        /// <summary>
+        /// Raises the NodeExpanded event.
+        /// </summary>
+        /// <param name="e">A ExpandedEventArgs that contains the event data.</param>
+        protected virtual void OnNodeExpanded(ExpandedEventArgs e)
+        {
+            if (this.NodeExpanded != null)
+            {
+                NodeExpanded(this, e);
+            }
+        }
+
+        /// <summary>
+        /// Raises the NodeCollapsing event.
+        /// </summary>
+        /// <param name="e">A CollapsingEventArgs that contains the event data.</param>
+        protected virtual void OnNodeCollapsing(CollapsingEventArgs e)
+        {
+            if (this.NodeCollapsing != null)
+            {
+                NodeCollapsing(this, e);
+            }
+
+        }
+
+        /// <summary>
+        /// Raises the NodeCollapsed event.
+        /// </summary>
+        /// <param name="e">A CollapsedEventArgs that contains the event data.</param>
+        protected virtual void OnNodeCollapsed(CollapsedEventArgs e)
+        {
+            if (this.NodeCollapsed != null)
+            {
+                NodeCollapsed(this, e);
+            }
+        }
+
         #endregion
 
         #region OutlookGrid methods
@@ -1267,6 +1372,34 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public void ExpandAll()
         {
             SetGroupCollapse(false);
+        }
+
+        public void ExpandNodeAll()
+        {
+            foreach (OutlookGridRow r in this.Rows)
+            {
+                RecursiveSetNodeCollapse(r, false);
+            }
+            this.Rows[0].Visible = !this.Rows[0].Visible;
+            this.Rows[0].Visible = !this.Rows[0].Visible;
+
+            //When collapsing the first row still seeing it.
+            if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
+                this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
+        }
+
+        public void CollapseNodeAll()
+        {
+            foreach (OutlookGridRow r in this.Rows)
+            {
+                RecursiveSetNodeCollapse(r, true);
+            }
+            this.Rows[0].Visible = !this.Rows[0].Visible;
+            this.Rows[0].Visible = !this.Rows[0].Visible;
+
+            //When collapsing the first row still seeing it.
+            if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
+                this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
         }
 
         /// <summary>
@@ -1690,7 +1823,37 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
+
+        private void RecursiveSetNodeCollapse(OutlookGridRow r, bool collapsed)
+        {
+            if (r.HasChildren)
+            {
+                r.Collapsed = collapsed;
+                foreach (OutlookGridRow r2 in r.Nodes.Nodes)
+                {
+                   RecursiveSetNodeCollapse(r2,collapsed);
+                }
+            }
+        }
+
         #region Grid Fill functions
+
+
+        private void NonGroupedRecursiveFillOutlookGridRows(List<OutlookGridRow> l, List<OutlookGridRow> tmp)
+        {
+            for (int i = 0; i < l.Count; i++)
+            {
+                tmp.Add(l[i]);
+
+                //Recusive call
+                if (l[i].HasChildren)
+                {
+                    NonGroupedRecursiveFillOutlookGridRows(l[i].Nodes.Nodes, tmp);
+                }
+            }
+        }
+
+
 
         /// <summary>
         /// Fill the grid (grouping, sorting,...)
@@ -1730,7 +1893,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 }
 
                 //Add rows to underlying DataGridView
-                this.Rows.AddRange(list.ToArray());
+                //this.Rows.AddRange(list.ToArray());
+                NonGroupedRecursiveFillOutlookGridRows(list, tmp);
+                this.Rows.AddRange(tmp.ToArray());
             }
             // this block is used when grouping is used
             // items in the list must be sorted, and then they will automatically be grouped
@@ -1923,16 +2088,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         #endregion Grid Fill functions
 
         /// <summary>
-        /// Raises the GroupImageClick event.
-        /// </summary>
-        /// <param name="e">A OutlookGridGroupImageEventArgs that contains the event data.</param>
-        protected virtual void OnGroupImageClick(OutlookGridGroupImageEventArgs e)
-        {
-            if (GroupImageClick != null)
-                GroupImageClick(this, e);
-        }
-
-        /// <summary>
         /// Persist the configuration of the KryptonOutlookGrid
         /// </summary>
         /// <param name="path">The path where the .xml file will be saved.</param>
@@ -1994,5 +2149,53 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             //Snif everything is gone ! Ready for a new start !
         }
         #endregion OutlookGrid methods
+
+        public bool CollapseNode(OutlookGridRow node)
+        {
+            if (!node.Collapsed)
+            {
+                CollapsingEventArgs exp = new CollapsingEventArgs(node);
+                this.OnNodeCollapsing(exp);
+
+                if (!exp.Cancel)
+                {
+                    node.SetNodeCollapse(true);
+
+                    CollapsedEventArgs exped = new CollapsedEventArgs(node);
+                    this.OnNodeCollapsed(exped);
+                }
+
+                return !exp.Cancel;
+            }
+            else
+            {
+                // row isn't expanded, so we didn't do anything.				
+                return false;
+            }
+        }
+
+        public bool ExpandNode(OutlookGridRow node)
+        {
+            if (node.Collapsed)
+            {
+                ExpandingEventArgs exp = new ExpandingEventArgs(node);
+                this.OnNodeExpanding(exp);
+
+                if (!exp.Cancel)
+                {
+                    node.SetNodeCollapse(false);
+
+                    ExpandedEventArgs exped = new ExpandedEventArgs(node);
+                    this.OnNodeExpanded(exped);
+                }
+
+                return !exp.Cancel;
+            }
+            else
+            {
+                // row isn't expanded, so we didn't do anything.				
+                return false;
+            }
+        }
     }
 }
