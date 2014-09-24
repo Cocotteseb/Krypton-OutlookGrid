@@ -151,9 +151,16 @@ namespace KryptonOutlookGrid.SandBox
             OutlookGrid1.PersistConfiguration(Application.StartupPath + "grid.xml");
         }
 
+        bool expand = true;
+
         private void buttonSpecHeaderGroup3_Click(object sender, EventArgs e)
         {
-            OutlookGrid1.ExpandNodeAll();
+            if (expand)
+                OutlookGrid1.ExpandNodeAll();
+            else
+                OutlookGrid1.CollapseNodeAll();
+
+             expand = !expand;
         }
     }
 }

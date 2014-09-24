@@ -1866,7 +1866,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             azer.Start();
 #endif
             List<OutlookGridRow> list;
-            List<OutlookGridRow> tmp = new List<OutlookGridRow>();
+            List<OutlookGridRow> tmp; // = new List<OutlookGridRow>();
             IOutlookGridGroup grParent = null;
             this.Rows.Clear();
             this.groupCollection.Clear();
@@ -1874,6 +1874,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             if (internalRows.Count == 0)
                 return;
             list = internalRows;
+
 
             // this block is used of grouping is turned off
             // this will simply list all attributes of each object in the list
@@ -1893,8 +1894,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 }
 
                 //Add rows to underlying DataGridView
+                //TODO : boolean to choose fill mode
                 //this.Rows.AddRange(list.ToArray());
+                tmp = new List<OutlookGridRow>();//list.Count);
                 NonGroupedRecursiveFillOutlookGridRows(list, tmp);
+
+                //Add all the rows to the grid
                 this.Rows.AddRange(tmp.ToArray());
             }
             // this block is used when grouping is used
@@ -1986,6 +1991,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                                    MessageBoxIcon.Error);
                 }
 
+                //Reinit!
+                tmp = new List<OutlookGridRow>();//list.Count);
                 //Get a list of rows (grouprow and non-grouprow)
                 RecursiveFillOutlookGridRows(this.groupCollection, tmp);
 
@@ -2081,7 +2088,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 }
 
                 //We add the rows associated with the current group
-                tmp.AddRange(gr.Rows);
+                //TODO : boolean to choose fill mode
+                //tmp.AddRange(gr.Rows);
+                NonGroupedRecursiveFillOutlookGridRows(gr.Rows, tmp);
             }
         }
 

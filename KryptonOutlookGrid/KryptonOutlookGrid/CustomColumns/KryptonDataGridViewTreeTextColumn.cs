@@ -256,7 +256,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
                     }
                 }
             }
-            graphics.DrawRectangle(new Pen(new SolidBrush(Color.Red)), glyphRect);
+            //graphics.DrawRectangle(new Pen(new SolidBrush(Color.Red)), glyphRect);
         }
 
         protected override void OnMouseUp(DataGridViewCellMouseEventArgs e)
@@ -273,8 +273,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             Rectangle glyphRect = new Rectangle(dis.X + this.GlyphMargin, dis.Y, INDENT_WIDTH, dis.Height - 1);
 
             //if (e.X > this.InheritedStyle.Padding.Left)
-            if ((e.X <= glyphRect.X + 11) &&
-                (e.X >= glyphRect.X))
+            if ((e.X + dis.X <= glyphRect.X + 11) &&
+                (e.X + dis.X >= glyphRect.X))
             {
              
                 // Expand the node

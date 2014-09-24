@@ -35,10 +35,10 @@
             this.kryptonHeaderGroup1 = new ComponentFactory.Krypton.Toolkit.KryptonHeaderGroup();
             this.buttonSpecHeaderGroup1 = new ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup();
             this.buttonSpecHeaderGroup2 = new ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup();
+            this.buttonSpecHeaderGroup3 = new ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup();
             this.OutlookGrid1 = new JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonOutlookGrid();
             this.KryptonOutlookGridGroupBox1 = new JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonOutlookGridGroupBox();
             this.kryptonManager1 = new ComponentFactory.Krypton.Toolkit.KryptonManager(this.components);
-            this.buttonSpecHeaderGroup3 = new ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup();
             ((System.ComponentModel.ISupportInitialize)(this.panel1)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonHeaderGroup1)).BeginInit();
@@ -90,6 +90,12 @@
             this.buttonSpecHeaderGroup2.UniqueName = "8759F4DBDA4544F62EA5239B1C0DEC24";
             this.buttonSpecHeaderGroup2.Click += new System.EventHandler(this.buttonSpecHeaderGroup2_Click);
             // 
+            // buttonSpecHeaderGroup3
+            // 
+            this.buttonSpecHeaderGroup3.Text = "Toogle all nodes";
+            this.buttonSpecHeaderGroup3.UniqueName = "52F142270C854D89D9886479CF81F2F8";
+            this.buttonSpecHeaderGroup3.Click += new System.EventHandler(this.buttonSpecHeaderGroup3_Click);
+            // 
             // OutlookGrid1
             // 
             this.OutlookGrid1.AllowDrop = true;
@@ -121,12 +127,6 @@
             this.KryptonOutlookGridGroupBox1.Name = "KryptonOutlookGridGroupBox1";
             this.KryptonOutlookGridGroupBox1.Size = new System.Drawing.Size(620, 46);
             this.KryptonOutlookGridGroupBox1.TabIndex = 1;
-            // 
-            // buttonSpecHeaderGroup3
-            // 
-            this.buttonSpecHeaderGroup3.Text = "aa";
-            this.buttonSpecHeaderGroup3.UniqueName = "52F142270C854D89D9886479CF81F2F8";
-            this.buttonSpecHeaderGroup3.Click += new System.EventHandler(this.buttonSpecHeaderGroup3_Click);
             // 
             // MainForm
             // 
