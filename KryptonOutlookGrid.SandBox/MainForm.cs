@@ -36,7 +36,7 @@ namespace KryptonOutlookGrid.SandBox
             List<OutlookGridRow> l = new List<OutlookGridRow>();
             OutlookGrid1.SuspendLayout();
             OutlookGrid1.ClearInternalRows();
-
+            OutlookGrid1.FillMode = FillMode.GroupsAndNodes;
 
             Random random = new Random();
             //.Next permet de retourner un nombre aléatoire contenu dans la plage spécifiée entre parenthèses.
@@ -69,8 +69,9 @@ namespace KryptonOutlookGrid.SandBox
                 });
                     ((KryptonDataGridViewTreeTextCell)row2.Cells[1]).UpdateStyle();
                     row.Nodes.Add(row2);
+   
+                   // }
 
-                    //TODO improve that
                     ((KryptonDataGridViewTreeTextCell)row.Cells[1]).UpdateStyle();
                     l.Add(row);
                 }
@@ -148,7 +149,7 @@ namespace KryptonOutlookGrid.SandBox
 
         private void buttonSpecHeaderGroup2_Click(object sender, EventArgs e)
         {
-            OutlookGrid1.PersistConfiguration(Application.StartupPath + "grid.xml");
+            OutlookGrid1.PersistConfiguration(Application.StartupPath + "grid.xml","2");
         }
 
         bool expand = true;
@@ -156,9 +157,9 @@ namespace KryptonOutlookGrid.SandBox
         private void buttonSpecHeaderGroup3_Click(object sender, EventArgs e)
         {
             if (expand)
-                OutlookGrid1.ExpandNodeAll();
+                OutlookGrid1.ExpandAllNodes();
             else
-                OutlookGrid1.CollapseNodeAll();
+                OutlookGrid1.CollapseAllNodes();
 
              expand = !expand;
         }

@@ -81,6 +81,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             //    plus = 15;
             this.Style.Padding = new Padding(defaultPadding.Left + (level * INDENT_WIDTH) + INDENT_MARGIN + plus,
                                                            defaultPadding.Top, defaultPadding.Right, defaultPadding.Bottom);
+           
+            
         }
 
         /// <summary>
@@ -241,7 +243,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
                     }
                     else
                     {
-                        graphics.DrawImage(Properties.Resources.collapseIcon, glyphRect.X, glyphRect.Y + (glyphRect.Height / 2) - 4, 11, 11);
+                        graphics.DrawImage(Properties.Resources.expandIcon, glyphRect.X, glyphRect.Y + (glyphRect.Height / 2) - 4, 11, 11);
                     }
                 }
                 else
@@ -252,7 +254,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
                     }
                     else
                     {
-                        graphics.DrawImage(Properties.Resources.expandIcon, glyphRect.X, glyphRect.Y + (glyphRect.Height / 2) - 4, 11, 11);
+                        graphics.DrawImage(Properties.Resources.collapseIcon, glyphRect.X, glyphRect.Y + (glyphRect.Height / 2) - 4, 11, 11);
                     }
                 }
             }

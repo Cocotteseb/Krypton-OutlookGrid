@@ -29,7 +29,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public static readonly int _defaultGroupRowHeight = 34;
         public static readonly int _2013GroupRowHeight = 24;
         public static readonly int _defaultOffsetHeight = 22;
-        public static readonly int _2013OffsetHeight = 20;
+        public static readonly int _2013OffsetHeight = 22;
         public static readonly int _ImageOffsetwidth = 18;
         public static readonly int _groupLevelMultiplier = 15;
         public static readonly int _groupImageSide = 16;

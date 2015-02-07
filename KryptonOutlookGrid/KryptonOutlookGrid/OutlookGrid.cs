@@ -87,6 +87,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         //Nodes
         private bool _showLines;
         internal bool _inExpandCollapseMouseCapture = false;
+        private FillMode _fillMode;
 
         /// <summary>
         /// Group Image Click Event
@@ -289,6 +290,19 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 if (value != this._showLines)
                 {
                     this._showLines = value;
+                    this.Invalidate();
+                }
+            }
+        }
+
+        public FillMode FillMode
+        {
+            get { return this._fillMode; }
+            set
+            {
+                if (value != this._fillMode)
+                {
+                    this._fillMode = value;
                     this.Invalidate();
                 }
             }
@@ -1367,39 +1381,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
-        /// Expands all groups
+        /// Expand all groups
         /// </summary>
         public void ExpandAll()
         {
             SetGroupCollapse(false);
-        }
-
-        public void ExpandNodeAll()
-        {
-            foreach (OutlookGridRow r in this.Rows)
-            {
-                RecursiveSetNodeCollapse(r, false);
-            }
-            this.Rows[0].Visible = !this.Rows[0].Visible;
-            this.Rows[0].Visible = !this.Rows[0].Visible;
-
-            //When collapsing the first row still seeing it.
-            if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
-                this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
-        }
-
-        public void CollapseNodeAll()
-        {
-            foreach (OutlookGridRow r in this.Rows)
-            {
-                RecursiveSetNodeCollapse(r, true);
-            }
-            this.Rows[0].Visible = !this.Rows[0].Visible;
-            this.Rows[0].Visible = !this.Rows[0].Visible;
-
-            //When collapsing the first row still seeing it.
-            if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
-                this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
         }
 
         /// <summary>
@@ -1823,17 +1809,170 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
-
-        private void RecursiveSetNodeCollapse(OutlookGridRow r, bool collapsed)
+        /// <summary>
+        /// Expand all nodes
+        /// </summary>
+        public void ExpandAllNodes()
         {
+            if (this.Rows.Count > 0)
+            {
+                foreach (OutlookGridRow r in this.Rows)
+                {
+                    RecursiveDescendantSetNodeCollapse(r, false);
+                }
+                this.Rows[0].Visible = !this.Rows[0].Visible;
+                this.Rows[0].Visible = !this.Rows[0].Visible;
+
+                //When collapsing the first row still seeing it.
+                if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
+                    this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
+            }
+        }
+
+        /// <summary>
+        /// Collapse all nodes
+        /// </summary>
+        public void CollapseAllNodes()
+        {
+            if (this.Rows.Count > 0)
+            {
+                foreach (OutlookGridRow r in this.Rows)
+                {
+                    RecursiveDescendantSetNodeCollapse(r, true);
+                }
+                this.Rows[0].Visible = !this.Rows[0].Visible;
+                this.Rows[0].Visible = !this.Rows[0].Visible;
+
+                //When collapsing the first row still seeing it.
+                if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
+                    this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
+            }
+        }
+
+        private void RecursiveDescendantSetNodeCollapse(OutlookGridRow r, bool collapsed)
+        {
+            //No events - for speed
             if (r.HasChildren)
             {
                 r.Collapsed = collapsed;
                 foreach (OutlookGridRow r2 in r.Nodes.Nodes)
                 {
-                   RecursiveSetNodeCollapse(r2,collapsed);
+                   RecursiveDescendantSetNodeCollapse(r2,collapsed);
                 }
             }
+        }
+
+        //private void RecursiveUpwardSetNodeCollaspse(OutlookGridRow r, bool collasped)
+        //{
+        //    //No events - for speed
+        //    if (r.ParentNode != null)
+        //    {
+        //        if (r.ParentNode.Collapsed)
+        //        {
+        //            r.ParentNode.Collapsed = collasped;
+        //            RecursiveUpwardSetNodeCollaspse(r.ParentNode, collapsed);
+        //        }
+        //    }
+        //    //sw.Stop();
+        //    //Console.WriteLine(sw.ElapsedMilliseconds.ToString() + " ms" + r.ToString());
+
+        //}
+
+        private void RecursiveUpwardSetNodeCollaspse(OutlookGridRow r, bool collapsed)
+        {
+            //No events - for speed
+            if (r.ParentNode != null)
+            {
+                    r.ParentNode.Collapsed = collapsed;
+                    RecursiveUpwardSetNodeCollaspse(r.ParentNode, collapsed);
+            }
+        }
+
+  
+        /// <summary>
+        /// Ensure the node is visible (all parents exanded)
+        /// </summary>
+        /// <param name="r">The OutlookGridRow which needs to be visible.</param>
+        public void EnsureVisibleNode(OutlookGridRow r)
+        {
+            RecursiveUpwardSetNodeCollaspse(r, false);
+
+        }
+
+        public bool CollapseNode(OutlookGridRow node)
+        {
+            if (!node.Collapsed)
+            {
+                CollapsingEventArgs exp = new CollapsingEventArgs(node);
+                this.OnNodeCollapsing(exp);
+
+                if (!exp.Cancel)
+                {
+                    node.SetNodeCollapse(true);
+
+                    CollapsedEventArgs exped = new CollapsedEventArgs(node);
+                    this.OnNodeCollapsed(exped);
+                }
+
+                return !exp.Cancel;
+            }
+            else
+            {
+                // row isn't expanded, so we didn't do anything.				
+                return false;
+            }
+        }
+
+        public bool ExpandNode(OutlookGridRow node)
+        {
+            if (node.Collapsed)
+            {
+                ExpandingEventArgs exp = new ExpandingEventArgs(node);
+                this.OnNodeExpanding(exp);
+
+                if (!exp.Cancel)
+                {
+                    node.SetNodeCollapse(false);
+
+                    ExpandedEventArgs exped = new ExpandedEventArgs(node);
+                    this.OnNodeExpanded(exped);
+                }
+
+                return !exp.Cancel;
+            }
+            else
+            {
+                // row isn't expanded, so we didn't do anything.				
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Expand Node and all its subnodes (without events)
+        /// </summary>
+        public void ExpandNodeAndSubNodes(OutlookGridRow r)
+        {
+            RecursiveDescendantSetNodeCollapse(r, false);
+            r.Visible = !r.Visible;
+            r.Visible = !r.Visible;
+            
+            ////When collapsing the first row still seeing it.
+            //if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
+            //    this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
+        }
+
+        /// <summary>
+        /// Collapse Node and all its subnodes (without events)
+        /// </summary>
+        public void CollapseNodeAndSubNodes(OutlookGridRow r)
+        {
+            RecursiveDescendantSetNodeCollapse(r, true);
+            r.Visible = !r.Visible;
+            r.Visible = !r.Visible;
+
+            ////When collapsing the first row still seeing it.
+            //if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
+            //    this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
         }
 
         #region Grid Fill functions
@@ -1894,13 +2033,19 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 }
 
                 //Add rows to underlying DataGridView
-                //TODO : boolean to choose fill mode
-                //this.Rows.AddRange(list.ToArray());
-                tmp = new List<OutlookGridRow>();//list.Count);
-                NonGroupedRecursiveFillOutlookGridRows(list, tmp);
+                if (_fillMode == FillMode.GroupsOnly) 
+                {
+                    this.Rows.AddRange(list.ToArray());
+                }
+                else
+                {
+                    tmp = new List<OutlookGridRow>();
+                    NonGroupedRecursiveFillOutlookGridRows(list, tmp);
 
-                //Add all the rows to the grid
-                this.Rows.AddRange(tmp.ToArray());
+                    //Add all the rows to the grid
+                    this.Rows.AddRange(tmp.ToArray());
+                }
+                
             }
             // this block is used when grouping is used
             // items in the list must be sorted, and then they will automatically be grouped
@@ -1992,7 +2137,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 }
 
                 //Reinit!
-                tmp = new List<OutlookGridRow>();//list.Count);
+                tmp = new List<OutlookGridRow>();
                 //Get a list of rows (grouprow and non-grouprow)
                 RecursiveFillOutlookGridRows(this.groupCollection, tmp);
 
@@ -2088,9 +2233,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 }
 
                 //We add the rows associated with the current group
-                //TODO : boolean to choose fill mode
-                //tmp.AddRange(gr.Rows);
-                NonGroupedRecursiveFillOutlookGridRows(gr.Rows, tmp);
+                if (_fillMode == FillMode.GroupsOnly)
+                {
+                    tmp.AddRange(gr.Rows);
+                }
+                else
+                {
+                    NonGroupedRecursiveFillOutlookGridRows(gr.Rows, tmp);
+                }
+              
             }
         }
 
@@ -2100,14 +2251,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Persist the configuration of the KryptonOutlookGrid
         /// </summary>
         /// <param name="path">The path where the .xml file will be saved.</param>
-        public void PersistConfiguration(string path)
+        public void PersistConfiguration(string path, string version)
         {
             OutlookGridColumn col = null;
             using (XmlWriter writer = XmlWriter.Create(path, new XmlWriterSettings { Indent = true }))
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("OutlookGrid");
-                writer.WriteAttributeString("V", "1");
+                writer.WriteAttributeString("V", version);
                 writer.WriteElementString("GroupBox", groupBox.Visible.ToString());
                 writer.WriteElementString("HideColumnOnGrouping", CommonHelper.BoolToString(this.HideColumnOnGrouping));
                 writer.WriteStartElement("Columns");
@@ -2158,53 +2309,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             //Snif everything is gone ! Ready for a new start !
         }
         #endregion OutlookGrid methods
+    }
 
-        public bool CollapseNode(OutlookGridRow node)
-        {
-            if (!node.Collapsed)
-            {
-                CollapsingEventArgs exp = new CollapsingEventArgs(node);
-                this.OnNodeCollapsing(exp);
-
-                if (!exp.Cancel)
-                {
-                    node.SetNodeCollapse(true);
-
-                    CollapsedEventArgs exped = new CollapsedEventArgs(node);
-                    this.OnNodeCollapsed(exped);
-                }
-
-                return !exp.Cancel;
-            }
-            else
-            {
-                // row isn't expanded, so we didn't do anything.				
-                return false;
-            }
-        }
-
-        public bool ExpandNode(OutlookGridRow node)
-        {
-            if (node.Collapsed)
-            {
-                ExpandingEventArgs exp = new ExpandingEventArgs(node);
-                this.OnNodeExpanding(exp);
-
-                if (!exp.Cancel)
-                {
-                    node.SetNodeCollapse(false);
-
-                    ExpandedEventArgs exped = new ExpandedEventArgs(node);
-                    this.OnNodeExpanded(exped);
-                }
-
-                return !exp.Cancel;
-            }
-            else
-            {
-                // row isn't expanded, so we didn't do anything.				
-                return false;
-            }
-        }
+    public enum FillMode
+    {
+        GroupsOnly,
+        GroupsAndNodes
     }
 }

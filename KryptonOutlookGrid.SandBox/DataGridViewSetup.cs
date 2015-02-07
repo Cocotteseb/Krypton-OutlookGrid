@@ -70,7 +70,6 @@ namespace KryptonOutlookGrid.SandBox
                 case SandBoxGridColumn.ColumnCountry:
                     column = new KryptonDataGridViewTextAndImageColumn();
                     column.HeaderText = "Country";
-                    ((KryptonDataGridViewTextAndImageColumn)column).Image = null;
                     column.Name = "ColumnCountry";
                     column.Resizable = System.Windows.Forms.DataGridViewTriState.True;
                     column.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;

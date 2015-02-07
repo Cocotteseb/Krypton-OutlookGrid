@@ -99,26 +99,29 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
 
         #region Public
 
-        /// <summary>
-        /// Gets or Sets the image
-        /// </summary>
-        public Image Image
-        {
-            get { return this.imageValue; }
-            set
-            {
-                if (this.Image != value)
-                {
-                    this.imageValue = value;
-                    this.imageSize = value.Size;
-                    if (this.InheritedStyle != null)
-                    {
-                        Padding inheritedPadding = this.InheritedStyle.Padding;
-                        this.DefaultCellStyle.Padding = new Padding(imageSize.Width, inheritedPadding.Top, inheritedPadding.Right, inheritedPadding.Bottom);
-                    }
-                }
-            }
-        }
+        ///// <summary>
+        ///// Gets or Sets the image
+        ///// </summary>
+        //public Image Image
+        //{
+        //    get { return this.imageValue; }
+        //    set
+        //    {
+        //        if (this.Image != value)
+        //        {
+        //            this.imageValue = value;
+        //            this.imageSize = value.Size;
+        //            if (this.InheritedStyle != null)
+        //            {
+        //                Padding inheritedPadding = this.InheritedStyle.Padding;
+        //                this.InheritedStyle.Padding = new Padding(imageSize.Width + 2, inheritedPadding.Top, inheritedPadding.Right, inheritedPadding.Bottom);
+        //                //Padding inheritedPadding = this.InheritedStyle.Padding;
+        //                //this.Style.Padding = new Padding(18, inheritedPadding.Top, inheritedPadding.Right, inheritedPadding.Bottom);
+                    
+        //            }
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Gets or sets the maximum number of characters that can be entered into the text box.
@@ -281,6 +284,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
     /// </summary>
     public class KryptonDataGridViewTextAndImageCell : KryptonDataGridViewTextBoxCell
     {
+        private Image imageValue;
+        private Size imageSize;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -297,6 +303,13 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             get { return typeof(TextAndImage); }
         }
 
+        protected override bool SetValue(int rowIndex, object value)
+        {
+            if (value != null)
+                Image = ((TextAndImage)value).Image;
+            return base.SetValue(rowIndex, value);
+        }
+
         /// <summary>
         /// Overrides Clone
         /// </summary>
@@ -304,7 +317,31 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         public override object Clone()
         {
             KryptonDataGridViewTextAndImageCell c = base.Clone() as KryptonDataGridViewTextAndImageCell;
+            c.imageValue = this.imageValue;
+            c.imageSize = this.imageSize;
             return c;
+        }
+
+        public Image Image
+        {
+            get { return this.imageValue; }
+            set
+            {
+                if (this.Image != value)
+                {
+                    this.imageValue = value;
+                    this.imageSize = value.Size;
+
+                    //if (this.InheritedStyle != null)
+                    //{
+                    Padding inheritedPadding = this.Style.Padding;
+                        //Padding inheritedPadding = this.InheritedStyle.Padding;
+                        this.Style.Padding = new Padding(imageSize.Width + 2,
+                     inheritedPadding.Top, inheritedPadding.Right,
+                     inheritedPadding.Bottom);
+                    //}
+                }
+            }
         }
 
         /// <summary>
@@ -326,12 +363,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             //TODO : improve we assume it is a 16x16 image 
             if (this.Value != null && ((TextAndImage)this.Value).Image != null)
             {
-                Padding inheritedPadding = this.InheritedStyle.Padding;
-                this.Style.Padding = new Padding(18, inheritedPadding.Top, inheritedPadding.Right, inheritedPadding.Bottom);
+                //Padding inheritedPadding = this.InheritedStyle.Padding;
+                //this.Style.Padding = new Padding(18, inheritedPadding.Top, inheritedPadding.Right, inheritedPadding.Bottom);
                 // Draw the image clipped to the cell.
                 System.Drawing.Drawing2D.GraphicsContainer container = graphics.BeginContainer();
                 graphics.SetClip(cellBounds);
-                graphics.DrawImageUnscaled(((TextAndImage)this.Value).Image, new Point(cellBounds.Location.X + 2, cellBounds.Location.Y + ((cellBounds.Height - 16) / 2)-1));
+                graphics.DrawImage(((TextAndImage)this.Value).Image, new Rectangle(cellBounds.Location.X + 2, cellBounds.Location.Y + ((cellBounds.Height - 16) / 2) - 1, 16, 16));
                 graphics.EndContainer(container);
             }
 

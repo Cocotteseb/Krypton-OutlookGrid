@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewTokenColumn.cs" />
     <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewTreeTextColumn.cs" />
     <Compile Include="KryptonOutlookGrid\IOutlookGridGroup.cs" />
     <Compile Include="KryptonOutlookGrid\KryptonOutlookGridGroupBox.cs">
