@@ -130,7 +130,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <returns>The IOutlookGridGroup.</returns>
         public IOutlookGridGroup FindGroup(object value)
         {
-            return groupList.Find(c => c.Value.Equals(value));
+            //We must return null if no group exist, then the OutlookGrid will create one. But we must return a group even for a null value.
+            if (value == null)
+            {
+                return groupList.Find(x => x.Value == null);
+                //return null;
+            }
+            //return groupList.Find(x => x.Value.Equals(value));
+            return groupList.Find(x => x.Value != null && x.Value.Equals(value));
         }
 
         #endregion

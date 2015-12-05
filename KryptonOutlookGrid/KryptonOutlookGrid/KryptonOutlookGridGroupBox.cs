@@ -43,6 +43,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private bool isDragging;
         private int indexselected;
 
+        //Dpi scaling
+        private float factorX, factorY;
+
         //Context menu
         private KryptonContextMenu KCtxMenu;
         private KryptonContextMenuItems _menuItems;
@@ -147,6 +150,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             // Create storage that maps onto the inherit instances
             _border = new PaletteBorder(_paletteBorder, null);
             _dragColumnToGroupText = LangManager.Instance.GetString("DRAGCOLUMNTOGROUP");
+
+            using (Graphics g = CreateGraphics())
+            {
+                factorX = g.DpiX > 96 ? (1f * g.DpiX / 96) : 1f;
+                factorY = g.DpiY > 96 ? (1f * g.DpiY / 96) : 1f;
+            }
         }
 
         #endregion
@@ -220,7 +229,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="e">PaintEventArgs</param>
         protected override void OnPaint(PaintEventArgs e)
         {
-            int num2 = 5;
+            int nextPosition = (int)(5 * factorX);
             if (_palette != null)
             {
                 // (3) Get the renderer associated with this palette
@@ -254,16 +263,18 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     _paletteBack.Style = PaletteBackStyle.GridHeaderColumnList;
                     _paletteBorder.Style = PaletteBorderStyle.GridHeaderColumnList;
                     // PaintGroupBox(e.Graphics, e.ClipRectangle, this.Font, "Drag a column here to group", columnsList.Count > 0);
+                   
+
 
                     //Draw the column boxes
                     foreach (OutlookGridGroupBoxColumn current in this.columnsList)
                     {
                         Rectangle rectangle = default(Rectangle);
-                        rectangle.Width = 100;
-                        rectangle.X = num2;
-                        rectangle.Y = (e.ClipRectangle.Height - 25) / 2;
-                        rectangle.Height = 25;
-                        num2 += 105;
+                        rectangle.Width = (int)(100 * factorX) ;
+                        rectangle.X = nextPosition;
+                        rectangle.Y = (e.ClipRectangle.Height - (int)(25 * factorY)) / 2;
+                        rectangle.Height = (int)(25 * factorY);
+                        nextPosition += (int)(105 * factorX); //next position
                         current.Rect = rectangle;
 
                         if (current.IsHovered)
@@ -800,19 +811,19 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 }
                 columnsList.Insert(i, colToAdd);
 
-                try
-                {
+                //try
+                //{
                     //Warns the grid of a new grouping
                     OnColumnGroupAdded(new OutlookGridColumnEventArgs(new OutlookGridColumn(columnName, null, null, sortOrder, i, -1)));
                     this.Invalidate();
-                }
-                catch (Exception exc)
-                {
-                    MessageBox.Show("Failed to group.\n\n Error:" + exc.Message,
-                                      "Grid GroupBox",
-                                      MessageBoxButtons.OK,
-                                      MessageBoxIcon.Error);
-                }
+                //}
+                //catch (Exception exc)
+                //{
+                //    MessageBox.Show("Failed to group.\n\n Error:" + exc.Message,
+                //                      "Grid GroupBox",
+                //                      MessageBoxButtons.OK,
+                //                      MessageBoxIcon.Error);
+                //}
             }
         }
 

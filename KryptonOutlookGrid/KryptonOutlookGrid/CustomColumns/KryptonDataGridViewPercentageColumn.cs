@@ -62,7 +62,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
             set
             {
-                // Ensure that the cell used for the template is a CalendarCell.
+                // Ensure that the cell used for the template is a DataGridViewPercentageCell.
                 if ((value != null) && !value.GetType().IsAssignableFrom(typeof(DataGridViewPercentageCell)))
                 {
                     throw new InvalidCastException("Must be a DataGridViewPercentageCell");
@@ -140,20 +140,39 @@ public class DataGridViewPercentageCell : KryptonDataGridViewTextBoxCell
         //}
 
         //Draw the bar
-        int barWidth = (int)((cellBounds.Width - 10) * (double)value);
+
+        int barWidth;
+        if ((double)value >= 1.0)
+        {
+            barWidth = (int)(cellBounds.Width - 10);
+        } else {
+            barWidth = (int)((cellBounds.Width - 10) * (double)value);
+        }
+       
         if ((double)value > 0 && barWidth > 0)
         {
-            Rectangle r = new Rectangle(cellBounds.X + 5, cellBounds.Y + 3, barWidth, cellBounds.Height - 8);
+            Rectangle r = new Rectangle(cellBounds.X + 3, cellBounds.Y + 3, barWidth, cellBounds.Height - 8);
 
-            using (LinearGradientBrush linearBrush = new LinearGradientBrush(r, KryptonManager.CurrentGlobalPalette.GetBackColor1(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), KryptonManager.CurrentGlobalPalette.GetBackColor2(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), LinearGradientMode.Vertical))
+            //using (LinearGradientBrush linearBrush = new LinearGradientBrush(r, KryptonManager.CurrentGlobalPalette.GetBackColor1(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), KryptonManager.CurrentGlobalPalette.GetBackColor2(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), LinearGradientMode.Vertical))
+            //{
+            //    graphics.FillRectangle(linearBrush, r);
+            //}
+
+            using (LinearGradientBrush linearBrush = new LinearGradientBrush(r, Color.FromArgb(255, 140, 197, 66), Color.FromArgb(255, 247, 251, 242), LinearGradientMode.Horizontal))
             {
                 graphics.FillRectangle(linearBrush, r);
             }
 
-            using (Pen pen = new Pen(KryptonManager.CurrentGlobalPalette.GetBackColor2(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal)))
+            //using (Pen pen = new Pen(KryptonManager.CurrentGlobalPalette.GetBackColor2(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal)))
+            //{
+            //    graphics.DrawRectangle(pen, r);
+            //    // graphics.DrawRectangle(Pens.DimGray, r);
+            //}
+
+            using (Pen pen = new Pen(Color.FromArgb(255, 140, 197, 66)))
             {
                 graphics.DrawRectangle(pen, r);
-                // graphics.DrawRectangle(Pens.DimGray, r);
+              
             }
         }
 

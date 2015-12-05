@@ -57,8 +57,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewFormattingColumn.cs" />
     <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewTokenColumn.cs" />
     <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewTreeTextColumn.cs" />
+    <Compile Include="KryptonOutlookGrid\Formatting\ColorFormatting.cs" />
+    <Compile Include="KryptonOutlookGrid\Formatting\CondtionalFormatting.cs" />
+    <Compile Include="KryptonOutlookGrid\Formatting\CustomFormatRule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="KryptonOutlookGrid\Formatting\CustomFormatRule.Designer.cs">
+      <DependentUpon>CustomFormatRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="KryptonOutlookGrid\Formatting\EnumConditionalFormatType.cs" />
+    <Compile Include="KryptonOutlookGrid\Formatting\IFormatParams.cs" />
+    <Compile Include="KryptonOutlookGrid\Formatting\Params\BarParams.cs" />
+    <Compile Include="KryptonOutlookGrid\Formatting\Params\ThreeColorsParams.cs" />
+    <Compile Include="KryptonOutlookGrid\Formatting\Params\TwoColorsParams.cs" />
+    <Compile Include="KryptonOutlookGrid\Helpers\ColorHelper.cs" />
     <Compile Include="KryptonOutlookGrid\IOutlookGridGroup.cs" />
     <Compile Include="KryptonOutlookGrid\KryptonOutlookGridGroupBox.cs">
       <SubType>UserControl</SubType>
@@ -66,9 +81,7 @@
     <Compile Include="KryptonOutlookGrid\KryptonOutlookGridGroupBox.Designer.cs">
       <DependentUpon>KryptonOutlookGridGroupBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewPercentageColumn.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewPercentageColumn.cs" />
     <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewRatingcolumn.cs" />
     <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewTextAndImageColumn.cs" />
     <Compile Include="KryptonOutlookGrid\Helpers\OutlookGridGroupHelpers.cs" />
@@ -92,6 +105,12 @@
     <Compile Include="KryptonOutlookGrid\StaticValues.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\Lang\LangManager.cs" />
+    <EmbeddedResource Include="KryptonOutlookGrid\Formatting\CustomFormatRule.fr.resx">
+      <DependentUpon>CustomFormatRule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KryptonOutlookGrid\Formatting\CustomFormatRule.resx">
+      <DependentUpon>CustomFormatRule.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="KryptonOutlookGrid\KryptonOutlookGridGroupBox.resx">
       <DependentUpon>KryptonOutlookGridGroupBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -118,10 +137,46 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Design.dll" />
-    <Content Include="Librairies\Release\ComponentFactory.Krypton.Toolkit.dll" />
-    <None Include="History.txt" />
-    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Toolkit.dll" />
+    <None Include="KryptonOutlookGrid\History.txt" />
+    <None Include="Resources\databar_generic_16.png" />
+    <None Include="Resources\color3scale_generic_16.png" />
+    <None Include="Resources\color2scale_generic_16.png" />
+    <None Include="Resources\Databar_solid_yellow_32.png" />
+    <None Include="Resources\Databar_solid_violet_32.png" />
+    <None Include="Resources\Databar_solid_rose_32.png" />
+    <None Include="Resources\Databar_solid_red_32.png" />
+    <None Include="Resources\Databar_solid_pink_32.png" />
+    <None Include="Resources\Databar_solid_green_32.png" />
+    <None Include="Resources\Databar_solid_blue_32.png" />
+    <None Include="Resources\Databar_gradient2_blue_32.png" />
+    <None Include="Resources\Databar_gradient_yellow_32.png" />
+    <None Include="Resources\Databar_gradient_violet_32.png" />
+    <None Include="Resources\Databar_gradient_rose_32.png" />
+    <None Include="Resources\Databar_gradient_red_32.png" />
+    <None Include="Resources\Databar_gradient_pink_32.png" />
+    <None Include="Resources\Databar_gradient_green_32.png" />
+    <None Include="Resources\Databar_gradient_blue_32.png" />
+    <None Include="Resources\paint_bucket_green.png" />
+    <None Include="Resources\eraser.png" />
+    <None Include="Resources\table_conditional_16.png" />
+    <None Include="Resources\TwoColors_yellow_white_32.png" />
+    <None Include="Resources\TwoColors_white_yellow_32.png" />
+    <None Include="Resources\TwoColors_white_violet_32.png" />
+    <None Include="Resources\TwoColors_white_red_32.png" />
+    <None Include="Resources\TwoColors_white_pink_32.png" />
+    <None Include="Resources\TwoColors_white_green_32.png" />
+    <None Include="Resources\TwoColors_white_blue_32.png" />
+    <None Include="Resources\TwoColors_violet_white_32.png" />
+    <None Include="Resources\TwoColors_red_white_32.png" />
+    <None Include="Resources\TwoColors_pink_white_32.png" />
+    <None Include="Resources\TwoColors_green_white_32.png" />
+    <None Include="Resources\TwoColors_blue_white_32.png" />
+    <None Include="Resources\ThreeColors_red_yellow_green_32.png" />
+    <None Include="Resources\ThreeColors_red_white_green_32.png" />
+    <None Include="Resources\ThreeColors_red_white_blue_32.png" />
+    <None Include="Resources\ThreeColors_green_yellow_red_32.png" />
+    <None Include="Resources\ThreeColors_green_white_red_32.png" />
+    <None Include="Resources\ThreeColors_blue_white_red_32.png" />
     <None Include="Resources\table2_selection_column.png" />
     <None Include="Resources\element_plus_16.png" />
     <None Include="Resources\element_minus_16.png" />
@@ -157,6 +212,17 @@
     <None Include="Resources\ExpandIcon.png" />
     <None Include="Resources\CollapseIcon2010.png" />
     <None Include="Resources\CollapseIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Design.dll" />
+    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Design.pdb" />
+    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Design.XML" />
+    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Toolkit.dll" />
+    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Toolkit.pdb" />
+    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Toolkit.XML" />
+    <Content Include="Librairies\Release\ComponentFactory.Krypton.Toolkit.dll" />
+    <Content Include="Librairies\Release\ComponentFactory.Krypton.Toolkit.pdb" />
+    <Content Include="Librairies\Release\ComponentFactory.Krypton.Toolkit.XML" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

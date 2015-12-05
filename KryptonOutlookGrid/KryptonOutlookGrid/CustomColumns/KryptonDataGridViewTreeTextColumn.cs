@@ -12,6 +12,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
     {
 
         public KryptonDataGridViewTreeTextColumn()
+            : base()
         {
             this.CellTemplate = new KryptonDataGridViewTreeTextCell();
         }

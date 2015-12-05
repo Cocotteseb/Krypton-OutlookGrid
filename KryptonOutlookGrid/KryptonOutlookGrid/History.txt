@@ -1,4 +1,26 @@
-﻿Version 1.2.0
+﻿Version 1.5.0
++Improvements to Conditionnal Formatting : ThreeColors, performance improvements, full context menu, new icons, custom values form, persistence, contrast color and bug fixes !
++Allow to group the grid with null values !
++Rating cells now allows number up to 10
++Added Timespan object for comparison (groups,...)
++Added Token object for comparison (groups,...)
+*DPI aware improvements
+*Fixed a crash when opening the context menu header on a non grouping column
+*Fixed a bug where auto resize height row was not working for group rows
+~Removed try catch, it is up to the parent application to handle grid crashes : allows more flexibility for developers
+
+Version 1.4.0
++Added Conditionnal Formatting: Bar, TwoColors (BETA)
+*Bug fixes for token column
+*Token column list or unique
+*Fixed dragging columns to change display order now correctly works
+
+Version 1.3.0
++Added Tree Grid mode
++Added TreeTextColumn
++Added Token Column
+
+Version 1.2.0
 + Added autohide column when grouped option
 + Added ability to sort groups by count value
 + Added function to expand/collapse only one group

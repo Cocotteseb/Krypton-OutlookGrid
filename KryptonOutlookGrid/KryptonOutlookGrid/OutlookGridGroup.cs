@@ -219,7 +219,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 string formattedValue = "";
                 string res = "";
                 //For formatting number we need to cast the object value to the number before applying formatting
-                if (string.IsNullOrEmpty(val.ToString()))
+                if (val == null || string.IsNullOrEmpty(val.ToString()))
                 {
                     formattedValue = LangManager.Instance.GetString("UNKNOWN");
                 }
@@ -253,6 +253,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     {
                         formattedValue = ((long)Value).ToString(formatStyle);
                     }
+                    else if (val is TimeSpan)
+                    {
+                        formattedValue = ((TimeSpan)Value).ToString(formatStyle);
+                    }
                     else
                     {
                         formattedValue = Value.ToString();
@@ -282,7 +286,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             get
             {
-                return val;
+                 return val;
             }
             set
             {
@@ -462,6 +466,16 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             int orderModifier = (Column.SortDirection == SortOrder.Ascending ? 1 : -1);
             int compareResult = 0;
             object o2 = ((OutlookGridDefaultGroup)obj).Value;
+
+            if ((val == null || val == DBNull.Value) && (o2 != null && o2 != DBNull.Value))
+            {
+                compareResult = 1;
+            }
+            else if ((val != null && val != DBNull.Value) && (o2 == null || o2 == DBNull.Value))
+            {
+                compareResult = -1;
+            }
+            else
             {
                 if (val is string)
                 {
@@ -505,9 +519,20 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     long n2 = (long)o2;
                     compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
                 }
+                else if (val is TimeSpan)
+                {
+                    TimeSpan t1 = (TimeSpan)val;
+                    TimeSpan t2 = (TimeSpan)o2;
+                    compareResult = (t1 > t2 ? 1 : t1 < t2 ? -1 : 0) * orderModifier;
+                }
                 else if (val is TextAndImage)
                 {
-                    compareResult = string.Compare(((TextAndImage)val).ToString(), ((TextAndImage)o2).ToString()) * orderModifier;
+                    compareResult = ((TextAndImage)val).CompareTo((TextAndImage)o2) * orderModifier;
+                }
+                //TODO implement a value for Token Column ??
+                else if (val is Token)
+                {
+                    compareResult = ((Token)val).CompareTo((Token)o2) * orderModifier;
                 }
             }
             return compareResult;

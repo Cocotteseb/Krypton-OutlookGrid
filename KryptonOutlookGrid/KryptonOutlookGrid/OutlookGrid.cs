@@ -17,7 +17,13 @@
 // Visit http://www.jdhsoftware.com and follow @jdhsoftware on Twitter
 //
 //--------------------------------------------------------------------------------
+using ComponentFactory.Krypton.Toolkit;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Formatting;
+using JDHSoftware.Krypton.Toolkit.Utils.Lang;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -26,10 +32,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
-using ComponentFactory.Krypton.Toolkit;
-using JDHSoftware.Krypton.Toolkit.Utils.Lang;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
-using System.Collections;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -73,7 +75,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private KryptonContextMenuItem _menuExpand;
         private KryptonContextMenuItem _menuCollapse;
         private KryptonContextMenuSeparator _menuSeparator4;
+        private KryptonContextMenuSeparator _menuSeparator5;
+        private KryptonContextMenuItem _menuConditionalFormatting;
         private int colSelected = 1;         //for menu
+        private const int FormattingBarSolidGradientSepIndex = 3;
 
         //For the Drag and drop of columns
         private Rectangle DragDropRectangle;
@@ -88,6 +93,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private bool _showLines;
         internal bool _inExpandCollapseMouseCapture = false;
         private FillMode _fillMode;
+
+        //Formatting
+        private List<ConditionalFormatting> formatConditions;
 
         /// <summary>
         /// Group Image Click Event
@@ -109,6 +117,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Node Collapsed event
         /// </summary>
         public event EventHandler<CollapsedEventArgs> NodeCollapsed;
+
+        float factorX, factorY;
 
         #region OutlookGrid constructor
 
@@ -146,6 +156,22 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
             this.AllowUserToOrderColumns = false;  //we will handle it ourselves
             _hideColumnOnGrouping = false;
+            formatConditions = new List<ConditionalFormatting>();
+
+            using (Graphics g = CreateGraphics())
+            {
+                factorX = g.DpiX > 96 ? (1f * g.DpiX / 96) : 1f;
+                factorY = g.DpiY > 96 ? (1f * g.DpiY / 96) : 1f;
+            }
+
+            //Update StaticValues
+            StaticValues._defaultGroupRowHeight = (int)(StaticValues._defaultGroupRowHeight * factorY);
+            StaticValues._2013GroupRowHeight = (int)(StaticValues._2013GroupRowHeight * factorY);
+            StaticValues._defaultOffsetHeight = (int)(StaticValues._defaultOffsetHeight * factorY);
+            StaticValues._2013OffsetHeight = (int)(StaticValues._defaultOffsetHeight * factorY);
+            StaticValues._ImageOffsetwidth = (int)(StaticValues._ImageOffsetwidth * factorX);
+            StaticValues._groupLevelMultiplier = (int)(StaticValues._groupLevelMultiplier * factorX);
+            StaticValues._groupImageSide = (int)(StaticValues._groupImageSide * factorX);
         }
 
         /// <summary>
@@ -280,6 +306,22 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 this._hideColumnOnGrouping = value;
             }
         }
+
+        [Category("Behavior")]
+        [Description("Conditional formatting.")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public List<ConditionalFormatting> ConditionalFormatting
+        {
+            get
+            {
+                return formatConditions;
+            }
+            set
+            {
+                this.formatConditions = value;
+            }
+        }
+
 
         [DefaultValue(true)]
         public bool ShowLines
@@ -592,11 +634,23 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                             string r = drgevent.Data.GetData(typeof(string)) as string;
                             string[] res = r.Split('|');
                             DataGridViewColumn SourceColumn = this.Columns[res[0]];
-                            int SourceDisplayIndex = SourceColumn.DisplayIndex;
+                            //int SourceDisplayIndex = SourceColumn.DisplayIndex;
                             DataGridViewColumn TargetColumn = this.Columns[DragDropTargetIndex];
-                            int TargetDisplayIndex = TargetColumn.DisplayIndex;
-                            SourceColumn.DisplayIndex = TargetDisplayIndex;
-                            TargetColumn.DisplayIndex = SourceDisplayIndex;
+                            // int TargetDisplayIndex = TargetColumn.DisplayIndex;
+                            SourceColumn.DisplayIndex = TargetColumn.DisplayIndex;
+
+                            //Debug
+                            List<DataGridViewColumn> listcol = new List<DataGridViewColumn>();
+                            foreach (DataGridViewColumn col in this.Columns)
+                            {
+                                listcol.Add(col);
+                            }
+                            foreach (DataGridViewColumn col in listcol.OrderBy(x => x.DisplayIndex))
+                            {
+                                Console.WriteLine(col.Name + " " + col.DisplayIndex);
+                            }
+                            Console.WriteLine("-----------------");
+
                             //*************************************************
                             //this.Columns.RemoveAt(DragDropSourceIndex);
                             //this.Columns.Insert(DragDropTargetIndex, SourceColumn);
@@ -835,7 +889,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             int h = StaticValues._defaultGroupRowHeight; // default height
             if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
                 h = StaticValues._2013GroupRowHeight; // special height for office 2013         
-            
+
             //For each outlookgridcolumn
             for (int j = 0; j < internalColumns.Count; j++)
             {
@@ -966,6 +1020,109 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             ForceRefreshGroupBox();
             Fill();
         }
+
+        private void OnConditionalFormattingClick(object sender, EventArgs e)
+        {
+            KryptonContextMenuImageSelect item = (KryptonContextMenuImageSelect)sender;
+            OutlookGridColumn col = internalColumns.FindFromColumnIndex(colSelected);
+            ConditionalFormatting format = formatConditions.Where(x => x.ColumnName == col.Name).FirstOrDefault();
+            ConditionalFormatting newformat = ((List<ConditionalFormatting>)item.Tag)[item.SelectedIndex];
+            if (format == null)
+            {
+                formatConditions.Add(new Formatting.ConditionalFormatting(col.DataGridViewColumn.Name, newformat.FormatType, newformat.FormatParams));
+            }
+            else
+            {
+                format.FormatType = newformat.FormatType;
+                format.FormatParams = newformat.FormatParams;
+            }
+            ((KryptonContextMenuImageSelect)sender).SelectedIndex = -1; //I'm unable to get only one imageselect checked between solid and gradient, so reset the selected image
+            Fill();
+        }
+
+        private void OnTwoColorsCustomClick(object sender, EventArgs e)
+        {
+            CustomFormatRule fm = new CustomFormatRule(EnumConditionalFormatType.TwoColorsRange);
+            fm.ShowDialog();
+            if (fm.DialogResult == DialogResult.OK)
+            {
+                OutlookGridColumn col = internalColumns.FindFromColumnIndex(colSelected);
+                ConditionalFormatting format = formatConditions.Where(x => x.ColumnName == col.Name).FirstOrDefault();
+                if (format == null)
+                {
+                    ConditionalFormatting newformat = new Formatting.ConditionalFormatting(col.DataGridViewColumn.Name, EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(fm.colMin, fm.colMax));
+                    formatConditions.Add(newformat);
+                }
+                else
+                {
+                    format.FormatType = EnumConditionalFormatType.TwoColorsRange;
+                    format.FormatParams = new TwoColorsParams(fm.colMin, fm.colMax);
+                }
+                Fill();
+            }
+            fm.Dispose();
+        }
+
+
+        private void OnThreeColorsCustomClick(object sender, EventArgs e)
+        {
+            CustomFormatRule fm = new CustomFormatRule(EnumConditionalFormatType.ThreeColorsRange);
+            fm.ShowDialog();
+            if (fm.DialogResult == DialogResult.OK)
+            {
+                OutlookGridColumn col = internalColumns.FindFromColumnIndex(colSelected);
+                ConditionalFormatting format = formatConditions.Where(x => x.ColumnName == col.Name).FirstOrDefault();
+                if (format == null)
+                {
+                    ConditionalFormatting newformat = new Formatting.ConditionalFormatting(col.DataGridViewColumn.Name, EnumConditionalFormatType.ThreeColorsRange, new ThreeColorsParams(Color.FromArgb(248, 105, 107), Color.FromArgb(255, 235, 132), Color.FromArgb(99, 190, 123)));
+                    formatConditions.Add(newformat);
+                }
+                else
+                {
+                    format.FormatType = EnumConditionalFormatType.ThreeColorsRange;
+                    format.FormatParams = new ThreeColorsParams(Color.FromArgb(248, 105, 107), Color.FromArgb(255, 235, 132), Color.FromArgb(99, 190, 123));
+                }
+                Fill();
+            }
+            fm.Dispose();
+        }
+
+        private void OnBarCustomClick(object sender, EventArgs e)
+        {
+            CustomFormatRule fm = new CustomFormatRule(EnumConditionalFormatType.Bar);
+            fm.ShowDialog();
+            if (fm.DialogResult == DialogResult.OK)
+            {
+                OutlookGridColumn col = internalColumns.FindFromColumnIndex(colSelected);
+                ConditionalFormatting format = formatConditions.Where(x => x.ColumnName == col.Name).FirstOrDefault();
+                if (format == null)
+                {
+                    ConditionalFormatting newformat = new Formatting.ConditionalFormatting(col.DataGridViewColumn.Name, EnumConditionalFormatType.Bar, new BarParams(fm.colMin, fm.gradient));
+                    formatConditions.Add(newformat);
+                }
+                else
+                {
+                    format.FormatType = EnumConditionalFormatType.Bar;
+                    format.FormatParams = new BarParams(fm.colMin, fm.gradient);
+                }
+                Fill();
+            }
+            fm.Dispose();
+        }
+
+        private void OnClearConditionalClick(object sender, EventArgs e)
+        {
+            OutlookGridColumn col = internalColumns.FindFromColumnIndex(colSelected);
+            formatConditions.RemoveAll(x => x.ColumnName == col.Name);
+            for (int i = 0; i < internalRows.Count; i++)
+            {
+                FormattingCell fCell = (FormattingCell)internalRows[i].Cells[colSelected];
+                //fCell.FormatType = formatConditions[i].FormatType;
+                fCell.FormatParams = null;
+            }
+            Fill();
+        }
+
 
         private void OnColumnVisibleCheckedChanged(object sender, EventArgs e)
         {
@@ -1548,6 +1705,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 _menuGroupInterval = new KryptonContextMenuItem(LangManager.Instance.GetString("GROUPINTERVAL"));
                 _menuSortBySummary = new KryptonContextMenuItem(LangManager.Instance.GetString("SORTBYSUMMARYCOUNT"), null, new EventHandler(OnSortBySummary));
                 _menuSortBySummary.CheckOnClick = true;
+                _menuSeparator5 = new KryptonContextMenuSeparator();
+                _menuConditionalFormatting = new KryptonContextMenuItem(LangManager.Instance.GetString("CONDITIONALFORMATTING"), Properties.Resources.table_conditional_16, null);
 
                 //Group Interval
                 KryptonContextMenuItems _GroupIntervalItems;
@@ -1565,17 +1724,211 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 _menuGroupInterval.Items.Add(_GroupIntervalItems);
 
                 //Visible Columns
-                KryptonContextMenuCheckBox it2 = null;
+                KryptonContextMenuCheckBox itCheckbox = null;
                 KryptonContextMenuItemBase[] arrayCols = new KryptonContextMenuItemBase[this.Columns.Count];
                 for (int i = 0; i < this.Columns.Count; i++)
                 {
-                    it2 = new KryptonContextMenuCheckBox(this.Columns[i].HeaderText);
-                    it2.Checked = this.Columns[i].Visible;
-                    it2.Tag = this.Columns[i].Index;
-                    it2.CheckedChanged += OnColumnVisibleCheckedChanged;
-                    arrayCols[i] = it2;
+                    itCheckbox = new KryptonContextMenuCheckBox(this.Columns[i].HeaderText);
+                    itCheckbox.Checked = this.Columns[i].Visible;
+                    itCheckbox.Tag = this.Columns[i].Index;
+                    itCheckbox.CheckedChanged += OnColumnVisibleCheckedChanged;
+                    arrayCols[i] = itCheckbox;
                 }
                 _menuVisibleColumns.Items.AddRange(arrayCols);
+
+                //Conditional formatting
+                ImageList imgListFormatting = new ImageList();
+                imgListFormatting.ColorDepth = ColorDepth.Depth32Bit;
+                imgListFormatting.ImageSize = new Size(32, 32);
+                List<ConditionalFormatting> tmpTag = new List<ConditionalFormatting>();
+                imgListFormatting.Images.Add(Properties.Resources.Databar_solid_blue_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(76, 118, 255), false)));
+                imgListFormatting.Images.Add(Properties.Resources.Databar_solid_green_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(95, 173, 123), false)));
+                imgListFormatting.Images.Add(Properties.Resources.Databar_solid_red_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(248, 108, 103), false)));
+                imgListFormatting.Images.Add(Properties.Resources.Databar_solid_yellow_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(255, 185, 56), false)));
+                imgListFormatting.Images.Add(Properties.Resources.Databar_solid_violet_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(185, 56, 255), false)));
+                imgListFormatting.Images.Add(Properties.Resources.Databar_solid_pink_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(255, 56, 185), false)));
+
+                imgListFormatting.Images.Add(Properties.Resources.Databar_gradient_blue_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(76, 118, 255), true)));
+                imgListFormatting.Images.Add(Properties.Resources.Databar_gradient_green_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(95, 173, 123), true)));
+                imgListFormatting.Images.Add(Properties.Resources.Databar_gradient_red_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(248, 108, 103), true)));
+                imgListFormatting.Images.Add(Properties.Resources.Databar_gradient_yellow_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(255, 185, 56), true)));
+                imgListFormatting.Images.Add(Properties.Resources.Databar_gradient_violet_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(185, 56, 255), true)));
+                imgListFormatting.Images.Add(Properties.Resources.Databar_gradient_pink_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.Bar, new BarParams(Color.FromArgb(255, 56, 185), true)));
+
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_white_blue_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.White, Color.FromArgb(76, 118, 255))));
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_blue_white_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.FromArgb(76, 118, 255), Color.White)));
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_white_green_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.White, Color.FromArgb(95, 173, 123))));
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_green_white_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.FromArgb(95, 173, 123), Color.White)));
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_white_red_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.White, Color.FromArgb(248, 108, 103))));
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_red_white_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.FromArgb(248, 108, 103), Color.White)));
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_white_yellow_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.White, Color.FromArgb(255, 185, 56))));
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_yellow_white_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.FromArgb(255, 185, 56), Color.White)));
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_white_violet_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.White, Color.FromArgb(185, 56, 255))));
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_violet_white_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.FromArgb(185, 56, 255), Color.White)));
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_white_pink_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.White, Color.FromArgb(255, 56, 185))));
+                imgListFormatting.Images.Add(Properties.Resources.TwoColors_pink_white_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.TwoColorsRange, new TwoColorsParams(Color.FromArgb(255, 56, 185), Color.White)));
+
+                imgListFormatting.Images.Add(Properties.Resources.ThreeColors_green_yellow_red_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.ThreeColorsRange, new ThreeColorsParams(Color.FromArgb(84, 179, 112), Color.FromArgb(252, 229, 130), Color.FromArgb(243, 120, 97))));
+                imgListFormatting.Images.Add(Properties.Resources.ThreeColors_red_yellow_green_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.ThreeColorsRange, new ThreeColorsParams(Color.FromArgb(243, 120, 97), Color.FromArgb(252, 229, 130), Color.FromArgb(84, 179, 112))));
+                imgListFormatting.Images.Add(Properties.Resources.ThreeColors_green_white_red_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.ThreeColorsRange, new ThreeColorsParams(Color.FromArgb(84, 179, 112), Color.White, Color.FromArgb(243, 120, 97))));
+                imgListFormatting.Images.Add(Properties.Resources.ThreeColors_red_white_green_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.ThreeColorsRange, new ThreeColorsParams(Color.FromArgb(243, 120, 97), Color.White, Color.FromArgb(84, 179, 112))));
+                imgListFormatting.Images.Add(Properties.Resources.ThreeColors_blue_white_red_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.ThreeColorsRange, new ThreeColorsParams(Color.FromArgb(134, 166, 253), Color.White, Color.FromArgb(243, 120, 97))));
+                imgListFormatting.Images.Add(Properties.Resources.ThreeColors_red_white_blue_32);
+                tmpTag.Add(new ConditionalFormatting(EnumConditionalFormatType.ThreeColorsRange, new ThreeColorsParams(Color.FromArgb(243, 120, 97), Color.White, Color.FromArgb(134, 166, 253))));
+
+
+                it = null;
+                names = Enum.GetNames(typeof(EnumConditionalFormatType));
+                arrayOptions = new KryptonContextMenuItemBase[names.Length + 2];
+                for (int i = 0; i < names.Length; i++)
+                {
+                    it = new KryptonContextMenuItem(LangManager.Instance.GetString(names[i]));
+                    it.Tag = names[i];
+
+                    if (names[i] == EnumConditionalFormatType.Bar.ToString())
+                    {
+                        it.Image = Properties.Resources.databar_generic_16;
+
+                        //Solid
+                        KryptonContextMenuHeading KFormattingBarHeadingSolid = new KryptonContextMenuHeading();
+                        KFormattingBarHeadingSolid.Text = LangManager.Instance.GetString("SolidFill");
+                        KryptonContextMenuImageSelect KFormattingBarImgSelectSolid = new KryptonContextMenuImageSelect();
+                        KFormattingBarImgSelectSolid.ImageList = imgListFormatting;
+                        KFormattingBarImgSelectSolid.ImageIndexStart = 0;
+                        KFormattingBarImgSelectSolid.ImageIndexEnd = 5;
+                        KFormattingBarImgSelectSolid.LineItems = 4;
+                        KFormattingBarImgSelectSolid.Tag = tmpTag;
+                        KFormattingBarImgSelectSolid.Click += OnConditionalFormattingClick;
+
+                        //Gradient
+                        KryptonContextMenuHeading KFormattingBarHeadingGradient = new KryptonContextMenuHeading();
+                        KFormattingBarHeadingGradient.Text = LangManager.Instance.GetString("GradientFill");
+                        KryptonContextMenuImageSelect KFormattingBarImgSelectGradient = new KryptonContextMenuImageSelect();
+                        KFormattingBarImgSelectGradient.ImageList = imgListFormatting;
+                        KFormattingBarImgSelectGradient.ImageIndexStart = 6;
+                        KFormattingBarImgSelectGradient.ImageIndexEnd = 11;
+                        KFormattingBarImgSelectGradient.LineItems = 4;
+                        KFormattingBarImgSelectGradient.Tag = tmpTag;
+                        KFormattingBarImgSelectGradient.Click += OnConditionalFormattingClick;
+
+                        //Custom
+                        KryptonContextMenuHeading KFormattingBarHeadingOther = new KryptonContextMenuHeading();
+                        KFormattingBarHeadingOther.Text = LangManager.Instance.GetString("Other");
+                        KryptonContextMenuItem it2 = null;
+                        it2 = new KryptonContextMenuItem(LangManager.Instance.GetString("CustomThreeDots"));
+                        it2.Tag = "";
+                        it2.Image = Properties.Resources.paint_bucket_green;
+                        it2.Click += OnBarCustomClick;
+
+                        KryptonContextMenuItems _Bars = new KryptonContextMenuItems(new ComponentFactory.Krypton.Toolkit.KryptonContextMenuItemBase[] { it2 });
+
+                        //Menu construction
+                        it.Items.AddRange(new ComponentFactory.Krypton.Toolkit.KryptonContextMenuItemBase[] {
+                        KFormattingBarHeadingSolid,
+                        KFormattingBarImgSelectSolid,
+                        KFormattingBarHeadingGradient,
+                        KFormattingBarImgSelectGradient,
+                        KFormattingBarHeadingOther,
+                        _Bars
+                        });
+                    }
+                    else if (names[i] == EnumConditionalFormatType.TwoColorsRange.ToString())
+                    {
+                        it.Image = Properties.Resources.color2scale_generic_16;
+
+                        KryptonContextMenuItems _TwoColors;
+
+                        KryptonContextMenuImageSelect KTwoColorsImgSelect = new KryptonContextMenuImageSelect();
+                        KTwoColorsImgSelect.ImageList = imgListFormatting;
+                        KTwoColorsImgSelect.ImageIndexStart = 12;
+                        KTwoColorsImgSelect.ImageIndexEnd = 23;
+                        KTwoColorsImgSelect.LineItems = 4;
+                        KTwoColorsImgSelect.Tag = tmpTag;
+                        KTwoColorsImgSelect.Click += OnConditionalFormattingClick;
+                        it.Items.Add(KTwoColorsImgSelect);
+
+                        KryptonContextMenuSeparator sep1 = new KryptonContextMenuSeparator();
+                        sep1.Tag = "";
+
+                        KryptonContextMenuItem it2 = null;
+                        it2 = new KryptonContextMenuItem(LangManager.Instance.GetString("CustomThreeDots"));
+                        it2.Tag = "";
+                        it2.Image = Properties.Resources.paint_bucket_green;
+                        it2.Click += OnTwoColorsCustomClick;
+
+                        _TwoColors = new KryptonContextMenuItems(new ComponentFactory.Krypton.Toolkit.KryptonContextMenuItemBase[] { sep1, it2 });
+                        it.Items.Add(_TwoColors);
+                    }
+                    else if (names[i] == EnumConditionalFormatType.ThreeColorsRange.ToString())
+                    {
+                        it.Image = Properties.Resources.color3scale_generic_16;
+
+                        KryptonContextMenuItems _ThreeColors;
+
+                        KryptonContextMenuImageSelect KThreeColorsImgSelect = new KryptonContextMenuImageSelect();
+                        KThreeColorsImgSelect.ImageList = imgListFormatting;
+                        KThreeColorsImgSelect.ImageIndexStart = 24;
+                        KThreeColorsImgSelect.ImageIndexEnd = 29;
+                        KThreeColorsImgSelect.LineItems = 4;
+                        KThreeColorsImgSelect.Tag = tmpTag;
+                        KThreeColorsImgSelect.Click += OnConditionalFormattingClick;
+                        it.Items.Add(KThreeColorsImgSelect);
+
+                        KryptonContextMenuSeparator sep1 = new KryptonContextMenuSeparator();
+                        sep1.Tag = "";
+
+                        KryptonContextMenuItem it2 = null;
+                        it2 = new KryptonContextMenuItem(LangManager.Instance.GetString("CustomThreeDots"));
+                        it2.Tag = "";
+                        it2.Image = Properties.Resources.paint_bucket_green;
+                        it2.Click += OnThreeColorsCustomClick;
+
+                        _ThreeColors = new KryptonContextMenuItems(new ComponentFactory.Krypton.Toolkit.KryptonContextMenuItemBase[] { sep1, it2 });
+                        it.Items.Add(_ThreeColors);
+                    }
+
+                    arrayOptions[i] = it;
+                    KryptonContextMenuSeparator sep2 = new KryptonContextMenuSeparator();
+                    sep2.Tag = "";
+                    arrayOptions[i + 1] = sep2;
+                    KryptonContextMenuItem it3 = null;
+                    it3 = new KryptonContextMenuItem(LangManager.Instance.GetString("ClearRules"));
+                    it3.Image = Properties.Resources.eraser;
+                    it3.Tag = "";
+                    it3.Click += OnClearConditionalClick;
+                    arrayOptions[i + 2] = it3;
+                }
+                KryptonContextMenuItems _ConditionalFormattingItems = new KryptonContextMenuItems(arrayOptions);
+                _menuConditionalFormatting.Items.Add(_ConditionalFormattingItems);
 
                 //Add items inside an items collection (apart from separator1 which is only added if required)
                 _menuItems = new KryptonContextMenuItems(new KryptonContextMenuItemBase[] { _menuSortAscending,
@@ -1595,7 +1948,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                                                                                             _menuBestFitColumn,
                                                                                             _menuBestFitAllColumns,
                                                                                             _menuSeparator3,
-                                                                                            _menuVisibleColumns});
+                                                                                            _menuVisibleColumns,
+                                                                                            _menuSeparator5,
+                                                                                            _menuConditionalFormatting});
             }
 
             // Ensure we have a krypton context menu if not already present
@@ -1609,8 +1964,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 _menuSortAscending.Checked = col.SortDirection == SortOrder.Ascending ? true : false;
                 _menuSortDescending.Checked = col.SortDirection == SortOrder.Descending ? true : false;
                 _menuSortDescending.Visible = col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable;
-                _menuSortBySummary.Visible = col.IsGrouped;
-                _menuSortBySummary.Checked = col.GroupingType.SortBySummaryCount;
+                _menuSortBySummary.Visible = col.IsGrouped && col.GroupingType != null;
+                if (_menuSortBySummary.Visible)
+                    _menuSortBySummary.Checked = col.GroupingType.SortBySummaryCount;
                 _menuClearSorting.Enabled = col.SortDirection != SortOrder.None && !col.IsGrouped;
                 _menuClearSorting.Visible = col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable;
                 _menuSeparator1.Visible = (_menuSortAscending.Visible || _menuSortDescending.Visible || _menuClearSorting.Visible);
@@ -1632,6 +1988,32 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 _menuHideGroupBox.Visible = (groupBox != null) && groupBox.Visible;
                 _menuSeparator2.Visible = (_menuGroupByThisColumn.Visible || _menuUngroupByThisColumn.Visible || _menuShowGroupBox.Visible || _menuHideGroupBox.Visible);
                 _menuBestFitColumn.Visible = true;
+                if (col.DataGridViewColumn.GetType() == typeof(KryptonDataGridViewFormattingColumn))
+                {
+                    _menuSeparator5.Visible = true;
+                    _menuConditionalFormatting.Visible = true;
+
+                    //Get the format condition
+                    ConditionalFormatting format = formatConditions.Where(x => x.ColumnName == col.Name).FirstOrDefault();
+
+                    for (int i = 0; i < _menuConditionalFormatting.Items[0].ItemChildCount; i++)
+                    {
+                        if (format != null && ((KryptonContextMenuItems)_menuConditionalFormatting.Items[0]).Items[i].Tag.ToString().Equals(format.FormatType.ToString()))
+                        {
+                            ((KryptonContextMenuItem)((KryptonContextMenuItems)_menuConditionalFormatting.Items[0]).Items[i]).Checked = true;
+                        }
+                        else
+                        {
+                            if (((KryptonContextMenuItems)_menuConditionalFormatting.Items[0]).Items[i].GetType() != typeof(KryptonContextMenuSeparator))
+                                ((KryptonContextMenuItem)((KryptonContextMenuItems)_menuConditionalFormatting.Items[0]).Items[i]).Checked = false;
+                        }
+                    }
+                }
+                else
+                {
+                    _menuSeparator5.Visible = false;
+                    _menuConditionalFormatting.Visible = false;
+                }
             }
             else
             {
@@ -1650,6 +2032,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 _menuHideGroupBox.Visible = (groupBox != null) && groupBox.Visible;
                 _menuSeparator2.Visible = (_menuGroupByThisColumn.Visible || _menuUngroupByThisColumn.Visible || _menuShowGroupBox.Visible || _menuHideGroupBox.Visible);
                 _menuBestFitColumn.Visible = false;
+                _menuSeparator5.Visible = false;
+                _menuConditionalFormatting.Visible = false;
+
             }
 
             if (!KCtxMenu.Items.Contains(_menuItems))
@@ -1857,7 +2242,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 r.Collapsed = collapsed;
                 foreach (OutlookGridRow r2 in r.Nodes.Nodes)
                 {
-                   RecursiveDescendantSetNodeCollapse(r2,collapsed);
+                    RecursiveDescendantSetNodeCollapse(r2, collapsed);
                 }
             }
         }
@@ -1883,12 +2268,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             //No events - for speed
             if (r.ParentNode != null)
             {
-                    r.ParentNode.Collapsed = collapsed;
-                    RecursiveUpwardSetNodeCollaspse(r.ParentNode, collapsed);
+                r.ParentNode.Collapsed = collapsed;
+                RecursiveUpwardSetNodeCollaspse(r.ParentNode, collapsed);
             }
         }
 
-  
+
         /// <summary>
         /// Ensure the node is visible (all parents exanded)
         /// </summary>
@@ -1955,7 +2340,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             RecursiveDescendantSetNodeCollapse(r, false);
             r.Visible = !r.Visible;
             r.Visible = !r.Visible;
-            
+
             ////When collapsing the first row still seeing it.
             //if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
             //    this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
@@ -2015,25 +2400,146 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             list = internalRows;
 
 
+            //Apply Formatting (BETA)
+            int formatColumn;
+            Type typeColumn;
+
+            //Determine mix and max value
+            for (int j = 0; j < formatConditions.Count; j++)
+            {
+                formatColumn = Columns[formatConditions[j].ColumnName].Index;
+                typeColumn = Columns[formatConditions[j].ColumnName].ValueType;
+                formatConditions[j].minValue = double.MaxValue;
+                formatConditions[j].maxValue = double.MinValue;
+                if (typeColumn == typeof(TimeSpan))
+                {
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        if (list[i].Cells[formatColumn].Value != null)
+                        {
+
+                            if (((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes < formatConditions[j].minValue)
+                                formatConditions[j].minValue = ((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes;
+                            if (((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes > formatConditions[j].maxValue)
+                                formatConditions[j].maxValue = ((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes;
+                        }
+                    }
+                }
+                else if (typeColumn == typeof(Decimal))
+                {
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        if (list[i].Cells[formatColumn].Value != null)
+                        {
+                            if (Convert.ToDouble(list[i].Cells[formatColumn].Value) < formatConditions[j].minValue)
+                                formatConditions[j].minValue = Convert.ToDouble(list[i].Cells[formatColumn].Value);
+                            if (Convert.ToDouble(list[i].Cells[formatColumn].Value) > formatConditions[j].maxValue)
+                                formatConditions[j].maxValue = Convert.ToDouble(list[i].Cells[formatColumn].Value);
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        if (list[i].Cells[formatColumn].Value != null)
+                        {
+                            if ((double)list[i].Cells[formatColumn].Value < formatConditions[j].minValue)
+                                formatConditions[j].minValue = (double)list[i].Cells[formatColumn].Value;
+                            if ((double)list[i].Cells[formatColumn].Value > formatConditions[j].maxValue)
+                                formatConditions[j].maxValue = (double)list[i].Cells[formatColumn].Value;
+                        }
+                    }
+                }
+            }
+
+            //Passing the necessary information to cells 
+            for (int i = 0; i < list.Count; i++)
+            {
+                for (int j = 0; j < formatConditions.Count; j++)
+                {
+                    formatColumn = Columns[formatConditions[j].ColumnName].Index;
+                    if (list[i].Cells[formatColumn].Value != null)
+                    {
+                        typeColumn = Columns[formatConditions[j].ColumnName].ValueType;
+                        FormattingCell fCell = (FormattingCell)list[i].Cells[formatColumn];
+                        fCell.FormatType = formatConditions[j].FormatType;
+                        fCell.FormatParams = (IFormatParams)formatConditions[j].FormatParams.Clone();
+                        switch (formatConditions[j].FormatType)
+                        {
+                            case EnumConditionalFormatType.Bar:
+                                if (typeColumn == typeof(TimeSpan))
+                                {
+                                    ((BarParams)fCell.FormatParams).ProportionValue = ColorFormatting.ConvertBar(((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes, formatConditions[j].minValue, formatConditions[j].maxValue);
+                                }
+                                else if (typeColumn == typeof(Decimal))
+                                {
+                                    ((BarParams)fCell.FormatParams).ProportionValue = ColorFormatting.ConvertBar(Convert.ToDouble(list[i].Cells[formatColumn].Value), formatConditions[j].minValue, formatConditions[j].maxValue);
+                                }
+                                else
+                                {
+                                    ((BarParams)fCell.FormatParams).ProportionValue = ColorFormatting.ConvertBar((double)list[i].Cells[formatColumn].Value, formatConditions[j].minValue, formatConditions[j].maxValue);
+                                }
+                                break;
+                            case EnumConditionalFormatType.TwoColorsRange:
+                                if (typeColumn == typeof(TimeSpan))
+                                {
+                                    ((TwoColorsParams)fCell.FormatParams).ValueColor = ColorFormatting.ConvertTwoRange(((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes, formatConditions[j].minValue, formatConditions[j].maxValue, (TwoColorsParams)formatConditions[j].FormatParams);
+                                }
+                                else if (typeColumn == typeof(Decimal))
+                                {
+                                    ((TwoColorsParams)fCell.FormatParams).ValueColor = ColorFormatting.ConvertTwoRange(Convert.ToDouble(list[i].Cells[formatColumn].Value), formatConditions[j].minValue, formatConditions[j].maxValue, (TwoColorsParams)formatConditions[j].FormatParams);
+                                }
+                                else
+                                {
+                                    ((TwoColorsParams)fCell.FormatParams).ValueColor = ColorFormatting.ConvertTwoRange((double)list[i].Cells[formatColumn].Value, formatConditions[j].minValue, formatConditions[j].maxValue, (TwoColorsParams)formatConditions[j].FormatParams);
+                                }
+                                //list[i].Cells[formatColumn].Style.SelectionBackColor = list[i].Cells[formatColumn].Style.BackColor;
+                                break;
+                            case EnumConditionalFormatType.ThreeColorsRange:
+                                if (typeColumn == typeof(TimeSpan))
+                                {
+                                    ((ThreeColorsParams)fCell.FormatParams).ValueColor = ColorFormatting.ConvertThreeRange(((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes, formatConditions[j].minValue, formatConditions[j].maxValue, (ThreeColorsParams)formatConditions[j].FormatParams);
+                                }
+                                else if (typeColumn == typeof(Decimal))
+                                {
+                                    ((ThreeColorsParams)fCell.FormatParams).ValueColor = ColorFormatting.ConvertThreeRange(Convert.ToDouble(list[i].Cells[formatColumn].Value), formatConditions[j].minValue, formatConditions[j].maxValue, (ThreeColorsParams)formatConditions[j].FormatParams);
+                                }
+                                else
+                                {
+                                    ((ThreeColorsParams)fCell.FormatParams).ValueColor = ColorFormatting.ConvertThreeRange((double)list[i].Cells[formatColumn].Value, formatConditions[j].minValue, formatConditions[j].maxValue, (ThreeColorsParams)formatConditions[j].FormatParams);
+                                }
+                                //list[i].Cells[formatColumn].Style.SelectionBackColor = list[i].Cells[formatColumn].Style.BackColor;
+                                break;
+                        }
+                    }
+                }
+            }
+            //End of Formatting
+#if (DEBUG)
+            azer.Stop();
+            Console.WriteLine("Formatting : " + azer.ElapsedMilliseconds + " ms");
+            azer.Start();
+#endif
             // this block is used of grouping is turned off
             // this will simply list all attributes of each object in the list
             if (internalColumns.CountGrouped() == 0)
             {
                 //Applying sort
-                try
-                {
-                    list.Sort(new OutlookGridRowComparer2(internalColumns.GetIndexAndSortSortedOnlyColumns()));
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Failed to sort.\n\n Error:" + e.Message,
-                                   "Grid Sorting",
-                                   MessageBoxButtons.OK,
-                                   MessageBoxIcon.Error);
-                }
+                //try
+                //{
+                list.Sort(new OutlookGridRowComparer2(internalColumns.GetIndexAndSortSortedOnlyColumns()));
+                //}
+                //catch (Exception e)
+                //{
+                //    MessageBox.Show("Failed to sort.\n\n Error:" + e.Message,
+                //                   "Grid Sorting",
+                //                   MessageBoxButtons.OK,
+                //                   MessageBoxIcon.Error);
+                // }
 
                 //Add rows to underlying DataGridView
-                if (_fillMode == FillMode.GroupsOnly) 
+                if (_fillMode == FillMode.GroupsOnly)
                 {
                     this.Rows.AddRange(list.ToArray());
                 }
@@ -2045,96 +2551,113 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     //Add all the rows to the grid
                     this.Rows.AddRange(tmp.ToArray());
                 }
-                
+
             }
             // this block is used when grouping is used
             // items in the list must be sorted, and then they will automatically be grouped
             else
             {
                 //Group part of the job
-                try
+                //try
+                //{
+                //We get the columns that are grouped
+                List<OutlookGridColumn> groupedColumns = internalColumns.FindGroupedColumns();
+
+                //For each outlookgrid row in the grid
+                for (int j = 0; j < list.Count; j++)
                 {
-                    //We get the columns that are grouped
-                    List<OutlookGridColumn> groupedColumns = internalColumns.FindGroupedColumns();
+                    //Reload the groups collection for each rows !!
+                    OutlookGridGroupCollection children = this.groupCollection;
 
-                    //For each outlookgrid row in the grid
-                    for (int j = 0; j < list.Count; j++)
+                    //For each grouped column (ordered by GroupIndex)
+                    for (int i = 0; i < groupedColumns.Count; i++)
                     {
-                        //Reload the groups collection for each rows !!
-                        OutlookGridGroupCollection children = this.groupCollection;
+                        if (i == 0)
+                            grParent = null;
 
-                        //For each grouped column (ordered by GroupIndex)
-                        for (int i = 0; i < groupedColumns.Count; i++)
+                        //Gets the stored value
+                        object value = list[j].Cells[groupedColumns[i].DataGridViewColumn.Index].Value;
+                        object formattedValue;
+
+                        //We get the formatting value according to the type of group (Alphabetic, DateTime,...)
+                        groupedColumns[i].GroupingType.Value = value;
+                        formattedValue = groupedColumns[i].GroupingType.Value;
+
+                        //We search the corresponding group.
+                        IOutlookGridGroup gr = children.FindGroup(formattedValue);
+                        if (gr == null)
                         {
-                            if (i == 0)
-                                grParent = null;
-
-                            //Gets the stored value
-                            object value = list[j].Cells[groupedColumns[i].DataGridViewColumn.Index].Value;
-                            object formattedValue;
-
-                            //We get the formatting value according to the type of group (Alphabetic, DateTime,...)
-                            groupedColumns[i].GroupingType.Value = value;
-                            formattedValue = groupedColumns[i].GroupingType.Value;
-
-                            //We search the corresponding group.
-                            IOutlookGridGroup gr = children.FindGroup(formattedValue);
-                            if (gr == null)
+                            gr = (IOutlookGridGroup)groupedColumns[i].GroupingType.Clone();
+                            gr.ParentGroup = grParent;
+                            gr.Column = groupedColumns[i];
+                            gr.Value = value;                        
+                            gr.FormatStyle = groupedColumns[i].DataGridViewColumn.DefaultCellStyle.Format; //We can the formatting applied to the cell to the group
+                            if (value is TextAndImage)
+                                gr.GroupImage = ((TextAndImage)value).Image;
+                            else if (value is Token)
                             {
-                                gr = (IOutlookGridGroup)groupedColumns[i].GroupingType.Clone();
-                                gr.ParentGroup = grParent;
-                                gr.Column = groupedColumns[i];
-                                gr.Value = value;
-                                gr.FormatStyle = groupedColumns[i].DataGridViewColumn.DefaultCellStyle.Format; //We can the formatting applied to the cell to the group
-                                if (value is TextAndImage)
-                                    gr.GroupImage = ((TextAndImage)value).Image;
-                                gr.Level = i;
-                                children.Add(gr);
+                                Bitmap bmp = new Bitmap(13, 13);
+                                using (Graphics gfx = Graphics.FromImage(bmp))
+                                {
+                                    using (SolidBrush brush = new SolidBrush(((Token)value).BackColor))
+                                    {
+                                        gfx.FillRectangle(brush, 0, 0, bmp.Width, bmp.Height);
+                                    }
+                                }
+                                gr.GroupImage = bmp;
                             }
+                            //else if (groupedColumns[i].DataGridViewColumn.GetType() == typeof(KryptonDataGridViewRatingColumn))
+                            //{
+                            //    gr.GroupImage = (Image)Properties.Resources.ResourceManager.GetObject("star" + value.ToString());
+                            //}
 
-                            //Go deeper in the groups, set current group as parent
-                            grParent = gr;
-                            children = gr.Children;
+                            gr.Level = i;
+                            children.Add(gr);
+                        }
 
-                            //if we have browsed all the groups we are sure to be in the righr group: add rows and update counters !
-                            if (i == groupedColumns.Count - 1)
-                            {
-                                list[j].Group = gr;
-                                gr.Rows.Add(list[j]);
-                                RecursiveIncrementParentGroupCounters(gr);
-                            }
+                        //Go deeper in the groups, set current group as parent
+                        grParent = gr;
+                        children = gr.Children;
+
+                        //if we have browsed all the groups we are sure to be in the righr group: add rows and update counters !
+                        if (i == groupedColumns.Count - 1)
+                        {
+                            list[j].Group = gr;
+                            gr.Rows.Add(list[j]);
+                            RecursiveIncrementParentGroupCounters(gr);
                         }
                     }
+                }
 
-                    //reset local variable for GC
-                    groupedColumns = null;
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Failed to add rows.\n\n Error:" + e.Message,
-                                   "Grid Filling",
-                                   MessageBoxButtons.OK,
-                                   MessageBoxIcon.Error);
-                }
+                //reset local variable for GC
+                groupedColumns = null;
+                //}
+                //catch (Exception e)
+                //{
+                //    MessageBox.Show("Failed to add rows.\n\n Error:" + e.Message,
+                //                   "Grid Filling",
+                //                   MessageBoxButtons.OK,
+                //                   MessageBoxIcon.Error);
+                //}
 
                 //Sorting part : sort the groups between them and sort the rows inside the groups
-                try
-                {
-                    //int index = internalColumns.FindSortedColumnNotgrouped();
-                    //RecursiveSort(this.groupCollection, index, (index == -1) ? SortOrder.None : internalColumns.FindFromColumnIndex(index).SortDirection);
-                    List<Tuple<int, SortOrder, IComparer>> sortList = internalColumns.GetIndexAndSortSortedOnlyColumns();
-                    if (sortList.Count > 0)
-                        RecursiveSort(this.groupCollection, sortList);
-                    else
-                        RecursiveSort(this.groupCollection, internalColumns.GetIndexAndSortGroupedColumns());
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show("Failed to sort.\n\n Error:" + e.Message,
-                                   "Grid Sorting",
-                                   MessageBoxButtons.OK,
-                                   MessageBoxIcon.Error);
-                }
+                //try
+                //{
+                //int index = internalColumns.FindSortedColumnNotgrouped();
+                //RecursiveSort(this.groupCollection, index, (index == -1) ? SortOrder.None : internalColumns.FindFromColumnIndex(index).SortDirection);
+                List<Tuple<int, SortOrder, IComparer>> sortList = internalColumns.GetIndexAndSortSortedOnlyColumns();
+                if (sortList.Count > 0)
+                    RecursiveSort(this.groupCollection, sortList);
+                else
+                    RecursiveSort(this.groupCollection, internalColumns.GetIndexAndSortGroupedColumns());
+                //}
+                //catch (Exception e)
+                //{
+                //    MessageBox.Show("Failed to sort.\n\n Error:" + e.Message,
+                //                   "Grid Sorting",
+                //                   MessageBoxButtons.OK,
+                //                   MessageBoxIcon.Error);
+                //}
 
                 //Reinit!
                 tmp = new List<OutlookGridRow>();
@@ -2223,6 +2746,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 grRow.Group = gr;
                 grRow.IsGroupRow = true;
                 grRow.Height = gr.Height;
+                grRow.MinimumHeight = grRow.Height; //To handle auto resize rows correctly on high dpi
                 grRow.CreateCells(this, gr.Value);
                 tmp.Add(grRow);
 
@@ -2241,10 +2765,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 {
                     NonGroupedRecursiveFillOutlookGridRows(gr.Rows, tmp);
                 }
-              
+
             }
         }
-
         #endregion Grid Fill functions
 
         /// <summary>
@@ -2270,7 +2793,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     writer.WriteStartElement("GroupingType");
                     if (col.GroupingType != null)
                     {
-                        writer.WriteElementString("Name",col.GroupingType.GetType().AssemblyQualifiedName); //.GetType().Name.ToString());
+                        writer.WriteElementString("Name", col.GroupingType.GetType().AssemblyQualifiedName); //.GetType().Name.ToString());
                         writer.WriteElementString("OneItemText", col.GroupingType.OneItemText);
                         writer.WriteElementString("XXXItemsText", col.GroupingType.XXXItemsText);
                         writer.WriteElementString("SortBySummaryCount", CommonHelper.BoolToString(col.GroupingType.SortBySummaryCount));
@@ -2291,7 +2814,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     writer.WriteEndElement();
                 }
                 writer.WriteEndElement();
-                writer.WriteEndElement();
+
+                //Conditional formatting
+                writer.WriteStartElement("ConditionalFormatting");
+                for (int i = 0; i < this.formatConditions.Count; i++)
+                {
+                    formatConditions[i].Persist(writer);
+                }
+                writer.WriteEndElement(); // End ConditionalFormatting
+                writer.WriteEndElement(); //End OutlookGrid
                 writer.WriteEndDocument();
                 writer.Flush();
             }
@@ -2307,6 +2838,16 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             this.internalColumns.Clear();
             this.Columns.Clear();
             //Snif everything is gone ! Ready for a new start !
+        }
+
+        public OutlookGridColumn FindFromColumnName(string name)
+        {
+            return internalColumns.FindFromColumnName(name);
+        }
+
+        public OutlookGridColumn FindFromColumnIndex(int index)
+        {
+            return internalColumns.FindFromColumnIndex(index);
         }
         #endregion OutlookGrid methods
     }

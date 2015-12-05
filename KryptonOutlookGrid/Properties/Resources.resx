@@ -217,4 +217,121 @@
   <data name="table2_selection_column" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\table2_selection_column.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="color2scale_generic_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\color2scale_generic_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="color3scale_generic_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\color3scale_generic_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="databar_generic_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\databar_generic_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_gradient2_blue_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_gradient2_blue_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_gradient_blue_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_gradient_blue_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_gradient_green_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_gradient_green_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_gradient_pink_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_gradient_pink_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_gradient_red_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_gradient_red_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_gradient_rose_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_gradient_rose_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_gradient_violet_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_gradient_violet_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_gradient_yellow_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_gradient_yellow_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_solid_blue_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_solid_blue_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_solid_green_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_solid_green_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_solid_pink_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_solid_pink_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_solid_red_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_solid_red_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_solid_rose_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_solid_rose_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_solid_violet_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_solid_violet_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Databar_solid_yellow_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Databar_solid_yellow_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="eraser" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\eraser.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="paint_bucket_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\paint_bucket_green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="table_conditional_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\table_conditional_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ThreeColors_blue_white_red_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ThreeColors_blue_white_red_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ThreeColors_green_white_red_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ThreeColors_green_white_red_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ThreeColors_green_yellow_red_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ThreeColors_green_yellow_red_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ThreeColors_red_white_blue_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ThreeColors_red_white_blue_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ThreeColors_red_white_green_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ThreeColors_red_white_green_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ThreeColors_red_yellow_green_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ThreeColors_red_yellow_green_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_blue_white_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_blue_white_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_green_white_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_green_white_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_pink_white_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_pink_white_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_red_white_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_red_white_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_violet_white_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_violet_white_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_white_blue_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_white_blue_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_white_green_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_white_green_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_white_pink_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_white_pink_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_white_red_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_white_red_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_white_violet_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_white_violet_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_white_yellow_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_white_yellow_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TwoColors_yellow_white_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TwoColors_yellow_white_32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

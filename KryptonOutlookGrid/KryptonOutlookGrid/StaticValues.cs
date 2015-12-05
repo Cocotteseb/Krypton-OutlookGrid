@@ -26,12 +26,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
     public static class StaticValues
     {
-        public static readonly int _defaultGroupRowHeight = 34;
-        public static readonly int _2013GroupRowHeight = 24;
-        public static readonly int _defaultOffsetHeight = 22;
-        public static readonly int _2013OffsetHeight = 22;
-        public static readonly int _ImageOffsetwidth = 18;
-        public static readonly int _groupLevelMultiplier = 15;
-        public static readonly int _groupImageSide = 16;
+        public static int _defaultGroupRowHeight = 34;
+        public static int _2013GroupRowHeight = 24;
+        public static int _defaultOffsetHeight = 22;
+        public static int _2013OffsetHeight = 22;
+        public static int _ImageOffsetwidth = 18;
+        public static int _groupLevelMultiplier = 15;
+        public static int _groupImageSide = 16;
     }
 }

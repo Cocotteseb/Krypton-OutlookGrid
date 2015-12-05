@@ -54,8 +54,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         /// <returns></returns>
         protected override object GetFormattedValue(object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
         {
-            //Convert integer to star images 
-            return starImages[(int)value];
+            if (value == null)
+                return null; //For example it is also the case for group row...
+            else
+               return starImages[(int)value];
         }
 
         /// <summary>
@@ -84,12 +86,13 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         protected override void Paint(Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates elementState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
         {
             Image cellImage = (Image)formattedValue;
+            if (!this.ReadOnly)
+            {
+                int starNumber = GetStarFromMouse(cellBounds, this.DataGridView.PointToClient(Control.MousePosition));
 
-            int starNumber = GetStarFromMouse(cellBounds, this.DataGridView.PointToClient(Control.MousePosition));
-
-            if (starNumber != -1)
-                cellImage = starHotImages[starNumber];
-
+                if (starNumber != -1)
+                    cellImage = starHotImages[starNumber];
+            }
             //supress painting of selection 
             base.Paint(graphics, clipBounds, cellBounds, rowIndex, elementState, value, cellImage, errorText, cellStyle, advancedBorderStyle, (paintParts & ~DataGridViewPaintParts.SelectionBackground));
         }
@@ -101,10 +104,13 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         protected override void OnContentClick(DataGridViewCellEventArgs e)
         {
             base.OnContentClick(e);
-            int starNumber = GetStarFromMouse(this.DataGridView.GetCellDisplayRectangle(this.DataGridView.CurrentCellAddress.X, this.DataGridView.CurrentCellAddress.Y, false), this.DataGridView.PointToClient(Control.MousePosition));
+            if (!this.ReadOnly)
+            {
+                int starNumber = GetStarFromMouse(this.DataGridView.GetCellDisplayRectangle(this.DataGridView.CurrentCellAddress.X, this.DataGridView.CurrentCellAddress.Y, false), this.DataGridView.PointToClient(Control.MousePosition));
 
-            if (starNumber != -1)
-                this.Value = starNumber;
+                if (starNumber != -1)
+                    this.Value = starNumber;
+            }
         }
 
         #region Invalidate cells when mouse moves or leaves the cell
@@ -146,8 +152,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
                     return -1;
                 else
                 {
-                    int oo = (int)Math.Round((((float)(mouseXRelativeToCell - imageXArea + 5) / (float)IMAGEWIDTH) * 5f), MidpointRounding.AwayFromZero);
-                    if (oo > 5 || oo < 0) System.Diagnostics.Debugger.Break();
+                    int oo = (int)Math.Round((((float)(mouseXRelativeToCell - imageXArea + 2) / (float)IMAGEWIDTH) * 10f), MidpointRounding.AwayFromZero);
+                    if (oo > 10 || oo < 0) System.Diagnostics.Debugger.Break();
                     return oo;
                 }
             }
@@ -160,14 +166,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
 
         static RatingCell()
         {
-            starImages = new Image[6];
-            starHotImages = new Image[6];
+            starImages = new Image[11];
+            starHotImages = new Image[11];
             // load normal stars 
-            for (int i = 0; i <= 5; i++)
+            for (int i = 0; i <= 10; i++)
                 starImages[i] = (Image)Properties.Resources.ResourceManager.GetObject("star" + i.ToString());
 
             // load hot normal stars 
-            for (int i = 0; i <= 5; i++)
+            for (int i = 0; i <= 10; i++)
                 starHotImages[i] = (Image)Properties.Resources.ResourceManager.GetObject("starhot" + i.ToString());
         }
         #endregion

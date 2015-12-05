@@ -108,9 +108,20 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                         long n2 = (long)o2;
                         compareResult = (n1 > n2 ? 1 : n1 < n2 ? -1 : 0) * orderModifier;
                     }
+                    else if (o1 is TimeSpan)
+                    {
+                        TimeSpan t1 = (TimeSpan)o1;
+                        TimeSpan t2 = (TimeSpan)o2;
+                        compareResult = (t1 > t2 ? 1 : t1 < t2 ? -1 : 0) * orderModifier;
+                    }
                     else if (o1 is TextAndImage)
                     {
-                        compareResult = string.Compare(((TextAndImage)o1).ToString(), ((TextAndImage)o2).ToString()) * orderModifier;
+                        compareResult = ((TextAndImage)o1).CompareTo((TextAndImage)o2) * orderModifier;
+                    }
+                    //TODO implement a value for Token Column ??
+                    else if (o1 is Token)
+                    {
+                        compareResult = ((Token)o1).CompareTo((Token)o2) * orderModifier;
                     }
                 }
                 return compareResult;

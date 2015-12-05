@@ -222,7 +222,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
      /// <summary>
      /// Class for TextAndImage object
     /// </summary>
-    public class TextAndImage
+    public class TextAndImage : IComparable<TextAndImage>
     {
         /// <summary>
         /// The text
@@ -276,6 +276,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         public override int GetHashCode()
         {
             return base.GetHashCode();
+        }
+
+        public int CompareTo(TextAndImage other)
+        {
+            return this.Text.CompareTo(other.Text);
         }
     }
 
