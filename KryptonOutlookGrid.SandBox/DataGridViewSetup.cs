@@ -1,15 +1,12 @@
-﻿using Microsoft.VisualBasic;
+﻿using ComponentFactory.Krypton.Toolkit;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using ComponentFactory.Krypton.Toolkit;
 using System.IO;
-using System.Xml;
 using System.Windows.Forms;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns;
+using System.Xml;
 
 namespace KryptonOutlookGrid.SandBox
 {
@@ -43,78 +40,79 @@ namespace KryptonOutlookGrid.SandBox
                     column = new KryptonDataGridViewTextBoxColumn();
                     column.HeaderText = "Customer ID";
                     column.Name = "ColumnCustomerID";
-                    column.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+                    column.SortMode = DataGridViewColumnSortMode.Programmatic;
                     column.Width = 79;
                     return column;
                 case SandBoxGridColumn.ColumnCustomerName:
                     column = new KryptonDataGridViewTreeTextColumn();// KryptonDataGridViewTextBoxColumn();
                     column.HeaderText = "Name";
                     column.Name = "ColumnCustomerName";
-                    column.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+                    column.SortMode = DataGridViewColumnSortMode.Programmatic;
                     column.Width = 79;
                     return column;
                 case SandBoxGridColumn.ColumnAddress:
                     column = new KryptonDataGridViewTextBoxColumn();
                     column.HeaderText = "Address";
                     column.Name = "ColumnAddress";
-                    column.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+                    column.SortMode = DataGridViewColumnSortMode.Programmatic;
                     column.Width = 79;
                     return column;
                 case SandBoxGridColumn.ColumnCity:
                     column = new KryptonDataGridViewTextBoxColumn();
                     column.HeaderText = "City";
                     column.Name = "ColumnCity";
-                    column.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+                    column.SortMode = DataGridViewColumnSortMode.Programmatic;
                     column.Width = 79;
                     return column;
                 case SandBoxGridColumn.ColumnCountry:
                     column = new KryptonDataGridViewTextAndImageColumn();
                     column.HeaderText = "Country";
                     column.Name = "ColumnCountry";
-                    column.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-                    column.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+                    column.Resizable = DataGridViewTriState.True;
+                    column.SortMode = DataGridViewColumnSortMode.Programmatic;
                     column.Width = 78;
                     return column;
                 case SandBoxGridColumn.ColumnOrderDate:
                     column = new KryptonDataGridViewDateTimePickerColumn();
                     ((KryptonDataGridViewDateTimePickerColumn)column).CalendarTodayDate = DateTime.Now;
                     ((KryptonDataGridViewDateTimePickerColumn)column).Checked = false;
-                    ((KryptonDataGridViewDateTimePickerColumn)column).Format = System.Windows.Forms.DateTimePickerFormat.Short;
+                    ((KryptonDataGridViewDateTimePickerColumn)column).Format = DateTimePickerFormat.Short;
                     column.HeaderText = "Order Date";
                     column.Name = "ColumnOrderDate";
-                    column.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+                    column.SortMode = DataGridViewColumnSortMode.Programmatic;
                     column.Width = 79;
                     return column;
                 case SandBoxGridColumn.ColumnProduct:
                     column = new KryptonDataGridViewTextBoxColumn();
                     column.HeaderText = "Product";
                     column.Name = "ColumnProduct";
-                    column.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+                    column.SortMode = DataGridViewColumnSortMode.Programmatic;
                     column.Width = 79;
                     return column;
                 case SandBoxGridColumn.ColumnPrice:
-                    column = new KryptonDataGridViewTextBoxColumn();
-                    System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+                    column = new KryptonDataGridViewFormattingColumn();
+                    column.Name = colType.ToString();
+                    column.ValueType = typeof(decimal); //really  important for formatting
+                    DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
                     dataGridViewCellStyle1.Format = "C2";
-                    dataGridViewCellStyle1.NullValue = null;
+                    dataGridViewCellStyle1.NullValue = "";
                     column.DefaultCellStyle = dataGridViewCellStyle1;
                     column.HeaderText = "Price";
-                    column.Name = "ColumnPrice";
-                    column.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-                    column.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+                    column.Resizable = DataGridViewTriState.True;
+                    column.SortMode = DataGridViewColumnSortMode.Programmatic;
                     column.Width = 79;
                     return column;
                 case SandBoxGridColumn.SatisfactionColumn:
                     column = new KryptonDataGridViewPercentageColumn();
-                    System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+                    DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
                     dataGridViewCellStyle2.Format = "0%";
                     column.DefaultCellStyle = dataGridViewCellStyle2;
                     column.HeaderText = "Satisfaction";
                     column.Name = "SatisfactionColumn";
-                    column.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+                    column.SortMode = DataGridViewColumnSortMode.Programmatic;
                     return column;
                 default:
-                    throw new Exception("Unknown Column Type !! TODO imprive that !");
+                    throw new Exception("Unknown Column Type !! TODO improve that !");
             }
         }
 

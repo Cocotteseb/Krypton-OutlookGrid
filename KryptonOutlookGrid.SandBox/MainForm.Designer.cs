@@ -36,9 +36,9 @@
             this.buttonSpecHeaderGroup1 = new ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup();
             this.buttonSpecHeaderGroup2 = new ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup();
             this.buttonSpecHeaderGroup3 = new ComponentFactory.Krypton.Toolkit.ButtonSpecHeaderGroup();
+            this.kryptonManager1 = new ComponentFactory.Krypton.Toolkit.KryptonManager(this.components);
             this.OutlookGrid1 = new JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonOutlookGrid();
             this.KryptonOutlookGridGroupBox1 = new JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.KryptonOutlookGridGroupBox();
-            this.kryptonManager1 = new ComponentFactory.Krypton.Toolkit.KryptonManager(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.panel1)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.kryptonHeaderGroup1)).BeginInit();
@@ -102,6 +102,7 @@
             this.OutlookGrid1.AllowUserToAddRows = false;
             this.OutlookGrid1.AllowUserToResizeRows = false;
             this.OutlookGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.OutlookGrid1.FillMode = JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.FillMode.GroupsOnly;
             this.OutlookGrid1.GridStyles.Style = ComponentFactory.Krypton.Toolkit.DataGridViewStyle.Mixed;
             this.OutlookGrid1.GridStyles.StyleBackground = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.ControlClient;
             this.OutlookGrid1.GroupBox = this.KryptonOutlookGridGroupBox1;
@@ -112,7 +113,6 @@
             this.OutlookGrid1.PreviousSelectedGroupRow = -1;
             this.OutlookGrid1.RowHeadersVisible = false;
             this.OutlookGrid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.OutlookGrid1.ShowLines = false;
             this.OutlookGrid1.Size = new System.Drawing.Size(620, 257);
             this.OutlookGrid1.TabIndex = 0;
             this.OutlookGrid1.GroupImageClick += new System.EventHandler<JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.OutlookGridGroupImageEventArgs>(this.OutlookGrid1_GroupImageClick);

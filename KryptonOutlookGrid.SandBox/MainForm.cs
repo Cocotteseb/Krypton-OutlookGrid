@@ -94,6 +94,7 @@ namespace KryptonOutlookGrid.SandBox
             DataGridViewSetup setup = new DataGridViewSetup();
             setup.SetupDataGridView(this.OutlookGrid1, true);
 
+            OutlookGrid1.ShowLines = true;
             LoadData();
         }
 
