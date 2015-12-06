@@ -1,20 +1,39 @@
-﻿using System;
+﻿//--------------------------------------------------------------------------------
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
+//
+// This program is provided to you under the terms of the Microsoft Public
+// License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
+//
+// Visit http://www.jdhsoftware.com and follow @jdhsoftware on Twitter
+//
+//--------------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using ComponentFactory.Krypton.Toolkit;
 
-namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
+namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns
 {
+    /// <summary>
+    /// Token object
+    /// </summary>
     public class Token : IComparable<Token>
     {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public Token()
         {
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="text">Text of the token</param>
+        /// <param name="bg">Background color</param>
+        /// <param name="fg">Foreground text color</param>
         public Token(string text, Color bg, Color fg)
         {
             this.Text = text;
@@ -22,10 +41,24 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             this.ForeColor = fg;
         }
 
+        /// <summary>
+        /// Text of the token
+        /// </summary>
         public string Text { get; set; }
+        /// <summary>
+        /// Background color
+        /// </summary>
         public Color BackColor { get; set; }
+        /// <summary>
+        /// Foreground text color
+        /// </summary>
         public Color ForeColor { get; set; }
 
+        /// <summary>
+        /// Compare a Token to another
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public int CompareTo(Token other)
         {
             return this.Text.CompareTo(other.Text);
@@ -61,7 +94,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
     }
 
     /// <summary>
-    /// Class for a rating celle
+    /// Class for a Token cell
     /// </summary>
     public class TokenCell : KryptonDataGridViewTextBoxCell
     {
@@ -77,6 +110,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             this.ValueType = typeof(TokenCell);
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
         public override string ToString()
         {
             Token tok = (Token)this.Value;
@@ -128,6 +167,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             }
         }
 
+        /// <summary>
+        /// Overrides GetPreferredSize
+        /// </summary>
+        /// <param name="graphics"></param>
+        /// <param name="cellStyle"></param>
+        /// <param name="rowIndex"></param>
+        /// <param name="constraintSize"></param>
+        /// <returns></returns>
         protected override Size GetPreferredSize(Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
         {
             float factorX = graphics.DpiX > 96 ? (1f * graphics.DpiX / 96) : 1f;
@@ -232,6 +279,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             }
         }
 
+        /// <summary>
+        /// Overrides GetPreferredSize
+        /// </summary>
+        /// <param name="graphics"></param>
+        /// <param name="cellStyle"></param>
+        /// <param name="rowIndex"></param>
+        /// <param name="constraintSize"></param>
+        /// <returns></returns>
         protected override Size GetPreferredSize(Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
         {
             float factorX = graphics.DpiX > 96 ? (1f * graphics.DpiX / 96) : 1f;

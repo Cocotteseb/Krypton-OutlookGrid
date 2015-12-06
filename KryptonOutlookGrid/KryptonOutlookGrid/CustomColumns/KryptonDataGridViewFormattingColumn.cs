@@ -1,20 +1,32 @@
-﻿using ComponentFactory.Krypton.Toolkit;
+﻿//--------------------------------------------------------------------------------
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
+//
+// This program is provided to you under the terms of the Microsoft Public
+// License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
+//
+// Visit http://www.jdhsoftware.com and follow @jdhsoftware on Twitter
+//
+//--------------------------------------------------------------------------------
+
+using ComponentFactory.Krypton.Toolkit;
 using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Formatting;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns
 {
+    /// <summary>
+    /// Class for a KryptonDataGridViewFormattingColumn : KryptonDataGridViewTextBoxColumn with conditionnal formatting abilities
+    /// </summary>
+    /// <seealso cref="ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn" />
     public class KryptonDataGridViewFormattingColumn : KryptonDataGridViewTextBoxColumn
     {
-        private bool _contrastTextColor; 
+        private bool _contrastTextColor;
 
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KryptonDataGridViewFormattingColumn"/> class.
+        /// </summary>
         public KryptonDataGridViewFormattingColumn()
             : base()
         {
@@ -24,6 +36,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns
             ContrastTextColor = false;
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [contrast text color].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [contrast text color]; otherwise, <c>false</c>.
+        /// </value>
         public bool ContrastTextColor
         {
             get
@@ -39,15 +57,33 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns
     }
 
     /// <summary>
-    /// Class for a rating celle
+    /// Formatting cell
     /// </summary>
+    /// <seealso cref="ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxCell" />
     public class FormattingCell : KryptonDataGridViewTextBoxCell
     {
 
+        /// <summary>
+        /// Gets or sets the type of the format.
+        /// </summary>
+        /// <value>
+        /// The type of the format.
+        /// </value>
         public EnumConditionalFormatType FormatType { get; set; }
+        /// <summary>
+        /// Gets or sets the format parameters.
+        /// </summary>
+        /// <value>
+        /// The format parameters.
+        /// </value>
         public IFormatParams FormatParams { get; set; }
 
 
+        /// <summary>
+        /// Contrasts the color.
+        /// </summary>
+        /// <param name="color">The color.</param>
+        /// <returns></returns>
         private Color ContrastColor(Color color)
         {
             int d = 0;
@@ -69,20 +105,21 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns
             //  dark colors - white font
             return Color.FromArgb(d, d, d);
         }
+
         /// <summary>
-        /// Overrides Paint
+        /// Paints the specified graphics.
         /// </summary>
-        /// <param name="graphics"></param>
-        /// <param name="clipBounds"></param>
-        /// <param name="cellBounds"></param>
-        /// <param name="rowIndex"></param>
-        /// <param name="cellState"></param>
-        /// <param name="value"></param>
-        /// <param name="formattedValue"></param>
-        /// <param name="errorText"></param>
-        /// <param name="cellStyle"></param>
-        /// <param name="advancedBorderStyle"></param>
-        /// <param name="paintParts"></param>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="clipBounds">The clip bounds.</param>
+        /// <param name="cellBounds">The cell bounds.</param>
+        /// <param name="rowIndex">Index of the row.</param>
+        /// <param name="cellState">State of the cell.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="formattedValue">The formatted value.</param>
+        /// <param name="errorText">The error text.</param>
+        /// <param name="cellStyle">The cell style.</param>
+        /// <param name="advancedBorderStyle">The advanced border style.</param>
+        /// <param name="paintParts">The paint parts.</param>
         protected override void Paint(System.Drawing.Graphics graphics, System.Drawing.Rectangle clipBounds, System.Drawing.Rectangle cellBounds, int rowIndex, System.Windows.Forms.DataGridViewElementStates cellState, object value, object formattedValue, string errorText, System.Windows.Forms.DataGridViewCellStyle cellStyle, System.Windows.Forms.DataGridViewAdvancedBorderStyle advancedBorderStyle,
         System.Windows.Forms.DataGridViewPaintParts paintParts)
         {

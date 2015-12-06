@@ -1,10 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//--------------------------------------------------------------------------------
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
+//
+// This program is provided to you under the terms of the Microsoft Public
+// License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
+//
+// Visit http://www.jdhsoftware.com and follow @jdhsoftware on Twitter
+//
+//--------------------------------------------------------------------------------
+
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using System.Resources;
-using System.Text;
 using System.Threading;
 
 namespace JDHSoftware.Krypton.Toolkit.Utils.Lang

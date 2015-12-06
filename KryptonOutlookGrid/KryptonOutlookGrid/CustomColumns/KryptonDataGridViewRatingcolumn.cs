@@ -1,15 +1,22 @@
-﻿//http://blogs.msdn.com/b/markrideout/archive/2006/01/18/media-player-like-rating-datagridview-column.aspx
+﻿//--------------------------------------------------------------------------------
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
+//
+// This program is provided to you under the terms of the Microsoft Public
+// License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
+//
+// Visit http://www.jdhsoftware.com and follow @jdhsoftware on Twitter
+//
+//--------------------------------------------------------------------------------
+
+//http://blogs.msdn.com/b/markrideout/archive/2006/01/18/media-player-like-rating-datagridview-column.aspx
 //MS-PL License
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
-namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
+namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns
 {
     /// <summary>
     /// Class for a rating column

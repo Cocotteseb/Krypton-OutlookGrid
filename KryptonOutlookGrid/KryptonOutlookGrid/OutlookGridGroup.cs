@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------
-// Copyright (C) 2013 JDH Software - <support@jdhsoftware.com>
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
 //
 // This program is provided to you under the terms of the Microsoft Public
 // License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
@@ -20,15 +20,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
 using JDHSoftware.Krypton.Toolkit.Utils.Lang;
 using System.Drawing;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns;
 using ComponentFactory.Krypton.Toolkit;
 using System.Globalization;
-using System.ComponentModel;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -46,10 +43,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// The Value of the group
         /// </summary>
         protected object val;
-        /// <summary>
-        /// The displayed text
-        /// </summary>
-        //protected string text;
         /// <summary>
         /// Boolean if the group is collapsed or not
         /// </summary>
@@ -116,10 +109,13 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
         #region "Constructor"
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OutlookGridDefaultGroup"/> class.
+        /// </summary>
         public OutlookGridDefaultGroup()
         {
             val = null;
-            this.column = null;
+            column = null;
             if (KryptonManager.CurrentGlobalPalette.GetRenderer() == KryptonManager.RenderOffice2013)
                 height = StaticValues._2013GroupRowHeight; // special height for office 2013
             else
@@ -412,7 +408,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
-        /// Gets or sets the boolean that sort groups by count value
+        /// Gets or sets the boolean that sort groups using summary value
         /// </summary>
         public virtual bool SortBySummaryCount
         {
@@ -420,6 +416,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             set { sortBySummaryCount = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the items comparer.
+        /// </summary>
+        /// <value>
+        /// The items comparer.
+        /// </value>
         public virtual IComparer ItemsComparer
         {
             get { return itemsComparer; }
@@ -436,18 +438,18 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <returns>OutlookgGridDefaultGroup</returns>
         public virtual object Clone()
         {
-            OutlookGridDefaultGroup gr = new OutlookGridDefaultGroup(this.parentGroup);
-            gr.column = this.column;
-            gr.val = this.val;
-            gr.collapsed = this.collapsed;
+            OutlookGridDefaultGroup gr = new OutlookGridDefaultGroup(parentGroup);
+            gr.column = column;
+            gr.val = val;
+            gr.collapsed = collapsed;
             //gr.text = this.text;
-            gr.height = this.height;
-            gr.groupImage = this.groupImage;
-            gr.formatStyle = this.formatStyle;
-            gr.xXXItemsText = this.XXXItemsText;
-            gr.oneItemText = this.OneItemText;
-            gr.allowHiddenWhenGrouped = this.allowHiddenWhenGrouped;
-            gr.sortBySummaryCount = this.sortBySummaryCount;
+            gr.height = height;
+            gr.groupImage = groupImage;
+            gr.formatStyle = formatStyle;
+            gr.xXXItemsText = XXXItemsText;
+            gr.oneItemText = OneItemText;
+            gr.allowHiddenWhenGrouped = allowHiddenWhenGrouped;
+            gr.sortBySummaryCount = sortBySummaryCount;
 
             return gr;
         }
@@ -551,6 +553,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     /// </summary>
     public class OutlookGridAlphabeticGroup : OutlookGridDefaultGroup
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OutlookGridAlphabeticGroup"/> class.
+        /// </summary>
         public OutlookGridAlphabeticGroup()
             : base()
         {
@@ -609,19 +614,19 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <returns>OutlookGridAlphabeticGroup</returns>
         public override object Clone()
         {
-            OutlookGridAlphabeticGroup gr = new OutlookGridAlphabeticGroup(this.parentGroup);
+            OutlookGridAlphabeticGroup gr = new OutlookGridAlphabeticGroup(parentGroup);
 
-            gr.column = this.column;
-            gr.val = this.val;
-            gr.collapsed = this.collapsed;
+            gr.column = column;
+            gr.val = val;
+            gr.collapsed = collapsed;
             //gr.text = this.text;
-            gr.height = this.height;
-            gr.groupImage = this.groupImage;
-            gr.formatStyle = this.formatStyle;
-            gr.xXXItemsText = this.XXXItemsText;
-            gr.oneItemText = this.OneItemText;
-            gr.allowHiddenWhenGrouped = this.allowHiddenWhenGrouped;
-            gr.sortBySummaryCount = this.sortBySummaryCount;
+            gr.height = height;
+            gr.groupImage = groupImage;
+            gr.formatStyle = formatStyle;
+            gr.xXXItemsText = XXXItemsText;
+            gr.oneItemText = OneItemText;
+            gr.allowHiddenWhenGrouped = allowHiddenWhenGrouped;
+            gr.sortBySummaryCount = sortBySummaryCount;
             return gr;
         }
 
@@ -695,6 +700,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         public DateInterval Interval { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OutlookGridDateTimeGroup"/> class.
+        /// </summary>
         public OutlookGridDateTimeGroup()
             : base()
         {
@@ -818,19 +826,19 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <returns>OutlookGridDateTimeGroup</returns>
         public override object Clone()
         {
-            OutlookGridDateTimeGroup gr = new OutlookGridDateTimeGroup(this.parentGroup);
-            gr.column = this.column;
-            gr.val = this.val;
-            gr.collapsed = this.collapsed;
+            OutlookGridDateTimeGroup gr = new OutlookGridDateTimeGroup(parentGroup);
+            gr.column = column;
+            gr.val = val;
+            gr.collapsed = collapsed;
             //gr.text = this.text;
-            gr.height = this.height;
-            gr.groupImage = this.groupImage;
-            gr.formatStyle = this.formatStyle;
-            gr.xXXItemsText = this.XXXItemsText;
-            gr.oneItemText = this.OneItemText;
-            gr.allowHiddenWhenGrouped = this.allowHiddenWhenGrouped;
-            gr.sortBySummaryCount = this.sortBySummaryCount;
-            gr.Interval = this.Interval;
+            gr.height = height;
+            gr.groupImage = groupImage;
+            gr.formatStyle = formatStyle;
+            gr.xXXItemsText = XXXItemsText;
+            gr.oneItemText = OneItemText;
+            gr.allowHiddenWhenGrouped = allowHiddenWhenGrouped;
+            gr.sortBySummaryCount = sortBySummaryCount;
+            gr.Interval = Interval;
 
             return gr;
         }

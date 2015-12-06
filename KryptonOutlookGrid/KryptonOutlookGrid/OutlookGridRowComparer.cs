@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------
-// Copyright (C) 2013 JDH Software - <support@jdhsoftware.com>
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
 //
 // This program is provided to you under the terms of the Microsoft Public
 // License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
@@ -18,17 +18,9 @@
 //
 //--------------------------------------------------------------------------------
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-using System.Drawing;
-using System.ComponentModel;
-using System.Drawing.Drawing2D;
-using ComponentFactory.Krypton.Toolkit;
-using System.Diagnostics;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
-using System.Globalization;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {

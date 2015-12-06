@@ -163,7 +163,7 @@
     <value>Hier</value>
   </data>
   <data name="DRAGCOLUMNTOGROUP" xml:space="preserve">
-    <value>Faites glisser un entête de colonne pour grouper par cette colonne </value>
+    <value>Faites glisser ici un entête de colonne pour grouper par cette colonne </value>
   </data>
   <data name="BESTFITALL" xml:space="preserve">
     <value>Meilleur ajustement (toutes colonnes)</value>
@@ -268,5 +268,41 @@
   </data>
   <data name="UNKNOWN" xml:space="preserve">
     <value>Inconnu</value>
+  </data>
+  <data name="CONDITIONALFORMATTING" xml:space="preserve">
+    <value>Mise en forme conditionnelle</value>
+  </data>
+  <data name="Bar" xml:space="preserve">
+    <value>Barres de données</value>
+    <comment>Enum</comment>
+  </data>
+  <data name="GradientFill" xml:space="preserve">
+    <value>Remplissage dégradé</value>
+  </data>
+  <data name="SolidFill" xml:space="preserve">
+    <value>Remplissage uni</value>
+  </data>
+  <data name="ThreeColorsRange" xml:space="preserve">
+    <value>Échelle de trois couleurs</value>
+    <comment>Enum</comment>
+  </data>
+  <data name="TwoColorsRange" xml:space="preserve">
+    <value>Échelle de deux couleurs</value>
+    <comment>Enum</comment>
+  </data>
+  <data name="ClearRules" xml:space="preserve">
+    <value>Effacer règles...</value>
+  </data>
+  <data name="CustomThreeDots" xml:space="preserve">
+    <value>Personnalisé...</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Autre</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Finish" xml:space="preserve">
+    <value>Terminer</value>
   </data>
 </root>

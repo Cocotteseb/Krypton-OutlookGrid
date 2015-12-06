@@ -1,24 +1,40 @@
-﻿using ComponentFactory.Krypton.Toolkit;
+﻿//--------------------------------------------------------------------------------
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
+//
+// This program is provided to you under the terms of the Microsoft Public
+// License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
+//
+// Visit http://www.jdhsoftware.com and follow @jdhsoftware on Twitter
+//
+//--------------------------------------------------------------------------------
+
+using ComponentFactory.Krypton.Toolkit;
 using JDHSoftware.Krypton.Toolkit.Utils.Lang;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Formatting
 {
     public partial class CustomFormatRule : KryptonForm
     {
+        /// <summary>
+        /// The colors
+        /// </summary>
         public Color colMin, colMedium, colMax;
+        /// <summary>
+        /// The Conditional Formatting type
+        /// </summary>
         public EnumConditionalFormatType mode;
+        /// <summary>
+        /// Gradient boolean
+        /// </summary>
         public bool gradient;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomFormatRule"/> class.
+        /// </summary>
+        /// <param name="initialmode">The  Conditional Formatting type.</param>
         public CustomFormatRule(EnumConditionalFormatType initialmode)
         {
             InitializeComponent();
@@ -164,6 +180,5 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Formatting
             }
             pictureBox1.Invalidate();
         }
-
     }
 }

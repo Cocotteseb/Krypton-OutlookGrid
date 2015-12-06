@@ -1,20 +1,33 @@
-﻿using ComponentFactory.Krypton.Toolkit;
-using System;
-using System.Collections.Generic;
+﻿//--------------------------------------------------------------------------------
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
+//
+// This program is provided to you under the terms of the Microsoft Public
+// License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
+//
+// Visit http://www.jdhsoftware.com and follow @jdhsoftware on Twitter
+//
+//--------------------------------------------------------------------------------
+
+using ComponentFactory.Krypton.Toolkit;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
-namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
+namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns
 {
+    /// <summary>
+    /// Special column used to enable nodes in the grid.
+    /// </summary>
+    /// <seealso cref="ComponentFactory.Krypton.Toolkit.KryptonDataGridViewTextBoxColumn" />
     public class KryptonDataGridViewTreeTextColumn : KryptonDataGridViewTextBoxColumn
     {
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KryptonDataGridViewTreeTextColumn"/> class.
+        /// </summary>
         public KryptonDataGridViewTreeTextColumn()
             : base()
         {
-            this.CellTemplate = new KryptonDataGridViewTreeTextCell();
+            CellTemplate = new KryptonDataGridViewTreeTextCell();
         }
     }
 
@@ -34,7 +47,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         public KryptonDataGridViewTreeTextCell()
             : base()
         {
-            this.defaultPadding = this.Style.Padding;
+            defaultPadding = Style.Padding;
         }
 
         /// <summary>
@@ -47,21 +60,33 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             return c;
         }
 
+        /// <summary>
+        /// Gets the glyph margin.
+        /// </summary>
+        /// <value>
+        /// The glyph margin.
+        /// </value>
         protected virtual int GlyphMargin
         {
             get
             {
-                return ((this.Level - 1) * INDENT_WIDTH) + INDENT_MARGIN;
+                return ((Level - 1) * INDENT_WIDTH) + INDENT_MARGIN;
             }
         
         
         }
 
+        /// <summary>
+        /// Gets the level.
+        /// </summary>
+        /// <value>
+        /// The level.
+        /// </value>
         public int Level
         {
             get
             {
-                OutlookGridRow row =(OutlookGridRow)this.OwningRow;
+                OutlookGridRow row =(OutlookGridRow)OwningRow;
                 if (row != null)
                 {
                     return row.NodeLevel+1; //during calculation 0 level must be 1 for multiplication
@@ -71,35 +96,39 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             }
         }
 
+        /// <summary>
+        /// Updates the style.
+        /// </summary>
+        /// <remarks>padding especially.</remarks>
         public void UpdateStyle()
         {
             OutlookGridRow node = OwningNode;
             //Console.WriteLine(DateTime.Now.ToString() + " " + node.ToString());
             bool hasChildNodes = node.HasChildren;
-            int level = this.Level;
+            int level = Level;
             int plus = 0;
             //if (hasChildNodes)
             //    plus = 15;
-            this.Style.Padding = new Padding(defaultPadding.Left + (level * INDENT_WIDTH) + INDENT_MARGIN + plus,
+            Style.Padding = new Padding(defaultPadding.Left + (level * INDENT_WIDTH) + INDENT_MARGIN + plus,
                                                            defaultPadding.Top, defaultPadding.Right, defaultPadding.Bottom);
            
             
         }
 
         /// <summary>
-        /// Overrides Paint
+        /// Paints the specified graphics.
         /// </summary>
-        /// <param name="graphics"></param>
-        /// <param name="clipBounds"></param>
-        /// <param name="cellBounds"></param>
-        /// <param name="rowIndex"></param>
-        /// <param name="cellState"></param>
-        /// <param name="value"></param>
-        /// <param name="formattedValue"></param>
-        /// <param name="errorText"></param>
-        /// <param name="cellStyle"></param>
-        /// <param name="advancedBorderStyle"></param>
-        /// <param name="paintParts"></param>
+        /// <param name="graphics">The graphics.</param>
+        /// <param name="clipBounds">The clip bounds.</param>
+        /// <param name="cellBounds">The cell bounds.</param>
+        /// <param name="rowIndex">Index of the row.</param>
+        /// <param name="cellState">State of the cell.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="formattedValue">The formatted value.</param>
+        /// <param name="errorText">The error text.</param>
+        /// <param name="cellStyle">The cell style.</param>
+        /// <param name="advancedBorderStyle">The advanced border style.</param>
+        /// <param name="paintParts">The paint parts.</param>
         protected override void Paint(Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
         {
             OutlookGridRow node = OwningNode;
@@ -137,7 +166,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, paintParts);
 
             // TODO: Indent width needs to take image size into account
-            Rectangle glyphRect = new Rectangle(cellBounds.X + this.GlyphMargin, cellBounds.Y, INDENT_WIDTH, cellBounds.Height - 1);
+            Rectangle glyphRect = new Rectangle(cellBounds.X + GlyphMargin, cellBounds.Y, INDENT_WIDTH, cellBounds.Height - 1);
 
 
             ////TODO: This painting code needs to be rehashed to be cleaner
@@ -262,18 +291,26 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             //graphics.DrawRectangle(new Pen(new SolidBrush(Color.Red)), glyphRect);
         }
 
+        /// <summary>
+        /// Raises the <see cref="E:MouseUp" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="DataGridViewCellMouseEventArgs"/> instance containing the event data.</param>
         protected override void OnMouseUp(DataGridViewCellMouseEventArgs e)
         {
             base.OnMouseUp(e);
 
-            OutlookGridRow node = this.OwningNode;
+            OutlookGridRow node = OwningNode;
             if (node != null)
                 ((KryptonOutlookGrid)node.DataGridView)._inExpandCollapseMouseCapture = false;
         }
+        /// <summary>
+        /// Raises the <see cref="E:MouseDown" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="DataGridViewCellMouseEventArgs"/> instance containing the event data.</param>
         protected override void OnMouseDown(DataGridViewCellMouseEventArgs e)
         {
-            Rectangle dis = this.DataGridView.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false);
-            Rectangle glyphRect = new Rectangle(dis.X + this.GlyphMargin, dis.Y, INDENT_WIDTH, dis.Height - 1);
+            Rectangle dis = DataGridView.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, false);
+            Rectangle glyphRect = new Rectangle(dis.X + GlyphMargin, dis.Y, INDENT_WIDTH, dis.Height - 1);
 
             //if (e.X > this.InheritedStyle.Padding.Left)
             if ((e.X + dis.X <= glyphRect.X + 11) &&
@@ -282,7 +319,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
              
                 // Expand the node
                 //TODO: Calculate more precise location
-                OutlookGridRow node = this.OwningNode;
+                OutlookGridRow node = OwningNode;
                 if (node != null)
                 {
                     ((KryptonOutlookGrid)node.DataGridView)._inExpandCollapseMouseCapture = true;
@@ -299,8 +336,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             }
         }
 
-
-
+        /// <summary>
+        /// Gets the owning node.
+        /// </summary>
+        /// <value>
+        /// The owning node.
+        /// </value>
         public OutlookGridRow OwningNode
         {
             get { return base.OwningRow as OutlookGridRow; }

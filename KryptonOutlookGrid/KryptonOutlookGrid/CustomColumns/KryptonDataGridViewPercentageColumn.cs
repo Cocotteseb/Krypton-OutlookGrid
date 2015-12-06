@@ -1,5 +1,5 @@
 ﻿//--------------------------------------------------------------------------------
-// Copyright (C) 2013 JDH Software - <support@jdhsoftware.com>
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
 //
 // This program is provided to you under the terms of the Microsoft Public
 // License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
@@ -9,22 +9,20 @@
 //--------------------------------------------------------------------------------
 
 using ComponentFactory.Krypton.Toolkit;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
+namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns
 {
     /// <summary>
     /// Hosts a collection of KryptonDataGridViewPercentageColumn cells.
     /// </summary>
+    /// <seealso cref="System.Windows.Forms.DataGridViewColumn" />
     public class KryptonDataGridViewPercentageColumn : DataGridViewColumn// KryptonDataGridViewTextBoxColumn
     {
         #region Identity

@@ -1,5 +1,5 @@
 ﻿//--------------------------------------------------------------------------------
-// Copyright (C) 2013 JDH Software - <support@jdhsoftware.com>
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
 //
 // This program is provided to you under the terms of the Microsoft Public
 // License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
@@ -7,10 +7,7 @@
 // Visit http://www.jdhsoftware.com and follow @jdhsoftware on Twitter
 //
 //--------------------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -26,12 +23,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
         #region "Constructor"
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the <see cref="OutlookGridRowNodeCollection"/> class.
         /// </summary>
-        /// <param name="parentGroup">Parent group , if any</param>
+        /// <param name="parentNode">The parent node.</param>
         public OutlookGridRowNodeCollection(OutlookGridRow parentNode)
         {
-            this._parentNode = parentNode;
+            _parentNode = parentNode;
             subNodes = new List<OutlookGridRow>();
         }
         #endregion
@@ -39,23 +36,29 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         #region Properties
 
         /// <summary>
-        /// Gets or Sets the parent group
+        /// Gets the parent node.
         /// </summary>
+        /// <value>
+        /// The parent node.
+        /// </value>
         public OutlookGridRow ParentNode
-		{
-			get
-			{
-				return this._parentNode;
-			}
-			internal set
-			{
-				this._parentNode = value;
-			}
-		}
+        {
+            get
+            {
+                return _parentNode;
+            }
+            internal set
+            {
+                _parentNode = value;
+            }
+        }
 
         /// <summary>
-        /// Gets the list of IOutlookGridGroup.
+        /// Gets the nodes.
         /// </summary>
+        /// <value>
+        /// The nodes.
+        /// </value>
         public List<OutlookGridRow> Nodes
         {
             get
@@ -64,9 +67,13 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
+
         /// <summary>
         /// Gets the number of groups
         /// </summary>
+        /// <value>
+        /// The count.
+        /// </value>
         public int Count
         {
             get
@@ -79,10 +86,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
         #region "Public methods"
 
+
         /// <summary>
-        /// Gets the Group object
+        /// Gets the <see cref="OutlookGridRow"/> at the specified index.
         /// </summary>
-        /// <param name="index">Index in the list of groups.</param>
+        /// <value>
+        /// The <see cref="OutlookGridRow"/>.
+        /// </value>
+        /// <param name="index">The index.</param>
         /// <returns>The IOutlookGridGroup.</returns>
         public OutlookGridRow this[int index]
         {
@@ -93,18 +104,18 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
-        /// Adds a new group
+        /// Adds the specified row.
         /// </summary>
-        /// <param name="row">The IOutlookGridGroup.</param>
+        /// <param name="row">The row.</param>
         public void Add(OutlookGridRow row)
-		{
+        {
             row.ParentNode = _parentNode;
-            row.NodeLevel = this.ParentNode.NodeLevel + 1; //Not ++
+            row.NodeLevel = ParentNode.NodeLevel + 1; //Not ++
             subNodes.Add(row);
-		}
+        }
 
         /// <summary>
-        /// Sorts the groups
+        /// Sorts this instance.
         /// </summary>
         public void Sort()
         {
@@ -112,32 +123,31 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
-        /// Sorts the groups
+        /// Sorts the specified comparer.
         /// </summary>
+        /// <param name="comparer">The comparer.</param>
         internal void Sort(OutlookGridRowComparer comparer)
         {
             subNodes.Sort(comparer);
         }
 
         /// <summary>
-        /// Find a group by its value
+        /// Gets the Index of a row
         /// </summary>
-        /// <param name="value">The value of the group</param>
-        /// <returns>The IOutlookGridGroup.</returns>
-        //public OutlookGridRow FindRow(object value)
-        //{
-        //    return subNodes.Find(c => c.Value.Equals(value));
-        //}
-
+        /// <param name="row">The OutlookGrid row.</param>
+        /// <returns></returns>
         public int IndexOf(OutlookGridRow row)
         {
-            return this.subNodes.IndexOf(row);
+            return subNodes.IndexOf(row);
         }
 
         #endregion
 
         #region "Internals"
 
+        /// <summary>
+        /// Clears all subnodes.
+        /// </summary>
         internal void Clear()
         {
             _parentNode = null;

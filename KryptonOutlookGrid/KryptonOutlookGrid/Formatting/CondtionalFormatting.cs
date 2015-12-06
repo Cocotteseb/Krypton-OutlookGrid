@@ -1,29 +1,68 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿//--------------------------------------------------------------------------------
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
+//
+// This program is provided to you under the terms of the Microsoft Public
+// License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
+//
+// Visit http://www.jdhsoftware.com and follow @jdhsoftware on Twitter
+//
+//--------------------------------------------------------------------------------
+
 using System.Xml;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Formatting
 {
+    /// <summary>
+    /// Conditional Formatting class
+    /// </summary>
     public class ConditionalFormatting
     {
+        /// <summary>
+        /// Gets or sets the name of the column.
+        /// </summary>
+        /// <value>
+        /// The name of the column.
+        /// </value>
         public string ColumnName { get; set; }
+        /// <summary>
+        /// Gets or sets the type of the Conditional Formatting.
+        /// </summary>
+        /// <value>
+        /// The type of the Conditional Formatting.
+        /// </value>
         public EnumConditionalFormatType FormatType { get; set; }
+        /// <summary>
+        /// Gets or sets the Conditional Formatting parameters.
+        /// </summary>
+        /// <value>
+        /// The Conditional Formatting parameters.
+        /// </value>
         public IFormatParams FormatParams {get; set; }
+        /// <summary>
+        /// Gets or sets the minimum value.
+        /// </summary>
+        /// <value>
+        /// The minimum value.
+        /// </value>
         public double minValue { get; set; }
+        /// <summary>
+        /// Gets or sets the maximum value.
+        /// </summary>
+        /// <value>
+        /// The maximum value.
+        /// </value>
         public double maxValue { get; set; }
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the <see cref="ConditionalFormatting"/> class.
         /// </summary>
         public ConditionalFormatting() { }
 
         /// <summary>
-        /// Constructor. (Only use for Context menu !)
+        /// Initializes a new instance of the <see cref="ConditionalFormatting"/> class. (Only use for context menu !)
         /// </summary>
-        /// <param name="formatType">The conditional formatting type.</param>
-        /// <param name="formatParams">The conditional formatting parameters.</param>
+        /// <param name="formatType">Type of the Conditional Formatting.</param>
+        /// <param name="formatParams">The Conditional Formatting parameters.</param>
         public ConditionalFormatting(EnumConditionalFormatType formatType, IFormatParams formatParams)
         {
             FormatType = formatType;
@@ -31,11 +70,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Formatting
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ConditionalFormatting"/> class.
         /// </summary>
-        /// <param name="columnName">Name of the column to apply the formatting.</param>
-        /// <param name="formatType">The conditional formatting type.</param>
-        /// <param name="formatParams">The conditional formatting parameters.</param>
+        /// <param name="columnName">Name of the column.</param>
+        /// <param name="formatType">Type of the Conditional Formatting.</param>
+        /// <param name="formatParams">The Conditional Formatting parameters.</param>
         public ConditionalFormatting(string columnName, EnumConditionalFormatType formatType, IFormatParams formatParams)
         {
             ColumnName = columnName;
@@ -48,15 +87,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Formatting
             writer.WriteStartElement("Condition");
             writer.WriteElementString("ColumnName", ColumnName);
             writer.WriteElementString("FormatType", FormatType.ToString());
-            //tofo
             writer.WriteStartElement("FormatParams");
             FormatParams.Persist(writer);
             writer.WriteEndElement(); //FormatParams
             //No need to persist min/max Value.
             writer.WriteEndElement(); //Condition
         }
-
-
-
     }
 }

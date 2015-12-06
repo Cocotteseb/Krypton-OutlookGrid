@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Drawing;
 
+/// <summary>
+/// Helper for color manipulations
+/// </summary>
 public static class ColorHelper
 {
     #region Structures for HSL and HSV colors
 
+    /// <summary>
+    /// HSV Structure
+    /// </summary>
     public struct HSVColor
     {
         private float hue;
@@ -37,6 +43,12 @@ public static class ColorHelper
             set { valueOrBrightness = value; }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HSVColor"/> struct.
+        /// </summary>
+        /// <param name="hue">The hue.</param>
+        /// <param name="saturation">The saturation.</param>
+        /// <param name="value">The value.</param>
         public HSVColor(float hue, float saturation, float value)
         {
             this.hue = hue;
@@ -45,6 +57,9 @@ public static class ColorHelper
         }
     }
 
+    /// <summary>
+    /// HSL Structure
+    /// </summary>
     public struct HSLColor
     {
         private float hue;
@@ -77,6 +92,12 @@ public static class ColorHelper
             set { lightness = value; }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HSLColor"/> struct.
+        /// </summary>
+        /// <param name="hue">The hue.</param>
+        /// <param name="saturation">The saturation.</param>
+        /// <param name="lightness">The lightness.</param>
         public HSLColor(float hue, float saturation, float lightness)
         {
             this.hue = hue;
@@ -198,13 +219,13 @@ public static class ColorHelper
     }
 
 
-    ///// <summary>
-    ///// Returns a System.Color from HSL values
-    ///// </summary>
-    ///// <param name="h">Hue (0 to 360°)</param>
-    ///// <param name="s">Saturation (0 to 1)</param>
-    ///// <param name="l">Lightness (0 to 1)</param>
-    ///// <returns></returns>
+    /// <summary>
+    /// Returns a System.Color from HSL values
+    /// </summary>
+    /// <param name="h">Hue (0 to 360°)</param>
+    /// <param name="s">Saturation (0 to 1)</param>
+    /// <param name="l">Lightness (0 to 1)</param>
+    /// <returns></returns>
     public static Color FromHSL(float h, float s, float l)
     {
         // Hue checking

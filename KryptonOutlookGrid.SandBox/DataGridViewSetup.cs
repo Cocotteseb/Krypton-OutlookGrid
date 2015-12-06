@@ -9,7 +9,7 @@ using System.IO;
 using System.Xml;
 using System.Windows.Forms;
 using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns;
 
 namespace KryptonOutlookGrid.SandBox
 {

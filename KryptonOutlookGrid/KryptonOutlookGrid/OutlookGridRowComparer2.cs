@@ -1,15 +1,5 @@
-﻿// Copyright 2006 Herre Kuijpers - <herre@xs4all.nl>
-//
-// This source file(s) may be redistributed, altered and customized
-// by any means PROVIDING the authors name and all copyright
-// notices remain intact.
-// THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED. USE IT AT YOUR OWN RISK. THE AUTHOR ACCEPTS NO
-// LIABILITY FOR ANY DATA DAMAGE/LOSS THAT THIS PRODUCT MAY CAUSE.
-//-----------------------------------------------------------------------
-
-//--------------------------------------------------------------------------------
-// Copyright (C) 2013 JDH Software - <support@jdhsoftware.com>
+﻿//--------------------------------------------------------------------------------
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
 //
 // This program is provided to you under the terms of the Microsoft Public
 // License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
@@ -20,15 +10,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-using System.Drawing;
-using System.ComponentModel;
-using System.Drawing.Drawing2D;
-using ComponentFactory.Krypton.Toolkit;
-using System.Diagnostics;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
-using System.Globalization;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
@@ -36,13 +19,24 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     {
         List<Tuple<int, SortOrder, IComparer>> sortColumnIndexAndOrder;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OutlookGridRowComparer2"/> class.
+        /// </summary>
+        /// <param name="sortList">The sort list, tuple (column index, sortorder, Icomparer)</param>
         public OutlookGridRowComparer2(List<Tuple<int, SortOrder, IComparer>> sortList)
         {
-            this.sortColumnIndexAndOrder = sortList;
+            sortColumnIndexAndOrder = sortList;
         }
 
         #region IComparer Members
 
+        /// <summary>
+        /// Compares the specified x.
+        /// </summary>
+        /// <param name="x">The x.</param>
+        /// <param name="y">The y.</param>
+        /// <returns></returns>
+        /// <exception cref="System.Exception">OutlookGridRowComparer:  + this.ToString()</exception>
         public int Compare(OutlookGridRow x, OutlookGridRow y)
         {
             int compareResult = 0;
@@ -125,7 +119,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                                 {
                                    compareResult = ((TextAndImage)o1).CompareTo((TextAndImage)o2) * orderModifier;
                                 }
-                                //TODO implement a value for Token Column ??
                                 else if (o1 is Token)
                                 {
                                     compareResult = ((Token)o1).CompareTo((Token)o2) * orderModifier;
@@ -138,7 +131,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
             catch (Exception ex)
             {
-                throw new Exception("OutlookGridRowComparer: " + this.ToString(), ex);
+                throw new Exception("OutlookGridRowComparer: " + ToString(), ex);
             }
         }
         #endregion

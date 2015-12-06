@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,13 +9,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid</RootNamespace>
     <AssemblyName>JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -27,6 +28,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,14 +38,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ComponentFactory.Krypton.Toolkit, Version=4.3.2.1, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+    <Reference Include="ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Librairies\ComponentFactory.Krypton.Toolkit.dll</HintPath>
+      <HintPath>Librairies\Debug\ComponentFactory.Krypton.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -212,17 +215,6 @@
     <None Include="Resources\ExpandIcon.png" />
     <None Include="Resources\CollapseIcon2010.png" />
     <None Include="Resources\CollapseIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Design.dll" />
-    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Design.pdb" />
-    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Design.XML" />
-    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Toolkit.dll" />
-    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Toolkit.pdb" />
-    <Content Include="Librairies\Debug\ComponentFactory.Krypton.Toolkit.XML" />
-    <Content Include="Librairies\Release\ComponentFactory.Krypton.Toolkit.dll" />
-    <Content Include="Librairies\Release\ComponentFactory.Krypton.Toolkit.pdb" />
-    <Content Include="Librairies\Release\ComponentFactory.Krypton.Toolkit.XML" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

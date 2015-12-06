@@ -269,4 +269,40 @@
   <data name="UNKNOWN" xml:space="preserve">
     <value>Unknown</value>
   </data>
+  <data name="CONDITIONALFORMATTING" xml:space="preserve">
+    <value>Conditional formatting</value>
+  </data>
+  <data name="Bar" xml:space="preserve">
+    <value>Data Bars</value>
+    <comment>Enum</comment>
+  </data>
+  <data name="GradientFill" xml:space="preserve">
+    <value>Gradient Fill</value>
+  </data>
+  <data name="SolidFill" xml:space="preserve">
+    <value>Solid Fill</value>
+  </data>
+  <data name="ThreeColorsRange" xml:space="preserve">
+    <value>Three Color Scale</value>
+    <comment>Enum</comment>
+  </data>
+  <data name="TwoColorsRange" xml:space="preserve">
+    <value>Two Color Scale</value>
+    <comment>Enum</comment>
+  </data>
+  <data name="ClearRules" xml:space="preserve">
+    <value>Clear rules...</value>
+  </data>
+  <data name="CustomThreeDots" xml:space="preserve">
+    <value>Custom...</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Finish" xml:space="preserve">
+    <value>Finish</value>
+  </data>
 </root>

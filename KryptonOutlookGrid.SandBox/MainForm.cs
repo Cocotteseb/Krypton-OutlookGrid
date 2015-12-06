@@ -1,5 +1,5 @@
 ﻿using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

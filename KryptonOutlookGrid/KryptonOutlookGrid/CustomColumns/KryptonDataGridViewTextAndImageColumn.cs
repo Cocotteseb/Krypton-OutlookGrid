@@ -1,5 +1,5 @@
 ﻿//--------------------------------------------------------------------------------
-// Copyright (C) 2013 JDH Software - <support@jdhsoftware.com>
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
 //
 // This program is provided to you under the terms of the Microsoft Public
 // License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
@@ -10,17 +10,14 @@
 
 using ComponentFactory.Krypton.Toolkit;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
+namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns
 {
-    //TODO Add designer
     /// <summary>
     /// Hosts a collection of KryptonDataGridViewTextAndImageCell cells.
     /// </summary>
@@ -74,8 +71,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         public override object Clone()
         {
             KryptonDataGridViewTextAndImageColumn cloned = base.Clone() as KryptonDataGridViewTextAndImageColumn;
-            cloned.imageValue = this.imageValue;
-            cloned.imageSize = this.imageSize;
+            cloned.imageValue = imageValue;
+            cloned.imageSize = imageSize;
             // Move the button specs over to the new clone
             foreach (ButtonSpec bs in ButtonSpecs)
                 cloned.ButtonSpecs.Add(bs.Clone());
@@ -266,7 +263,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         /// <returns>true if equal, false otherwise.</returns>
         public override bool Equals(object obj)
         {
-            return this.Text.Equals(obj.ToString());
+            return Text.Equals(obj.ToString());
         }
 
         /// <summary>
@@ -278,9 +275,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             return base.GetHashCode();
         }
 
+        /// <summary>
+        /// Compares to.
+        /// </summary>
+        /// <param name="other">The other.</param>
+        /// <returns></returns>
         public int CompareTo(TextAndImage other)
         {
-            return this.Text.CompareTo(other.Text);
+            return Text.CompareTo(other.Text);
         }
     }
 
@@ -308,6 +310,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
             get { return typeof(TextAndImage); }
         }
 
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="rowIndex">Index of the row.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         protected override bool SetValue(int rowIndex, object value)
         {
             if (value != null)
@@ -322,26 +330,32 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         public override object Clone()
         {
             KryptonDataGridViewTextAndImageCell c = base.Clone() as KryptonDataGridViewTextAndImageCell;
-            c.imageValue = this.imageValue;
-            c.imageSize = this.imageSize;
+            c.imageValue = imageValue;
+            c.imageSize = imageSize;
             return c;
         }
 
+        /// <summary>
+        /// Gets or sets the image.
+        /// </summary>
+        /// <value>
+        /// The image.
+        /// </value>
         public Image Image
         {
-            get { return this.imageValue; }
+            get { return imageValue; }
             set
             {
-                if (this.Image != value)
+                if (Image != value)
                 {
-                    this.imageValue = value;
-                    this.imageSize = value.Size;
+                    imageValue = value;
+                    imageSize = value.Size;
 
                     //if (this.InheritedStyle != null)
                     //{
-                    Padding inheritedPadding = this.Style.Padding;
-                        //Padding inheritedPadding = this.InheritedStyle.Padding;
-                        this.Style.Padding = new Padding(imageSize.Width + 2,
+                    Padding inheritedPadding = Style.Padding;
+                    //Padding inheritedPadding = this.InheritedStyle.Padding;
+                    Style.Padding = new Padding(imageSize.Width + 2,
                      inheritedPadding.Top, inheritedPadding.Right,
                      inheritedPadding.Bottom);
                     //}
@@ -366,14 +380,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns
         protected override void Paint(Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
         {
             //TODO : improve we assume it is a 16x16 image 
-            if (this.Value != null && ((TextAndImage)this.Value).Image != null)
+            if (Value != null && ((TextAndImage)Value).Image != null)
             {
                 //Padding inheritedPadding = this.InheritedStyle.Padding;
                 //this.Style.Padding = new Padding(18, inheritedPadding.Top, inheritedPadding.Right, inheritedPadding.Bottom);
                 // Draw the image clipped to the cell.
                 System.Drawing.Drawing2D.GraphicsContainer container = graphics.BeginContainer();
                 graphics.SetClip(cellBounds);
-                graphics.DrawImage(((TextAndImage)this.Value).Image, new Rectangle(cellBounds.Location.X + 2, cellBounds.Location.Y + ((cellBounds.Height - 16) / 2) - 1, 16, 16));
+                graphics.DrawImage(((TextAndImage)Value).Image, new Rectangle(cellBounds.Location.X + 2, cellBounds.Location.Y + ((cellBounds.Height - 16) / 2) - 1, 16, 16));
                 graphics.EndContainer(container);
             }
 

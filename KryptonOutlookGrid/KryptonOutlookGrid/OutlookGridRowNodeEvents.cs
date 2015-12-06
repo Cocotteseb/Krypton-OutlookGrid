@@ -1,68 +1,139 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿//--------------------------------------------------------------------------------
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
+//
+// This program is provided to you under the terms of the Microsoft Public
+// License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
+//
+// Visit http://www.jdhsoftware.com and follow @jdhsoftware on Twitter
+//
+//--------------------------------------------------------------------------------
+
+using System;
+using System.ComponentModel;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 {
-     public class OutlookGridRowNodeEventBase : EventArgs
-	{
-		private OutlookGridRow _row;
+    /// <summary>
+    /// Base class for OutlookGridRowNode events
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
+    public class OutlookGridRowNodeEventBase : EventArgs
+    {
+        private OutlookGridRow _row;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OutlookGridRowNodeEventBase"/> class.
+        /// </summary>
+        /// <param name="node">The node.</param>
         public OutlookGridRowNodeEventBase(OutlookGridRow node)
-		{
-			this._row = node;
-		}
+        {
+            _row = node;
+        }
 
+        /// <summary>
+        /// Gets the node.
+        /// </summary>
+        /// <value>
+        /// The node.
+        /// </value>
         public OutlookGridRow Node
-		{
-			get { return _row; }
-		}
-	}
-	public class CollapsingEventArgs : System.ComponentModel.CancelEventArgs
-	{
-        private OutlookGridRow _node;
+        {
+            get { return _row; }
+        }
+    }
 
-		private CollapsingEventArgs() { }
+
+    /// <summary>
+    /// Base class OutlookGridRowNode cancellable events
+    /// </summary>
+    /// <seealso cref="System.ComponentModel.CancelEventArgs" />
+    public class OutlookGridRowNodeCancelEventBase : CancelEventArgs
+    {
+        private OutlookGridRow _row;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OutlookGridRowNodeCancelEventBase"/> class.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        public OutlookGridRowNodeCancelEventBase(OutlookGridRow node)
+        {
+            _row = node;
+        }
+
+        /// <summary>
+        /// Gets the node.
+        /// </summary>
+        /// <value>
+        /// The node.
+        /// </value>
+        public OutlookGridRow Node
+        {
+            get { return _row; }
+        }
+    }
+
+    /// <summary>
+    /// Class for Node collapsing events
+    /// </summary>
+    /// <seealso cref="JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.OutlookGridRowNodeCancelEventBase" />
+    public class CollapsingEventArgs : OutlookGridRowNodeCancelEventBase
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CollapsingEventArgs"/> class.
+        /// </summary>
+        /// <param name="node">The node.</param>
         public CollapsingEventArgs(OutlookGridRow node)
-			: base()
-		{
-			this._node = node;
-		}
-        public OutlookGridRow Node
-		{
-			get { return _node; }
-		}
+            : base(node)
+        {
+        }
+    }
 
-	}
+    /// <summary>
+    /// Class for Node collapsed events 
+    /// </summary>
+    /// <seealso cref="JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.OutlookGridRowNodeEventBase" />
     public class CollapsedEventArgs : OutlookGridRowNodeEventBase
-	{
-		public CollapsedEventArgs(OutlookGridRow node)
-			: base(node)
-		{
-		}
-	}
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CollapsedEventArgs"/> class.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        public CollapsedEventArgs(OutlookGridRow node)
+            : base(node)
+        {
+        }
+    }
 
-	public class ExpandingEventArgs:System.ComponentModel.CancelEventArgs
-	{
-		private OutlookGridRow _node;
 
-		private ExpandingEventArgs() { }
-		public ExpandingEventArgs(OutlookGridRow node):base()
-		{
-			this._node = node;
-		}
-		public OutlookGridRow Node
-		{
-			get { return _node; }
-		}
+    /// <summary>
+    /// Class for Node expanding events
+    /// </summary>
+    /// <seealso cref="JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.OutlookGridRowNodeCancelEventBase" />
+    public class ExpandingEventArgs : OutlookGridRowNodeCancelEventBase
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpandingEventArgs"/> class.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        public ExpandingEventArgs(OutlookGridRow node) : base(node)
+        {
+        }
+    }
 
-	}
+
+    /// <summary>
+    /// Class for Node expanding events
+    /// </summary>
+    /// <seealso cref="JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.OutlookGridRowNodeEventBase" />
     public class ExpandedEventArgs : OutlookGridRowNodeEventBase
-	{
-		public ExpandedEventArgs(OutlookGridRow node):base(node)
-		{
-		}
-	}
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpandedEventArgs"/> class.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        public ExpandedEventArgs(OutlookGridRow node) : base(node)
+        {
+        }
+    }
 
 }

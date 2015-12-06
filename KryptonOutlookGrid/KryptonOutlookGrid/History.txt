@@ -7,6 +7,7 @@
 *DPI aware improvements
 *Fixed a crash when opening the context menu header on a non grouping column
 *Fixed a bug where auto resize height row was not working for group rows
+*Refactoring and commenting code
 ~Removed try catch, it is up to the parent application to handle grid crashes : allows more flexibility for developers
 
 Version 1.4.0

@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------
-// Copyright (C) 2013 JDH Software - <support@jdhsoftware.com>
+// Copyright (C) 2013-2015 JDH Software - <support@jdhsoftware.com>
 //
 // This program is provided to you under the terms of the Microsoft Public
 // License (Ms-PL) as published at https://kryptonoutlookgrid.codeplex.com/license
@@ -19,7 +19,6 @@
 //--------------------------------------------------------------------------------
 using ComponentFactory.Krypton.Toolkit;
 using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns;
-using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomsColumns;
 using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Formatting;
 using JDHSoftware.Krypton.Toolkit.Utils.Lang;
 using System;
@@ -29,7 +28,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -38,6 +36,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     /// <summary>
     /// Krypton DataGridView allowing nested grouping and unlimited sorting
     /// </summary>
+    /// <seealso cref="ComponentFactory.Krypton.Toolkit.KryptonDataGridView" />
     public partial class KryptonOutlookGrid : KryptonDataGridView
     {
         private KryptonOutlookGridGroupBox groupBox;
@@ -132,7 +131,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             // very important, this indicates that a new default row class is going to be used to fill the grid
             // in this case our custom OutlookGridRow class
             base.RowTemplate = new OutlookGridRow();
-            this.groupCollection = new OutlookGridGroupCollection(null);
+            groupCollection = new OutlookGridGroupCollection(null);
             internalRows = new List<OutlookGridRow>();
             internalColumns = new OutlookGridColumnCollection();
 
@@ -154,7 +153,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             _paletteBorder = new PaletteBorderInheritRedirect(_paletteRedirect);
             //_paletteContent = new PaletteContentInheritRedirect(_paletteRedirect);
 
-            this.AllowUserToOrderColumns = false;  //we will handle it ourselves
+            AllowUserToOrderColumns = false;  //we will handle it ourselves
             _hideColumnOnGrouping = false;
             formatConditions = new List<ConditionalFormatting>();
 
@@ -280,11 +279,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             get
             {
-                return this.groupCollection;
+                return groupCollection;
             }
             set
             {
-                this.groupCollection = value;
+                groupCollection = value;
             }
         }
 
@@ -303,10 +302,16 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
             set
             {
-                this._hideColumnOnGrouping = value;
+                _hideColumnOnGrouping = value;
             }
         }
 
+        /// <summary>
+        /// Gets or sets the conditional formatting items list.
+        /// </summary>
+        /// <value>
+        /// The conditional formatting items list.
+        /// </value>
         [Category("Behavior")]
         [Description("Conditional formatting.")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -318,34 +323,46 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
             set
             {
-                this.formatConditions = value;
+                formatConditions = value;
             }
         }
 
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the lines are shown between nodes.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [show lines]; otherwise, <c>false</c>.
+        /// </value>
         [DefaultValue(true)]
         public bool ShowLines
         {
-            get { return this._showLines; }
+            get { return _showLines; }
             set
             {
-                if (value != this._showLines)
+                if (value != _showLines)
                 {
-                    this._showLines = value;
-                    this.Invalidate();
+                    _showLines = value;
+                    Invalidate();
                 }
             }
         }
 
+        /// <summary>
+        /// Gets or sets the fill mode.
+        /// </summary>
+        /// <value>
+        /// The fill mode.
+        /// </value>
         public FillMode FillMode
         {
-            get { return this._fillMode; }
+            get { return _fillMode; }
             set
             {
-                if (value != this._fillMode)
+                if (value != _fillMode)
                 {
-                    this._fillMode = value;
-                    this.Invalidate();
+                    _fillMode = value;
+                    Invalidate();
                 }
             }
         }
@@ -355,9 +372,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         #region OutlookGrid Overrides
 
         /// <summary>
-        /// Disposing ressources
+        /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -404,9 +421,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
-        /// Overrides OnCellBeginEdit
+        /// Raises the <see cref="E:CellBeginEdit" /> event.
         /// </summary>
-        /// <param name="e">DataGridViewCellCancelEventArgs</param>
+        /// <param name="e">The <see cref="DataGridViewCellCancelEventArgs"/> instance containing the event data.</param>
         protected override void OnCellBeginEdit(DataGridViewCellCancelEventArgs e)
         {
             OutlookGridRow row = (OutlookGridRow)base.Rows[e.RowIndex];
@@ -417,9 +434,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
-        /// Overrides OnCellDoubleClick (expand/collapse group rows)
+        /// Raises the <see cref="E:CellDoubleClick" /> event.
         /// </summary>
-        /// <param name="e">DataGridViewCellEventArgs</param>
+        /// <param name="e">The <see cref="DataGridViewCellEventArgs"/> instance containing the event data.</param>
         protected override void OnCellDoubleClick(DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
@@ -440,45 +457,49 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             base.OnCellDoubleClick(e);
         }
 
+        /// <summary>
+        /// Raises the <see cref="E:MouseUp" /> event.
+        /// </summary>
+        /// <param name="e">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
         protected override void OnMouseUp(MouseEventArgs e)
         {
             // used to keep extra mouse moves from selecting more rows when collapsing
             base.OnMouseUp(e);
-            this._inExpandCollapseMouseCapture = false;
+            _inExpandCollapseMouseCapture = false;
         }
 
         /// <summary>
-        /// Overrides OnMouseDown
+        /// Raises the <see cref="E:MouseDown" /> event.
         /// </summary>
-        /// <param name="e">MouseEventArgs</param>
+        /// <param name="e">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
         protected override void OnMouseDown(MouseEventArgs e)
         {
             //stores values for drag/drop operations if necessary
-            if (this.AllowDrop)
+            if (AllowDrop)
             {
-                if (this.HitTest(e.X, e.Y).ColumnIndex == -1 && this.HitTest(e.X, e.Y).RowIndex > -1)
+                if (HitTest(e.X, e.Y).ColumnIndex == -1 && HitTest(e.X, e.Y).RowIndex > -1)
                 {
                     //if this is a row header cell
-                    if (this.Rows[this.HitTest(e.X, e.Y).RowIndex].Selected)
+                    if (Rows[HitTest(e.X, e.Y).RowIndex].Selected)
                     {
                         //if this row is selected
                         DragDropType = 1;
                         Size DragSize = SystemInformation.DragSize;
                         DragDropRectangle = new Rectangle(new Point(e.X - (DragSize.Width / 2), e.Y - (DragSize.Height / 2)), DragSize);
-                        DragDropSourceIndex = this.HitTest(e.X, e.Y).RowIndex;
+                        DragDropSourceIndex = HitTest(e.X, e.Y).RowIndex;
                     }
                     else
                     {
                         DragDropRectangle = Rectangle.Empty;
                     }
                 }
-                else if (this.HitTest(e.X, e.Y).ColumnIndex > -1 && this.HitTest(e.X, e.Y).RowIndex == -1)
+                else if (HitTest(e.X, e.Y).ColumnIndex > -1 && HitTest(e.X, e.Y).RowIndex == -1)
                 {
                     //if this is a column header cell
                     //if (this.Columns[this.HitTest(e.X, e.Y).ColumnIndex].Selected)
                     //{
                     DragDropType = 0;
-                    DragDropSourceIndex = this.HitTest(e.X, e.Y).ColumnIndex;
+                    DragDropSourceIndex = HitTest(e.X, e.Y).ColumnIndex;
                     Size DragSize = SystemInformation.DragSize;
                     DragDropRectangle = new Rectangle(new Point(e.X - (DragSize.Width / 2), e.Y - (DragSize.Height / 2)), DragSize);
                     //}
@@ -500,18 +521,18 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
-        /// Overrides OnMouseDown
+        /// Raises the <see cref="E:MouseMove" /> event.
         /// </summary>
-        /// <param name="e">MouseEventArgs</param>
+        /// <param name="e">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
         protected override void OnMouseMove(MouseEventArgs e)
         {
             // while we are expanding and collapsing a node mouse moves are
             // supressed to keep selections from being messed up.
-            if (!this._inExpandCollapseMouseCapture)
+            if (!_inExpandCollapseMouseCapture)
             {
                 bool dragdropdone = false;
                 //handles drag/drop operations
-                if (this.AllowDrop)
+                if (AllowDrop)
                 {
                     if ((e.Button & MouseButtons.Left) == MouseButtons.Left && Cursor.Current != Cursors.SizeWE)
                     {
@@ -533,13 +554,13 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                                 }
                                 //column drag/drop
                                 string info = String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}", col.Name.ToString(), col.DataGridViewColumn.HeaderText.ToString(), col.DataGridViewColumn.HeaderCell.SortGlyphDirection.ToString(), col.DataGridViewColumn.SortMode.ToString(), groupType, groupInterval, groupSortBySummaryCount);
-                                DragDropEffects DropEffect = this.DoDragDrop(info, DragDropEffects.Move);
+                                DragDropEffects DropEffect = DoDragDrop(info, DragDropEffects.Move);
                                 dragdropdone = true;
                             }
                             else if (DragDropType == 1)
                             {
                                 //row drag/drop
-                                DragDropEffects DropEffect = this.DoDragDrop(this.Rows[DragDropSourceIndex], DragDropEffects.Move);
+                                DragDropEffects DropEffect = DoDragDrop(Rows[DragDropSourceIndex], DragDropEffects.Move);
                                 dragdropdone = true;
                             }
                         }
@@ -547,24 +568,24 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 }
                 base.OnMouseMove(e);
                 if (dragdropdone)
-                    this.CellOver = new Point(-2, -2);//To avoid that the column header appears in a pressed state - Modification of ToolKit
+                    CellOver = new Point(-2, -2);//To avoid that the column header appears in a pressed state - Modification of ToolKit
             }
         }
 
         /// <summary>
-        /// Overrides OnDragLeave
+        /// Raises the <see cref="E:DragLeave" /> event.
         /// </summary>
-        /// <param name="e">EventArgs</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected override void OnDragLeave(EventArgs e)
         {
             if (DragDropCurrentIndex > -1 && DragDropType == 0)
             {
-                DataGridViewColumn col = this.Columns[DragDropCurrentIndex];
-                if (this.groupBox != null && groupBox.Contains(col.Name))
+                DataGridViewColumn col = Columns[DragDropCurrentIndex];
+                if (groupBox != null && groupBox.Contains(col.Name))
                 {
                     DragDropCurrentIndex = -1;
                     //this.InvalidateColumn(col.Index);
-                    this.Invalidate();
+                    Invalidate();
                 }
                 else
                 {
@@ -576,33 +597,33 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
-        /// Overrides OnDragOver
+        /// Raises the <see cref="E:DragOver" /> event.
         /// </summary>
-        /// <param name="drgevent">DragEventArgs</param>
+        /// <param name="drgevent">The <see cref="DragEventArgs"/> instance containing the event data.</param>
         protected override void OnDragOver(DragEventArgs drgevent)
         {
             //runs while the drag/drop is in progress
-            if (this.AllowDrop)
+            if (AllowDrop)
             {
                 drgevent.Effect = DragDropEffects.Move;
                 if (DragDropType == 0)
                 {
                     //column drag/drop
-                    int CurCol = this.HitTest(this.PointToClient(new Point(drgevent.X, drgevent.Y)).X, this.PointToClient(new Point(drgevent.X, drgevent.Y)).Y).ColumnIndex;
+                    int CurCol = HitTest(PointToClient(new Point(drgevent.X, drgevent.Y)).X, PointToClient(new Point(drgevent.X, drgevent.Y)).Y).ColumnIndex;
                     if (DragDropCurrentIndex != CurCol)
                     {
                         DragDropCurrentIndex = CurCol;
-                        this.Invalidate(); //repaint
+                        Invalidate(); //repaint
                     }
                 }
                 else if (DragDropType == 1)
                 {
                     //row drag/drop
-                    int CurRow = this.HitTest(this.PointToClient(new Point(drgevent.X, drgevent.Y)).X, this.PointToClient(new Point(drgevent.X, drgevent.Y)).Y).RowIndex;
+                    int CurRow = HitTest(PointToClient(new Point(drgevent.X, drgevent.Y)).X, PointToClient(new Point(drgevent.X, drgevent.Y)).Y).RowIndex;
                     if (DragDropCurrentIndex != CurRow)
                     {
                         DragDropCurrentIndex = CurRow;
-                        this.Invalidate(); //repaint
+                        Invalidate(); //repaint
                     }
                 }
             }
@@ -610,22 +631,22 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         }
 
         /// <summary>
-        /// Overrides OnDragDrop
+        /// Raises the <see cref="E:DragDrop" /> event.
         /// </summary>
-        /// <param name="drgevent">DragEventArgs</param>
+        /// <param name="drgevent">The <see cref="DragEventArgs"/> instance containing the event data.</param>
         protected override void OnDragDrop(DragEventArgs drgevent)
         {
             //runs after a drag/drop operation for column/row has completed
-            if (this.AllowDrop)
+            if (AllowDrop)
             {
                 if (drgevent.Effect == DragDropEffects.Move)
                 {
-                    Point ClientPoint = this.PointToClient(new Point(drgevent.X, drgevent.Y));
+                    Point ClientPoint = PointToClient(new Point(drgevent.X, drgevent.Y));
                     if (DragDropType == 0)
                     {
                         //if this is a column drag/drop operation
-                        DragDropTargetIndex = this.HitTest(ClientPoint.X, ClientPoint.Y).ColumnIndex;
-                        if (DragDropTargetIndex > -1 && DragDropCurrentIndex < this.ColumnCount - 1)
+                        DragDropTargetIndex = HitTest(ClientPoint.X, ClientPoint.Y).ColumnIndex;
+                        if (DragDropTargetIndex > -1 && DragDropCurrentIndex < ColumnCount - 1)
                         {
                             DragDropCurrentIndex = -1;
                             //*************************************************
@@ -633,15 +654,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                             //below executes... Why? This works fine for rows!!
                             string r = drgevent.Data.GetData(typeof(string)) as string;
                             string[] res = r.Split('|');
-                            DataGridViewColumn SourceColumn = this.Columns[res[0]];
+                            DataGridViewColumn SourceColumn = Columns[res[0]];
                             //int SourceDisplayIndex = SourceColumn.DisplayIndex;
-                            DataGridViewColumn TargetColumn = this.Columns[DragDropTargetIndex];
+                            DataGridViewColumn TargetColumn = Columns[DragDropTargetIndex];
                             // int TargetDisplayIndex = TargetColumn.DisplayIndex;
                             SourceColumn.DisplayIndex = TargetColumn.DisplayIndex;
 
                             //Debug
                             List<DataGridViewColumn> listcol = new List<DataGridViewColumn>();
-                            foreach (DataGridViewColumn col in this.Columns)
+                            foreach (DataGridViewColumn col in Columns)
                             {
                                 listcol.Add(col);
                             }
@@ -658,34 +679,35 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                             SourceColumn.Selected = false;
                             TargetColumn.Selected = false;
                             //this.Columns[DragDropTargetIndex].Selected = true;
-                            this.CurrentCell = this[DragDropTargetIndex, 0];
+                            CurrentCell = this[DragDropTargetIndex, 0];
                         } //end if
                     }
                     else if (DragDropType == 1)
                     {
                         //if this is a row drag/drop operation
-                        DragDropTargetIndex = this.HitTest(ClientPoint.X, ClientPoint.Y).RowIndex;
-                        if (DragDropTargetIndex > -1 && DragDropCurrentIndex < this.RowCount - 1)
+                        DragDropTargetIndex = HitTest(ClientPoint.X, ClientPoint.Y).RowIndex;
+                        if (DragDropTargetIndex > -1 && DragDropCurrentIndex < RowCount - 1)
                         {
                             DragDropCurrentIndex = -1;
                             DataGridViewRow SourceRow = drgevent.Data.GetData(typeof(DataGridViewRow)) as DataGridViewRow;
-                            this.Rows.RemoveAt(DragDropSourceIndex);
-                            this.Rows.Insert(DragDropTargetIndex, SourceRow);
-                            this.Rows[DragDropTargetIndex].Selected = true;
-                            this.CurrentCell = this[0, DragDropTargetIndex];
+                            Rows.RemoveAt(DragDropSourceIndex);
+                            Rows.Insert(DragDropTargetIndex, SourceRow);
+                            Rows[DragDropTargetIndex].Selected = true;
+                            CurrentCell = this[0, DragDropTargetIndex];
                         }
                     }
                 }
             }
             DragDropCurrentIndex = -1;
-            this.Invalidate();
+            Invalidate();
             base.OnDragDrop(drgevent);
         }
 
         /// <summary>
-        /// Overrides OnCellPainting - Drawing a line for drag and drop
+        /// Raises the <see cref="E:CellPainting" /> event.
         /// </summary>
-        /// <param name="e">DataGridViewCellPaintingEventArgs</param>
+        /// <param name="e">The <see cref="DataGridViewCellPaintingEventArgs"/> instance containing the event data.</param>
+        /// <remarks>Draws a line for drag and drop</remarks>
         protected override void OnCellPainting(DataGridViewCellPaintingEventArgs e)
         {
             //draws red drag/drop target indicator lines if necessary
@@ -706,7 +728,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 else if (DragDropType == 1)
                 {
                     //row drag/drop
-                    if (e.RowIndex == DragDropCurrentIndex && DragDropCurrentIndex < this.RowCount - 1)
+                    if (e.RowIndex == DragDropCurrentIndex && DragDropCurrentIndex < RowCount - 1)
                     {
                         //if this cell is in the same row as the mouse cursor
 
@@ -750,7 +772,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             if (row.IsGroupRow)
             {
                 PreviousSelectedGroupRow = e.RowIndex;
-                this.ClearSelection(); //unselect
+                ClearSelection(); //unselect
                 if (row.IsIconHit(e))
                 {
                     row.Group.Collapsed = !row.Group.Collapsed;
@@ -761,8 +783,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     row.Visible = false;
                     row.Visible = true;
                     //When collapsing the first row still seeing it.
-                    if (row.Index < this.FirstDisplayedScrollingRowIndex)
-                        this.FirstDisplayedScrollingRowIndex = row.Index;
+                    if (row.Index < FirstDisplayedScrollingRowIndex)
+                        FirstDisplayedScrollingRowIndex = row.Index;
                 }
                 else if (row.IsGroupImageHit(e))
                 {
@@ -841,10 +863,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             base.OnColumnHeaderMouseClick(e);
         }
 
+
         /// <summary>
-        /// Overrides OnCellFormatting
+        /// Raises the <see cref="E:CellFormatting" /> event.
         /// </summary>
-        /// <param name="e">DataGridViewCellFormattingEventArgs event args.</param>
+        /// <param name="e">The <see cref="DataGridViewCellFormattingEventArgs"/> instance containing the event data.</param>
         protected override void OnCellFormatting(DataGridViewCellFormattingEventArgs e)
         {
             //Allows to have a picture in the first column
@@ -861,20 +884,20 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         #region OutlookGrid Events
 
         /// <summary>
-        /// Redraw on OnPalettePaint
+        /// Called when [palette paint].
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="PaletteLayoutEventArgs"/> instance containing the event data.</param>
         private void OnPalettePaint(object sender, PaletteLayoutEventArgs e)
         {
             Invalidate();
         }
 
         /// <summary>
-        /// Update palettes on OnGlobalPaletteChanged
+        /// Called when [global palette changed].
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void OnGlobalPaletteChanged(object sender, EventArgs e)
         {
             // (5) Unhook events from old palette
@@ -1127,7 +1150,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private void OnColumnVisibleCheckedChanged(object sender, EventArgs e)
         {
             KryptonContextMenuCheckBox item = (KryptonContextMenuCheckBox)sender;
-            this.Columns[(int)item.Tag].Visible = item.Checked;
+            Columns[(int)item.Tag].Visible = item.Checked;
         }
 
         /// <summary>
@@ -1163,7 +1186,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             if (colSelected > -1)
             {
                 Cursor.Current = Cursors.WaitCursor;
-                this.AutoResizeColumn(colSelected, DataGridViewAutoSizeColumnMode.AllCells);
+                AutoResizeColumn(colSelected, DataGridViewAutoSizeColumnMode.AllCells);
                 Cursor.Current = Cursors.Default;
             }
         }
@@ -1176,7 +1199,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private void OnBestFitAllColumns(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            this.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             Cursor.Current = Cursors.Default;
         }
 
@@ -1332,7 +1355,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="e">A ExpandingEventArgs that contains the event data.</param>
         protected virtual void OnNodeExpanding(ExpandingEventArgs e)
         {
-            if (this.NodeExpanding != null)
+            if (NodeExpanding != null)
             {
                 NodeExpanding(this, e);
             }
@@ -1344,7 +1367,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="e">A ExpandedEventArgs that contains the event data.</param>
         protected virtual void OnNodeExpanded(ExpandedEventArgs e)
         {
-            if (this.NodeExpanded != null)
+            if (NodeExpanded != null)
             {
                 NodeExpanded(this, e);
             }
@@ -1356,7 +1379,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="e">A CollapsingEventArgs that contains the event data.</param>
         protected virtual void OnNodeCollapsing(CollapsingEventArgs e)
         {
-            if (this.NodeCollapsing != null)
+            if (NodeCollapsing != null)
             {
                 NodeCollapsing(this, e);
             }
@@ -1369,7 +1392,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="e">A CollapsedEventArgs that contains the event data.</param>
         protected virtual void OnNodeCollapsed(CollapsedEventArgs e)
         {
-            if (this.NodeCollapsed != null)
+            if (NodeCollapsed != null)
             {
                 NodeCollapsed(this, e);
             }
@@ -1409,7 +1432,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 internalColumns.Add(col);
                 //Already reflect the SortOrder on the column
                 col.DataGridViewColumn.HeaderCell.SortGlyphDirection = col.SortDirection;
-                if (this._hideColumnOnGrouping && col.GroupIndex > -1 && col.GroupingType.AllowHiddenWhenGrouped)
+                if (_hideColumnOnGrouping && col.GroupIndex > -1 && col.GroupingType.AllowHiddenWhenGrouped)
                     col.DataGridViewColumn.Visible = false;
             }
         }
@@ -1600,7 +1623,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             groupCollection.Clear();
             //reset groups in columns
             internalColumns.MaxGroupIndex = -1;
-            for (int i = 0; i < this.internalColumns.Count; i++)
+            for (int i = 0; i < internalColumns.Count; i++)
             {
                 if (internalColumns[i].IsGrouped)
                     internalColumns[i].DataGridViewColumn.Visible = true;
@@ -1650,7 +1673,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         public void RegisterGroupBoxEvents()
         {
             //Register for event of the associated KryptonGroupBox
-            if (this.GroupBox != null)
+            if (GroupBox != null)
             {
                 groupBox.ColumnGroupAdded += ColumnGroupAddedEvent;
                 groupBox.ColumnSortChanged += ColumnSortChangedEvent;
@@ -1725,12 +1748,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
                 //Visible Columns
                 KryptonContextMenuCheckBox itCheckbox = null;
-                KryptonContextMenuItemBase[] arrayCols = new KryptonContextMenuItemBase[this.Columns.Count];
-                for (int i = 0; i < this.Columns.Count; i++)
+                KryptonContextMenuItemBase[] arrayCols = new KryptonContextMenuItemBase[Columns.Count];
+                for (int i = 0; i < Columns.Count; i++)
                 {
-                    itCheckbox = new KryptonContextMenuCheckBox(this.Columns[i].HeaderText);
-                    itCheckbox.Checked = this.Columns[i].Visible;
-                    itCheckbox.Tag = this.Columns[i].Index;
+                    itCheckbox = new KryptonContextMenuCheckBox(Columns[i].HeaderText);
+                    itCheckbox.Checked = Columns[i].Visible;
+                    itCheckbox.Tag = Columns[i].Index;
                     itCheckbox.CheckedChanged += OnColumnVisibleCheckedChanged;
                     arrayCols[i] = itCheckbox;
                 }
@@ -1954,7 +1977,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
 
             // Ensure we have a krypton context menu if not already present
-            if (this.KCtxMenu == null)
+            if (KCtxMenu == null)
                 KCtxMenu = new KryptonContextMenu();
 
             // Update the individual menu options
@@ -2074,7 +2097,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         //}
 
         /// <summary>
-        /// Clear the internal Rows
+        /// Clears the internal rows.
         /// </summary>
         public void ClearInternalRows()
         {
@@ -2115,15 +2138,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             //    if (((OutlookGridRow)this.Rows[i]).IsGroupRow)
             //        ((OutlookGridRow)this.Rows[i]).Group.Collapsed = collapsed;
             //}
-            RecursiveSetGroupCollapse(this.groupCollection, collapsed);
+            RecursiveSetGroupCollapse(groupCollection, collapsed);
 
             // workaround, make the grid refresh properly
-            this.Rows[0].Visible = !this.Rows[0].Visible;
-            this.Rows[0].Visible = !this.Rows[0].Visible;
+            Rows[0].Visible = !Rows[0].Visible;
+            Rows[0].Visible = !Rows[0].Visible;
 
             //When collapsing the first row still seeing it.
-            if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
-                this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
+            if (Rows[0].Index < FirstDisplayedScrollingRowIndex)
+                FirstDisplayedScrollingRowIndex = Rows[0].Index;
         }
 
         private void RecursiveSetGroupCollapse(OutlookGridGroupCollection col, bool collapsed)
@@ -2146,15 +2169,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             //    if (((OutlookGridRow)this.Rows[i]).IsGroupRow && ((OutlookGridRow)this.Rows[i]).Group.Column.DataGridViewColumn.Name == c.Name)
             //        ((OutlookGridRow)this.Rows[i]).Group.Collapsed = collapsed;
             //}
-            RecursiveSetGroupCollapse(c, this.groupCollection, collapsed);
+            RecursiveSetGroupCollapse(c, groupCollection, collapsed);
 
             // workaround, make the grid refresh properly
-            this.Rows[0].Visible = !this.Rows[0].Visible;
-            this.Rows[0].Visible = !this.Rows[0].Visible;
+            Rows[0].Visible = !Rows[0].Visible;
+            Rows[0].Visible = !Rows[0].Visible;
 
             //When collapsing the first row still seeing it.
-            if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
-                this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
+            if (Rows[0].Index < FirstDisplayedScrollingRowIndex)
+                FirstDisplayedScrollingRowIndex = Rows[0].Index;
         }
 
         private void RecursiveSetGroupCollapse(string c, OutlookGridGroupCollection col, bool collapsed)
@@ -2189,8 +2212,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 row.Visible = true;
 
                 //When collapsing the first row still seeing it.
-                if (row.Index < this.FirstDisplayedScrollingRowIndex)
-                    this.FirstDisplayedScrollingRowIndex = row.Index;
+                if (row.Index < FirstDisplayedScrollingRowIndex)
+                    FirstDisplayedScrollingRowIndex = row.Index;
             }
         }
 
@@ -2199,18 +2222,18 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         public void ExpandAllNodes()
         {
-            if (this.Rows.Count > 0)
+            if (Rows.Count > 0)
             {
-                foreach (OutlookGridRow r in this.Rows)
+                foreach (OutlookGridRow r in Rows)
                 {
                     RecursiveDescendantSetNodeCollapse(r, false);
                 }
-                this.Rows[0].Visible = !this.Rows[0].Visible;
-                this.Rows[0].Visible = !this.Rows[0].Visible;
+                Rows[0].Visible = !Rows[0].Visible;
+                Rows[0].Visible = !Rows[0].Visible;
 
                 //When collapsing the first row still seeing it.
-                if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
-                    this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
+                if (Rows[0].Index < FirstDisplayedScrollingRowIndex)
+                    FirstDisplayedScrollingRowIndex = Rows[0].Index;
             }
         }
 
@@ -2219,18 +2242,18 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         public void CollapseAllNodes()
         {
-            if (this.Rows.Count > 0)
+            if (Rows.Count > 0)
             {
-                foreach (OutlookGridRow r in this.Rows)
+                foreach (OutlookGridRow r in Rows)
                 {
                     RecursiveDescendantSetNodeCollapse(r, true);
                 }
-                this.Rows[0].Visible = !this.Rows[0].Visible;
-                this.Rows[0].Visible = !this.Rows[0].Visible;
+                Rows[0].Visible = !Rows[0].Visible;
+                Rows[0].Visible = !Rows[0].Visible;
 
                 //When collapsing the first row still seeing it.
-                if (this.Rows[0].Index < this.FirstDisplayedScrollingRowIndex)
-                    this.FirstDisplayedScrollingRowIndex = this.Rows[0].Index;
+                if (Rows[0].Index < FirstDisplayedScrollingRowIndex)
+                    FirstDisplayedScrollingRowIndex = Rows[0].Index;
             }
         }
 
@@ -2284,19 +2307,24 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
         }
 
+        /// <summary>
+        /// Collapses the node.
+        /// </summary>
+        /// <param name="node">The OutlookGridRow node.</param>
+        /// <returns></returns>
         public bool CollapseNode(OutlookGridRow node)
         {
             if (!node.Collapsed)
             {
                 CollapsingEventArgs exp = new CollapsingEventArgs(node);
-                this.OnNodeCollapsing(exp);
+                OnNodeCollapsing(exp);
 
                 if (!exp.Cancel)
                 {
                     node.SetNodeCollapse(true);
 
                     CollapsedEventArgs exped = new CollapsedEventArgs(node);
-                    this.OnNodeCollapsed(exped);
+                    OnNodeCollapsed(exped);
                 }
 
                 return !exp.Cancel;
@@ -2308,19 +2336,24 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
+        /// <summary>
+        /// Expands the node.
+        /// </summary>
+        /// <param name="node">The OutlookGridRow node.</param>
+        /// <returns></returns>
         public bool ExpandNode(OutlookGridRow node)
         {
             if (node.Collapsed)
             {
                 ExpandingEventArgs exp = new ExpandingEventArgs(node);
-                this.OnNodeExpanding(exp);
+                OnNodeExpanding(exp);
 
                 if (!exp.Cancel)
                 {
                     node.SetNodeCollapse(false);
 
                     ExpandedEventArgs exped = new ExpandedEventArgs(node);
-                    this.OnNodeExpanded(exped);
+                    OnNodeExpanded(exped);
                 }
 
                 return !exp.Cancel;
@@ -2392,8 +2425,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             List<OutlookGridRow> list;
             List<OutlookGridRow> tmp; // = new List<OutlookGridRow>();
             IOutlookGridGroup grParent = null;
-            this.Rows.Clear();
-            this.groupCollection.Clear();
+            Rows.Clear();
+            groupCollection.Clear();
 
             if (internalRows.Count == 0)
                 return;
@@ -2541,7 +2574,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 //Add rows to underlying DataGridView
                 if (_fillMode == FillMode.GroupsOnly)
                 {
-                    this.Rows.AddRange(list.ToArray());
+                    Rows.AddRange(list.ToArray());
                 }
                 else
                 {
@@ -2549,7 +2582,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     NonGroupedRecursiveFillOutlookGridRows(list, tmp);
 
                     //Add all the rows to the grid
-                    this.Rows.AddRange(tmp.ToArray());
+                    Rows.AddRange(tmp.ToArray());
                 }
 
             }
@@ -2567,7 +2600,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 for (int j = 0; j < list.Count; j++)
                 {
                     //Reload the groups collection for each rows !!
-                    OutlookGridGroupCollection children = this.groupCollection;
+                    OutlookGridGroupCollection children = groupCollection;
 
                     //For each grouped column (ordered by GroupIndex)
                     for (int i = 0; i < groupedColumns.Count; i++)
@@ -2590,7 +2623,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                             gr = (IOutlookGridGroup)groupedColumns[i].GroupingType.Clone();
                             gr.ParentGroup = grParent;
                             gr.Column = groupedColumns[i];
-                            gr.Value = value;                        
+                            gr.Value = value;
                             gr.FormatStyle = groupedColumns[i].DataGridViewColumn.DefaultCellStyle.Format; //We can the formatting applied to the cell to the group
                             if (value is TextAndImage)
                                 gr.GroupImage = ((TextAndImage)value).Image;
@@ -2647,9 +2680,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 //RecursiveSort(this.groupCollection, index, (index == -1) ? SortOrder.None : internalColumns.FindFromColumnIndex(index).SortDirection);
                 List<Tuple<int, SortOrder, IComparer>> sortList = internalColumns.GetIndexAndSortSortedOnlyColumns();
                 if (sortList.Count > 0)
-                    RecursiveSort(this.groupCollection, sortList);
+                    RecursiveSort(groupCollection, sortList);
                 else
-                    RecursiveSort(this.groupCollection, internalColumns.GetIndexAndSortGroupedColumns());
+                    RecursiveSort(groupCollection, internalColumns.GetIndexAndSortGroupedColumns());
                 //}
                 //catch (Exception e)
                 //{
@@ -2662,10 +2695,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 //Reinit!
                 tmp = new List<OutlookGridRow>();
                 //Get a list of rows (grouprow and non-grouprow)
-                RecursiveFillOutlookGridRows(this.groupCollection, tmp);
+                RecursiveFillOutlookGridRows(groupCollection, tmp);
 
                 //Finally add the rows to underlying datagridview after all the magic !
-                this.Rows.AddRange(tmp.ToArray());
+                Rows.AddRange(tmp.ToArray());
             }
             Cursor.Current = Cursors.Default;
 #if (DEBUG)
@@ -2742,7 +2775,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 gr = l.List[i];
 
                 //Create the group row
-                grRow = (OutlookGridRow)this.RowTemplate.Clone();
+                grRow = (OutlookGridRow)RowTemplate.Clone();
                 grRow.Group = gr;
                 grRow.IsGroupRow = true;
                 grRow.Height = gr.Height;
@@ -2774,6 +2807,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Persist the configuration of the KryptonOutlookGrid
         /// </summary>
         /// <param name="path">The path where the .xml file will be saved.</param>
+        /// <param name="version">The version of the config file.</param>
         public void PersistConfiguration(string path, string version)
         {
             OutlookGridColumn col = null;
@@ -2783,11 +2817,11 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 writer.WriteStartElement("OutlookGrid");
                 writer.WriteAttributeString("V", version);
                 writer.WriteElementString("GroupBox", groupBox.Visible.ToString());
-                writer.WriteElementString("HideColumnOnGrouping", CommonHelper.BoolToString(this.HideColumnOnGrouping));
+                writer.WriteElementString("HideColumnOnGrouping", CommonHelper.BoolToString(HideColumnOnGrouping));
                 writer.WriteStartElement("Columns");
-                for (int i = 0; i < this.internalColumns.Count; i++)
+                for (int i = 0; i < internalColumns.Count; i++)
                 {
-                    col = this.internalColumns[i];
+                    col = internalColumns[i];
                     writer.WriteStartElement("Column");
                     writer.WriteElementString("Name", col.Name);
                     writer.WriteStartElement("GroupingType");
@@ -2817,7 +2851,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
                 //Conditional formatting
                 writer.WriteStartElement("ConditionalFormatting");
-                for (int i = 0; i < this.formatConditions.Count; i++)
+                for (int i = 0; i < formatConditions.Count; i++)
                 {
                     formatConditions[i].Persist(writer);
                 }
@@ -2833,18 +2867,28 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         public void ClearEverything()
         {
-            this.groupCollection.Clear();
-            this.internalRows.Clear();
-            this.internalColumns.Clear();
-            this.Columns.Clear();
-            //Snif everything is gone ! Ready for a new start !
+            groupCollection.Clear();
+            internalRows.Clear();
+            internalColumns.Clear();
+            Columns.Clear();
+            //Snif everything is gone ! Be Ready for a new start !
         }
 
+        /// <summary>
+        /// Finds the column from its name.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns></returns>
         public OutlookGridColumn FindFromColumnName(string name)
         {
             return internalColumns.FindFromColumnName(name);
         }
 
+        /// <summary>
+        /// Finds the column from its index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns></returns>
         public OutlookGridColumn FindFromColumnIndex(int index)
         {
             return internalColumns.FindFromColumnIndex(index);
@@ -2852,9 +2896,18 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         #endregion OutlookGrid methods
     }
 
+    /// <summary>
+    /// Grid filling mode
+    /// </summary>
     public enum FillMode
     {
+        /// <summary>
+        /// The grid contains only groups (faster).
+        /// </summary>
         GroupsOnly,
+        /// <summary>
+        /// The grid contains groups and nodes (no choice, choose this one !)
+        /// </summary>
         GroupsAndNodes
     }
 }

@@ -1,5 +1,9 @@
 ﻿namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Formatting
 {
+    /// <summary>
+    /// CustomFormatRule Form
+    /// </summary>
+    /// <seealso cref="ComponentFactory.Krypton.Toolkit.KryptonForm" />
     partial class CustomFormatRule
     {
         /// <summary>
