@@ -164,6 +164,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
 
             //Update StaticValues
+            //ColumnHeadersHeight = (int)(ColumnHeadersHeight * factorY); //No need already done in KryptonDataGridView
             StaticValues._defaultGroupRowHeight = (int)(StaticValues._defaultGroupRowHeight * factorY);
             StaticValues._2013GroupRowHeight = (int)(StaticValues._2013GroupRowHeight * factorY);
             StaticValues._defaultOffsetHeight = (int)(StaticValues._defaultOffsetHeight * factorY);
@@ -2410,83 +2411,58 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
-
-
-        /// <summary>
-        /// Fill the grid (grouping, sorting,...)
-        /// </summary>
-        public void Fill()
+        private void FillMinMaxFormatConditions(Type typeColumn, int j, List<OutlookGridRow> list, int formatColumn)
         {
-            Cursor.Current = Cursors.WaitCursor;
-#if (DEBUG)
-            Stopwatch azer = new Stopwatch();
-            azer.Start();
-#endif
-            List<OutlookGridRow> list;
-            List<OutlookGridRow> tmp; // = new List<OutlookGridRow>();
-            IOutlookGridGroup grParent = null;
-            Rows.Clear();
-            groupCollection.Clear();
-
-            if (internalRows.Count == 0)
-                return;
-            list = internalRows;
-
-
-            //Apply Formatting (BETA)
-            int formatColumn;
-            Type typeColumn;
-
-            //Determine mix and max value
-            for (int j = 0; j < formatConditions.Count; j++)
+            if (typeColumn == typeof(TimeSpan))
             {
-                formatColumn = Columns[formatConditions[j].ColumnName].Index;
-                typeColumn = Columns[formatConditions[j].ColumnName].ValueType;
-                formatConditions[j].minValue = double.MaxValue;
-                formatConditions[j].maxValue = double.MinValue;
-                if (typeColumn == typeof(TimeSpan))
+                for (int i = 0; i < list.Count; i++)
                 {
-                    for (int i = 0; i < list.Count; i++)
+                    if (list[i].Cells[formatColumn].Value != null)
                     {
-                        if (list[i].Cells[formatColumn].Value != null)
-                        {
 
-                            if (((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes < formatConditions[j].minValue)
-                                formatConditions[j].minValue = ((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes;
-                            if (((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes > formatConditions[j].maxValue)
-                                formatConditions[j].maxValue = ((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes;
-                        }
+                        if (((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes < formatConditions[j].minValue)
+                            formatConditions[j].minValue = ((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes;
+                        if (((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes > formatConditions[j].maxValue)
+                            formatConditions[j].maxValue = ((TimeSpan)list[i].Cells[formatColumn].Value).TotalMinutes;
                     }
-                }
-                else if (typeColumn == typeof(Decimal))
-                {
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        if (list[i].Cells[formatColumn].Value != null)
-                        {
-                            if (Convert.ToDouble(list[i].Cells[formatColumn].Value) < formatConditions[j].minValue)
-                                formatConditions[j].minValue = Convert.ToDouble(list[i].Cells[formatColumn].Value);
-                            if (Convert.ToDouble(list[i].Cells[formatColumn].Value) > formatConditions[j].maxValue)
-                                formatConditions[j].maxValue = Convert.ToDouble(list[i].Cells[formatColumn].Value);
-                        }
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        if (list[i].Cells[formatColumn].Value != null)
-                        {
-                            if ((double)list[i].Cells[formatColumn].Value < formatConditions[j].minValue)
-                                formatConditions[j].minValue = (double)list[i].Cells[formatColumn].Value;
-                            if ((double)list[i].Cells[formatColumn].Value > formatConditions[j].maxValue)
-                                formatConditions[j].maxValue = (double)list[i].Cells[formatColumn].Value;
-                        }
-                    }
+                    if (list[i].HasChildren)
+                        FillMinMaxFormatConditions(typeColumn, j, list[i].Nodes.Nodes, formatColumn);
                 }
             }
+            else if (typeColumn == typeof(Decimal))
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i].Cells[formatColumn].Value != null)
+                    {
+                        if (Convert.ToDouble(list[i].Cells[formatColumn].Value) < formatConditions[j].minValue)
+                            formatConditions[j].minValue = Convert.ToDouble(list[i].Cells[formatColumn].Value);
+                        if (Convert.ToDouble(list[i].Cells[formatColumn].Value) > formatConditions[j].maxValue)
+                            formatConditions[j].maxValue = Convert.ToDouble(list[i].Cells[formatColumn].Value);
+                    }
+                    if (list[i].HasChildren)
+                        FillMinMaxFormatConditions(typeColumn, j, list[i].Nodes.Nodes, formatColumn);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i].Cells[formatColumn].Value != null)
+                    {
+                        if ((double)list[i].Cells[formatColumn].Value < formatConditions[j].minValue)
+                            formatConditions[j].minValue = (double)list[i].Cells[formatColumn].Value;
+                        if ((double)list[i].Cells[formatColumn].Value > formatConditions[j].maxValue)
+                            formatConditions[j].maxValue = (double)list[i].Cells[formatColumn].Value;
+                    }
+                    if (list[i].HasChildren)
+                        FillMinMaxFormatConditions(typeColumn, j, list[i].Nodes.Nodes, formatColumn);
+                }
+            }
+        }
 
-            //Passing the necessary information to cells 
+        private void FillValueFormatConditions(int formatColumn, Type typeColumn, List<OutlookGridRow> list)
+        {
             for (int i = 0; i < list.Count; i++)
             {
                 for (int j = 0; j < formatConditions.Count; j++)
@@ -2547,7 +2523,51 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                         }
                     }
                 }
+
+                if (list[i].HasChildren)
+                    FillValueFormatConditions(formatColumn, typeColumn, list[i].Nodes.Nodes);
             }
+        }
+
+
+        /// <summary>
+        /// Fill the grid (grouping, sorting,...)
+        /// </summary>
+        public void Fill()
+        {
+            Cursor.Current = Cursors.WaitCursor;
+#if (DEBUG)
+            Stopwatch azer = new Stopwatch();
+            azer.Start();
+#endif
+            List<OutlookGridRow> list;
+            List<OutlookGridRow> tmp; // = new List<OutlookGridRow>();
+            IOutlookGridGroup grParent = null;
+            Rows.Clear();
+            groupCollection.Clear();
+
+            if (internalRows.Count == 0)
+                return;
+            list = internalRows;
+
+
+            //Apply Formatting
+            int formatColumn = 0;
+            Type typeColumn = null;
+
+            //Determine mix and max value
+            for (int j = 0; j < formatConditions.Count; j++)
+            {
+                formatColumn = Columns[formatConditions[j].ColumnName].Index;
+                typeColumn = Columns[formatConditions[j].ColumnName].ValueType;
+                formatConditions[j].minValue = double.MaxValue;
+                formatConditions[j].maxValue = double.MinValue;
+                FillMinMaxFormatConditions(typeColumn, j, list, formatColumn);
+            }
+
+            //Passing the necessary information to cells 
+            FillValueFormatConditions(formatColumn, typeColumn, list);
+
             //End of Formatting
 #if (DEBUG)
             azer.Stop();
@@ -2871,6 +2891,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             internalRows.Clear();
             internalColumns.Clear();
             Columns.Clear();
+            ConditionalFormatting.Clear();
             //Snif everything is gone ! Be Ready for a new start !
         }
 

@@ -67,13 +67,10 @@ namespace KryptonOutlookGrid.SandBox
                     double.Parse("11.5", CultureInfo.InvariantCulture),
                      (double)random.Next(101) /100
                 });
-                    ((KryptonDataGridViewTreeTextCell)row2.Cells[1]).UpdateStyle();
                     row.Nodes.Add(row2);
-   
-                   // }
-
-                    ((KryptonDataGridViewTreeTextCell)row.Cells[1]).UpdateStyle();
+                    ((KryptonDataGridViewTreeTextCell)row2.Cells[1]).UpdateStyle(); //Important : after added to the parent node
                     l.Add(row);
+                    ((KryptonDataGridViewTreeTextCell)row.Cells[1]).UpdateStyle(); //Important : after added to the rows list
                 }
                 catch (Exception ex)
                 {
