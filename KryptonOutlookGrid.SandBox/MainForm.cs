@@ -1,13 +1,10 @@
 ﻿using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid;
 using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns;
+using JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.Formatting;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -38,37 +35,54 @@ namespace KryptonOutlookGrid.SandBox
             OutlookGrid1.ClearInternalRows();
             OutlookGrid1.FillMode = FillMode.GroupsAndNodes;
 
+            List<Token> tokensList = new List<Token>();
+            tokensList.Add(new Token("Best seller", Color.Orange, Color.Black));
+            tokensList.Add(new Token("New", Color.LightGreen, Color.Black));
+            tokensList.Add(null);
+            tokensList.Add(null);
+            tokensList.Add(null);
+
             Random random = new Random();
             //.Next permet de retourner un nombre aléatoire contenu dans la plage spécifiée entre parenthèses.
             XmlDocument doc = new XmlDocument();
             doc.Load("invoices.xml");
             IFormatProvider culture = new CultureInfo("en-US", true);
-            foreach (XmlNode customer in doc.SelectNodes("//invoice"))
+            foreach (XmlNode customer in doc.SelectNodes("//invoice")) //TODO for instead foreach for perfs...
             {
                 try
                 {
                     row = new OutlookGridRow();
                     row.CreateCells(OutlookGrid1, new object[] {
-                    customer["CustomerID"].InnerText,
-                    customer["CustomerName"].InnerText,
-                    customer["Address"].InnerText,
-                    customer["City"].InnerText,
-                    new TextAndImage(customer["Country"].InnerText,GetFlag(customer["Country"].InnerText)),
-                    DateTime.Parse(customer["OrderDate"].InnerText,culture),
-                    customer["ProductName"].InnerText,  
-                    double.Parse(customer["Price"].InnerText, CultureInfo.InvariantCulture), //We put a float the formatting in design does the rest
-                    (double)random.Next(101) /100
-                });
-
-                    OutlookGridRow row2 = new OutlookGridRow();
-                    row2.CreateCells(OutlookGrid1, new object[] {"1","test","11 test avenue","TestCity",  new TextAndImage("test",null),
-                    DateTime.Now,
-                    "Por",
-                    double.Parse("11.5", CultureInfo.InvariantCulture),
-                     (double)random.Next(101) /100
-                });
-                    row.Nodes.Add(row2);
-                    ((KryptonDataGridViewTreeTextCell)row2.Cells[1]).UpdateStyle(); //Important : after added to the parent node
+                        customer["CustomerID"].InnerText,
+                        customer["CustomerName"].InnerText,
+                        customer["Address"].InnerText,
+                        customer["City"].InnerText,
+                        new TextAndImage(customer["Country"].InnerText,GetFlag(customer["Country"].InnerText)),
+                        DateTime.Parse(customer["OrderDate"].InnerText,culture),
+                        customer["ProductName"].InnerText,
+                        double.Parse(customer["Price"].InnerText, CultureInfo.InvariantCulture), //We put a float the formatting in design does the rest
+                        (double)random.Next(101) /100,
+                        tokensList[random.Next(5)]
+                    });
+                    if (random.Next(2) == 1)
+                    {
+                        //Sub row
+                        OutlookGridRow row2 = new OutlookGridRow();
+                        row2.CreateCells(OutlookGrid1, new object[] {
+                            customer["CustomerID"].InnerText + " 2",
+                            customer["CustomerName"].InnerText + " 2",
+                            customer["Address"].InnerText + "2",
+                            customer["City"].InnerText + " 2",
+                            new TextAndImage(customer["Country"].InnerText,GetFlag(customer["Country"].InnerText)),
+                            DateTime.Now,
+                            customer["ProductName"].InnerText + " 2",
+                            (double)random.Next(1000),
+                            (double)random.Next(101) /100,
+                            tokensList[random.Next(5)]
+                        });
+                        row.Nodes.Add(row2);
+                        ((KryptonDataGridViewTreeTextCell)row2.Cells[1]).UpdateStyle(); //Important : after added to the parent node
+                    }
                     l.Add(row);
                     ((KryptonDataGridViewTreeTextCell)row.Cells[1]).UpdateStyle(); //Important : after added to the rows list
                 }
@@ -77,6 +91,14 @@ namespace KryptonOutlookGrid.SandBox
                     MessageBox.Show("Gasp...Something went wrong ! " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+
+            //Add a default conditionnal formatting
+            ConditionalFormatting cond = new ConditionalFormatting();
+            cond.ColumnName = SandBoxGridColumn.ColumnPrice.ToString();
+            cond.FormatType = EnumConditionalFormatType.TwoColorsRange;
+            cond.FormatParams = new TwoColorsParams(Color.White, Color.FromArgb(255, 255, 58, 61));
+            OutlookGrid1.ConditionalFormatting.Add(cond);
+
             OutlookGrid1.ResumeLayout();
             OutlookGrid1.AssignRows(l);
             OutlookGrid1.ForceRefreshGroupBox();
@@ -97,12 +119,52 @@ namespace KryptonOutlookGrid.SandBox
 
         private Image GetFlag(string country)
         {
+            //Icons from http://365icon.com/icon-styles/ethnic/classic2/
+
             switch (country)
             {
                 case "France":
-                    return Properties.Resources.flag_france;
+                    return Properties.Resources.fr;
                 case "Germany":
-                    return Properties.Resources.flag_germany;
+                    return Properties.Resources.de;
+                case "Argentina":
+                    return Properties.Resources.ar;
+                case "Austria":
+                    return Properties.Resources.au;
+                case "Belgium":
+                    return Properties.Resources.be;
+                case "Brazil":
+                    return Properties.Resources.br;
+                case "Canada":
+                    return Properties.Resources.ca;
+                case "Denmark":
+                    return Properties.Resources.dk;
+                case "Finland":
+                    return Properties.Resources.fi;
+                case "Ireland":
+                    return Properties.Resources.ie;
+                case "Italy":
+                    return Properties.Resources.it;
+                case "Mexico":
+                    return Properties.Resources.mx;
+                case "Norway":
+                    return Properties.Resources.no;
+                case "Poland":
+                    return Properties.Resources.pl;
+                case "Portugal":
+                    return Properties.Resources.pt;
+                case "Spain":
+                    return Properties.Resources.es;
+                case "Sweden":
+                    return Properties.Resources.se;
+                case "Switzerland":
+                    return Properties.Resources.ch;
+                case "UK":
+                    return Properties.Resources.gb;
+                case "USA":
+                    return Properties.Resources.us;
+                case "Venezuela":
+                    return Properties.Resources.ve;
                 default:
                     return null;
             }
@@ -147,7 +209,7 @@ namespace KryptonOutlookGrid.SandBox
 
         private void buttonSpecHeaderGroup2_Click(object sender, EventArgs e)
         {
-            OutlookGrid1.PersistConfiguration(Application.StartupPath + "grid.xml","2");
+            OutlookGrid1.PersistConfiguration(Application.StartupPath + "grid.xml", "2");
         }
 
         bool expand = true;
@@ -159,7 +221,7 @@ namespace KryptonOutlookGrid.SandBox
             else
                 OutlookGrid1.CollapseAllNodes();
 
-             expand = !expand;
+            expand = !expand;
         }
     }
 }

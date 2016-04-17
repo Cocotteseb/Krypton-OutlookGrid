@@ -10,22 +10,25 @@ using System.Xml;
 
 namespace KryptonOutlookGrid.SandBox
 {
+
+    public enum SandBoxGridColumn
+    {
+        ColumnCustomerID = 0,
+        ColumnCustomerName = 1,
+        ColumnAddress = 2,
+        ColumnCity = 3,
+        ColumnCountry = 4,
+        ColumnOrderDate = 5,
+        ColumnProduct = 6,
+        ColumnPrice = 7,
+        SatisfactionColumn = 8,
+        ColumnToken = 9
+    }
+
     public class DataGridViewSetup
     {
         private const int mGRIDCONFIG_VERSION = 1;
-        private enum SandBoxGridColumn
-        {
-            ColumnCustomerID = 0,
-            ColumnCustomerName = 1,
-            ColumnAddress = 2,
-            ColumnCity = 3,
-            ColumnCountry = 4,
-            ColumnOrderDate = 5,
-            ColumnProduct = 6,
-            ColumnPrice = 7,
-            SatisfactionColumn = 8
-        }
-
+       
         /// <summary>
         /// Use this function if you do not add your columns at design time.
         /// </summary>
@@ -108,8 +111,15 @@ namespace KryptonOutlookGrid.SandBox
                     dataGridViewCellStyle2.Format = "0%";
                     column.DefaultCellStyle = dataGridViewCellStyle2;
                     column.HeaderText = "Satisfaction";
-                    column.Name = "SatisfactionColumn";
+                    column.Name = colType.ToString();
                     column.SortMode = DataGridViewColumnSortMode.Programmatic;
+                    return column;
+                case SandBoxGridColumn.ColumnToken:
+                    column = new KryptonDataGridViewTokenColumn();
+                    column.Name = colType.ToString();
+                    column.ReadOnly = true;
+                    column.SortMode = DataGridViewColumnSortMode.Programmatic;
+                    column.HeaderText = "Tag";
                     return column;
                 default:
                     throw new Exception("Unknown Column Type !! TODO improve that !");
@@ -231,7 +241,7 @@ namespace KryptonOutlookGrid.SandBox
             Grid.GroupBox.Visible = true;
             Grid.HideColumnOnGrouping = false;
 
-            DataGridViewColumn[] columnsToAdd = new DataGridViewColumn[9];
+            DataGridViewColumn[] columnsToAdd = new DataGridViewColumn[10];
             columnsToAdd[0] = SetupColumn(SandBoxGridColumn.ColumnCustomerID);
             columnsToAdd[1] = SetupColumn(SandBoxGridColumn.ColumnCustomerName);
             columnsToAdd[2] = SetupColumn(SandBoxGridColumn.ColumnAddress);
@@ -241,6 +251,7 @@ namespace KryptonOutlookGrid.SandBox
             columnsToAdd[6] = SetupColumn(SandBoxGridColumn.ColumnProduct);
             columnsToAdd[7] = SetupColumn(SandBoxGridColumn.ColumnPrice);
             columnsToAdd[8] = SetupColumn(SandBoxGridColumn.SatisfactionColumn);
+            columnsToAdd[9] = SetupColumn(SandBoxGridColumn.ColumnToken);
             Grid.Columns.AddRange(columnsToAdd);
 
             //Define the columns for a possible grouping
@@ -253,6 +264,7 @@ namespace KryptonOutlookGrid.SandBox
             Grid.AddInternalColumn(columnsToAdd[6], new OutlookGridDefaultGroup(null) { OneItemText = "1 product", XXXItemsText = " products" }, SortOrder.None, -1, -1);
             Grid.AddInternalColumn(columnsToAdd[7], new OutlookGridDefaultGroup(null), SortOrder.None, -1, -1);
             Grid.AddInternalColumn(columnsToAdd[8], new OutlookGridDefaultGroup(null), SortOrder.None, -1, -1);
+            Grid.AddInternalColumn(columnsToAdd[9], new OutlookGridDefaultGroup(null), SortOrder.None, -1, -1);
         }
     }
 }
