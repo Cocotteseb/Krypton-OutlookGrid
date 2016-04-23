@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="ab606f19-6ab7-4eab-bef3-a104f0542408" revisionNumber="1">
+	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<introduction>
+			<para>The topics in this section describe the various changes made to the Krypton OutlookGrid over the
+life of the project.</para>
+		</introduction>
+
+		<section>
+			<title>Version History</title>
+			<content>
+				<para>Select a version below to see a description of its changes.</para>
+
+				<list class="bullet">
+					<listItem>
+						<para><link xlink:href="3c2d708e-bd9c-4f7c-a736-74c5cc8a4e84" /></para>
+					</listItem>
+
+					<listItem>
+            <para>
+              <link xlink:href="acfabac9-8673-4a99-a2fb-cca792dbc9df" />
+            </para>
+					</listItem>
+
+          <listItem>
+            <para>
+              <link xlink:href="a59fdaea-ec09-4749-b282-b78a233a991c" />
+            </para>
+          </listItem>
+
+				</list>
+
+			</content>
+		</section>
+
+		<relatedTopics>
+			<link xlink:href="43f5e948-d93c-4c19-a919-386e75620c02" />
+		</relatedTopics>
+
+	</developerConceptualDocument>
+</topic>

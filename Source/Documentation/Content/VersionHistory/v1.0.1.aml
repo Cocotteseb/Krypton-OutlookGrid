@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="acfabac9-8673-4a99-a2fb-cca792dbc9df" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        Version 1.0.1 was released on Jun 1, 2013.
+      </para>
+    </introduction>
+
+    <section>
+      <title>Changes in This Release</title>
+      <content>
+
+        <list class="bullet">
+          <listItem>
+            <para>* Fixed Issue #1431</para>
+          </listItem>
+          <listItem>
+            <para>* Fixed Collapsing the first group row makes it no longer visible due to scrolling</para>
+          </listItem>
+
+        </list>
+
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="ab606f19-6ab7-4eab-bef3-a104f0542408" />
+    </relatedTopics>
+
+  </developerConceptualDocument>
+</topic>
