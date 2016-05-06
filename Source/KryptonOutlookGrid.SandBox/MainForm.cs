@@ -92,12 +92,7 @@ namespace KryptonOutlookGrid.SandBox
                 }
             }
 
-            //Add a default conditionnal formatting
-            ConditionalFormatting cond = new ConditionalFormatting();
-            cond.ColumnName = SandBoxGridColumn.ColumnPrice.ToString();
-            cond.FormatType = EnumConditionalFormatType.TwoColorsRange;
-            cond.FormatParams = new TwoColorsParams(Color.White, Color.FromArgb(255, 255, 58, 61));
-            OutlookGrid1.ConditionalFormatting.Add(cond);
+       
 
             OutlookGrid1.ResumeLayout();
             OutlookGrid1.AssignRows(l);
@@ -209,7 +204,7 @@ namespace KryptonOutlookGrid.SandBox
 
         private void buttonSpecHeaderGroup2_Click(object sender, EventArgs e)
         {
-            OutlookGrid1.PersistConfiguration(Application.StartupPath + "grid.xml", "2");
+            OutlookGrid1.PersistConfiguration(Application.StartupPath + "/grid.xml", StaticInfos._GRIDCONFIG_VERSION.ToString());
         }
 
         bool expand = true;

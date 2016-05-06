@@ -44,9 +44,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Librairies\Debug\ComponentFactory.Krypton.Toolkit.dll</HintPath>
+    <Reference Include="ComponentFactory.Krypton.Toolkit">
+      <HintPath>..\DLLs\ComponentFactory.Krypton.Toolkit\Debug\ComponentFactory.Krypton.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
