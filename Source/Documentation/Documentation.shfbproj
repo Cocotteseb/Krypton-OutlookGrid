@@ -46,19 +46,19 @@
     <NamespaceSummaries>
       <NamespaceSummaryItem name="JDHSoftware.Krypton.Toolkit.Utils.Lang" isDocumented="False" xmlns="" />
     </NamespaceSummaries>
-    <HeaderText>Krypton OutlookGrid v1.5.0</HeaderText>
+    <HeaderText>Krypton OutlookGrid v1.6.0</HeaderText>
     <FeedbackEMailAddress>support%40jdhsoftware.com</FeedbackEMailAddress>
     <PlugInConfigurations>
     </PlugInConfigurations>
     <FooterText>
     </FooterText>
     <FeedbackEMailLinkText>support%40jdhsoftware.com</FeedbackEMailLinkText>
-    <CopyrightText>Copyright &amp;#169%3b JDH Software 2015</CopyrightText>
+    <CopyrightText>Copyright &amp;#169%3b JDH Software 2013-2016</CopyrightText>
     <CopyrightHref>http://www.jdhsoftware.com</CopyrightHref>
-    <HelpFileVersion>1.5.0.0</HelpFileVersion>
+    <HelpFileVersion>1.6.0.0</HelpFileVersion>
     <MissingTags>Summary, Parameter, Returns, Value, AutoDocumentCtors, Namespace, TypeParameter, AutoDocumentDispose</MissingTags>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
-    <HelpFileFormat>HtmlHelp1, Markdown</HelpFileFormat>
+    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
     <IndentHtml>False</IndentHtml>
     <KeepLogFile>True</KeepLogFile>
     <DisableCodeBlockComponent>False</DisableCodeBlockComponent>

@@ -1,7 +1,7 @@
 ﻿Version 1.6.0
 +Allow conditional formatting for all rows in tree grid mode
-*Fixed custom rule form in french language
-*Updated and bug fixes in Sandbox
+*Bug fixies in sample
+
 
 Version 1.5.0
 +Improvements to Conditionnal Formatting : ThreeColors, performance improvements, full context menu, new icons, custom values form, persistence, contrast color and bug fixes !

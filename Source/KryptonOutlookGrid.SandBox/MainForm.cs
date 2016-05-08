@@ -15,6 +15,8 @@ namespace KryptonOutlookGrid.SandBox
         public MainForm()
         {
             InitializeComponent();
+
+       
         }
 
         static Random rand = new Random();

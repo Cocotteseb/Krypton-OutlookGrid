@@ -128,17 +128,7 @@ public class DataGridViewPercentageCell : KryptonDataGridViewTextBoxCell
     protected override void Paint(System.Drawing.Graphics graphics, System.Drawing.Rectangle clipBounds, System.Drawing.Rectangle cellBounds, int rowIndex, System.Windows.Forms.DataGridViewElementStates cellState, object value, object formattedValue, string errorText, System.Windows.Forms.DataGridViewCellStyle cellStyle, System.Windows.Forms.DataGridViewAdvancedBorderStyle advancedBorderStyle,
     System.Windows.Forms.DataGridViewPaintParts paintParts)
     {
-        //Double p = 0;
-        //Single percentage = 0f;
-        //if (value != null && Double.TryParse((string)value, out p))
-        //{
-        //p = Convert.ToDouble(value);
-        //percentage = (Convert.ToSingle(value) / 100f);
-        //formattedValue = value + "%";
-        //}
-
         //Draw the bar
-
         int barWidth;
         if ((double)value >= 1.0)
         {
@@ -151,27 +141,27 @@ public class DataGridViewPercentageCell : KryptonDataGridViewTextBoxCell
         {
             Rectangle r = new Rectangle(cellBounds.X + 3, cellBounds.Y + 3, barWidth, cellBounds.Height - 8);
 
-            //using (LinearGradientBrush linearBrush = new LinearGradientBrush(r, KryptonManager.CurrentGlobalPalette.GetBackColor1(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), KryptonManager.CurrentGlobalPalette.GetBackColor2(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), LinearGradientMode.Vertical))
-            //{
-            //    graphics.FillRectangle(linearBrush, r);
-            //}
-
-            using (LinearGradientBrush linearBrush = new LinearGradientBrush(r, Color.FromArgb(255, 140, 197, 66), Color.FromArgb(255, 247, 251, 242), LinearGradientMode.Horizontal))
+            using (LinearGradientBrush linearBrush = new LinearGradientBrush(r, KryptonManager.CurrentGlobalPalette.GetBackColor1(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), KryptonManager.CurrentGlobalPalette.GetBackColor2(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal), LinearGradientMode.Vertical))
             {
                 graphics.FillRectangle(linearBrush, r);
             }
 
-            //using (Pen pen = new Pen(KryptonManager.CurrentGlobalPalette.GetBackColor2(PaletteBackStyle.GridHeaderColumnList, PaletteState.Normal)))
-            //{
-            //    graphics.DrawRectangle(pen, r);
-            //    // graphics.DrawRectangle(Pens.DimGray, r);
-            //}
-
-            using (Pen pen = new Pen(Color.FromArgb(255, 140, 197, 66)))
+            using (Pen pen = new Pen(KryptonManager.CurrentGlobalPalette.GetBorderColor1(PaletteBorderStyle.GridHeaderColumnList, PaletteState.Normal)))
             {
                 graphics.DrawRectangle(pen, r);
-              
             }
+
+            //TODO : implement customization like conditional formatting
+            //using (LinearGradientBrush linearBrush = new LinearGradientBrush(r, Color.FromArgb(255, 140, 197, 66), Color.FromArgb(255, 247, 251, 242), LinearGradientMode.Horizontal))
+            //{
+            //    graphics.FillRectangle(linearBrush, r);
+            //}
+
+            //using (Pen pen = new Pen(Color.FromArgb(255, 140, 197, 66)))
+            //{
+            //    graphics.DrawRectangle(pen, r);
+
+            //}
         }
 
         base.Paint(graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle,

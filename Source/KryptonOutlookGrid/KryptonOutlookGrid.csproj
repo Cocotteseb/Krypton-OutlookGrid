@@ -84,7 +84,7 @@
       <DependentUpon>KryptonOutlookGridGroupBox.cs</DependentUpon>
     </Compile>
     <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewPercentageColumn.cs" />
-    <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewRatingcolumn.cs" />
+    <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewRatingColumn.cs" />
     <Compile Include="KryptonOutlookGrid\CustomColumns\KryptonDataGridViewTextAndImageColumn.cs" />
     <Compile Include="KryptonOutlookGrid\Helpers\OutlookGridGroupHelpers.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGrid.cs" />

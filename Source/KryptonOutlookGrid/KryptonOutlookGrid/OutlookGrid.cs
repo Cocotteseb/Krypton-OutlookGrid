@@ -134,6 +134,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             groupCollection = new OutlookGridGroupCollection(null);
             internalRows = new List<OutlookGridRow>();
             internalColumns = new OutlookGridColumnCollection();
+            _fillMode = FillMode.GroupsOnly;
 
             // Cache the current global palette setting
             _palette = KryptonManager.CurrentGlobalPalette;

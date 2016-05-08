@@ -142,7 +142,7 @@ namespace KryptonOutlookGrid.SandBox
             int.TryParse(doc.Element("OutlookGrid").Attribute("V").Value, out versionGrid);
 
             //Upgrade if necessary the config file
-            CheckAndUpgradeConfigFile(versionGrid, doc, Grid, LoadState.After);
+            CheckAndUpgradeConfigFile(versionGrid, doc, Grid, LoadState.Before);
             Grid.ClearEverything();
             Grid.GroupBox.Visible = CommonHelper.StringToBool(doc.XPathSelectElement("OutlookGrid/GroupBox").Value);
             Grid.HideColumnOnGrouping = CommonHelper.StringToBool(doc.XPathSelectElement("OutlookGrid/HideColumnOnGrouping").Value);
@@ -260,11 +260,11 @@ namespace KryptonOutlookGrid.SandBox
         {
             //Do changes according to version
             //For example you can add automatically new columns. This can be useful when you update your application to add columns and would like to display them to the user for the first time.
-            switch (version)
-            {
+            //switch (version)
+            //{
                 //case 2:
                 //    // Do changes to match the V2
-                //    if (state == DataGridViewSetup.LoadState.After)
+                //    if (state == DataGridViewSetup.LoadState.Before)
                 //    {
                 //        doc.Element("OutlookGrid").Attribute("V").Value = version.ToString();
                 //        Array.Resize(ref activeColumns, activeColumns.Length + 1);
@@ -280,7 +280,7 @@ namespace KryptonOutlookGrid.SandBox
                 //        Grid.PersistConfiguration(PublicFcts.GetGridConfigFile, version);
                 //    }
                 //    break;
-            }
+            //}
         }
 
 

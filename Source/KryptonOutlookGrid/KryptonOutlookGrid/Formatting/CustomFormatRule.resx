@@ -163,7 +163,7 @@
     <value>KBtnOK</value>
   </data>
   <data name="&gt;&gt;KBtnOK.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonButton, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonButton, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;KBtnOK.Parent" xml:space="preserve">
     <value>kryptonGroup1.Panel</value>
@@ -211,7 +211,7 @@
     <value>KBtnCancel</value>
   </data>
   <data name="&gt;&gt;KBtnCancel.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonButton, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonButton, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;KBtnCancel.Parent" xml:space="preserve">
     <value>kryptonGroup1.Panel</value>
@@ -259,7 +259,7 @@
     <value>KLblPreview</value>
   </data>
   <data name="&gt;&gt;KLblPreview.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonLabel, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonLabel, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;KLblPreview.Parent" xml:space="preserve">
     <value>kryptonGroup1.Panel</value>
@@ -296,7 +296,7 @@
     <value>KColorBtnMin</value>
   </data>
   <data name="&gt;&gt;KColorBtnMin.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonColorButton, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonColorButton, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;KColorBtnMin.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -333,7 +333,7 @@
     <value>KColorBtnMedium</value>
   </data>
   <data name="&gt;&gt;KColorBtnMedium.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonColorButton, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonColorButton, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;KColorBtnMedium.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -370,7 +370,7 @@
     <value>KColorBtnMax</value>
   </data>
   <data name="&gt;&gt;KColorBtnMax.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonColorButton, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonColorButton, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;KColorBtnMax.Parent" xml:space="preserve">
     <value>flowLayoutPanel1</value>
@@ -382,7 +382,7 @@
     <value>12, 67</value>
   </data>
   <data name="flowLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>384, 31</value>
+    <value>453, 31</value>
   </data>
   <data name="flowLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -412,7 +412,7 @@
     <value>KComboBoxStyle</value>
   </data>
   <data name="&gt;&gt;KComboBoxStyle.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonComboBox, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonComboBox, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;KComboBoxStyle.Parent" xml:space="preserve">
     <value>kryptonGroup1.Panel</value>
@@ -436,7 +436,7 @@
     <value>KLblFormat</value>
   </data>
   <data name="&gt;&gt;KLblFormat.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonLabel, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonLabel, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;KLblFormat.Parent" xml:space="preserve">
     <value>kryptonGroup1.Panel</value>
@@ -460,7 +460,7 @@
     <value>KLblFill</value>
   </data>
   <data name="&gt;&gt;KLblFill.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonLabel, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonLabel, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;KLblFill.Parent" xml:space="preserve">
     <value>kryptonGroup1.Panel</value>
@@ -487,7 +487,7 @@
     <value>KComboBoxFillMode</value>
   </data>
   <data name="&gt;&gt;KComboBoxFillMode.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonComboBox, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonComboBox, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;KComboBoxFillMode.Parent" xml:space="preserve">
     <value>kryptonGroup1.Panel</value>
@@ -505,7 +505,7 @@
     <value>kryptonGroup1.Panel</value>
   </data>
   <data name="&gt;&gt;kryptonGroup1.Panel.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonGroupPanel, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonGroupPanel, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;kryptonGroup1.Panel.Parent" xml:space="preserve">
     <value>kryptonGroup1</value>
@@ -523,7 +523,7 @@
     <value>kryptonGroup1</value>
   </data>
   <data name="&gt;&gt;kryptonGroup1.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonGroup, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonGroup, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
   <data name="&gt;&gt;kryptonGroup1.Parent" xml:space="preserve">
     <value>$this</value>
@@ -553,6 +553,6 @@
     <value>CustomFormatRule</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>ComponentFactory.Krypton.Toolkit.KryptonForm, ComponentFactory.Krypton.Toolkit, Version=4.4.0.2, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
+    <value>ComponentFactory.Krypton.Toolkit.KryptonForm, ComponentFactory.Krypton.Toolkit, Version=4.4.1.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e</value>
   </data>
 </root>
