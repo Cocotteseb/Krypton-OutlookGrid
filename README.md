@@ -3,9 +3,9 @@ Krypton customized version of the .NET Winforms DataGridView (C#) that allows mu
 
 ![](/Images/KryptonOutlookGridSample.png)
 
-<a href="#">Homepage (coming soon)</a>
-<a href="#">Documentation (coming soon)</a>
-<a href="#">Release Notes</a>
+<a href="http://www.jdhsoftware.com/products/krypton-outlookgrid/">Homepage</a>
+<a href="http://www.jdhsoftware.com/products/krypton-outlookgrid/documentation/">Documentation</a>
+<a href="http://www.jdhsoftware.com/products/krypton-outlookgrid/history/">Release Notes</a>
 <a href="https://github.com/Cocotteseb/Krypton-OutlookGrid/blob/master/LICENSE.md">License</a>
 
 
