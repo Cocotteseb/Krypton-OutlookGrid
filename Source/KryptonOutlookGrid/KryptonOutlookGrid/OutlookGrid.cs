@@ -1201,7 +1201,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private void OnBestFitAllColumns(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+            AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader);
             Cursor.Current = Cursors.Default;
         }
 
@@ -2659,7 +2659,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                                     }
                                 }
                                 gr.GroupImage = bmp;
-                            }
+                            } else if (value is System.Drawing.Bitmap)
+                                gr.GroupImage = (System.Drawing.Bitmap)value;
                             //else if (groupedColumns[i].DataGridViewColumn.GetType() == typeof(KryptonDataGridViewRatingColumn))
                             //{
                             //    gr.GroupImage = (Image)Properties.Resources.ResourceManager.GetObject("star" + value.ToString());
