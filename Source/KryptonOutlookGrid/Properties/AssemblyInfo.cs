@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
 [assembly: AssemblyTitle("Krypton OutlookGrid")]
-[assembly: AssemblyDescription("KryptonDataGridView with multi sorting and grouping abilities")]
+[assembly: AssemblyDescription("KryptonDataGridView with multi sorting and multi grouping abilities")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("JDH Software")]
 [assembly: AssemblyProduct("KryptonOutlookGrid")]

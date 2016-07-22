@@ -44,6 +44,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ComponentFactory.Krypton.Toolkit">
+      <HintPath>..\DLLs\ComponentFactory.Krypton.Toolkit\ComponentFactory.Krypton.Toolkit.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -212,6 +215,10 @@
     <None Include="Resources\CollapseIcon2010.png" />
     <None Include="Resources\CollapseIcon.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="IMPERATIVE to read.txt" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,0 +1,9 @@
+﻿Hello 
+
+Please note, as stated in the documentation page (http://www.jdhsoftware.com/products/krypton-outlookgrid/documentation/),
+that the (slightly modified) Krypton Components Suite (https://github.com/Cocotteseb/Krypton) is *NEEDED/REQUIRED/Put all synonyms* to run Krypton OutlookGrid.
+
+Please follow the steps described in the documentation to be hassle-free (especially for the *design time* support, really !). 
+For quick time demo purposes, a Krypton Toolkit is included (debug version only).
+
+Thanks for reading! Have fun !
