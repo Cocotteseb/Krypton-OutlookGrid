@@ -53,7 +53,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                         object o2 = y.Cells[sortColumnIndexAndOrder[i].Item1].Value;
                         if (sortColumnIndexAndOrder[i].Item3 != null)
                         {
-                           return sortColumnIndexAndOrder[i].Item3.Compare(o1, o2) * orderModifier;
+                            compareResult = sortColumnIndexAndOrder[i].Item3.Compare(o1, o2) * orderModifier;
                         }
                         else
                         {
