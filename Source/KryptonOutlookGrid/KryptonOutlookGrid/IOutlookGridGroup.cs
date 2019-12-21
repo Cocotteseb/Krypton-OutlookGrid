@@ -18,6 +18,7 @@
 //
 //--------------------------------------------------------------------------------
 
+using ComponentFactory.Krypton.Toolkit;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -129,5 +130,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// The items comparer.
         /// </value>
         IComparer ItemsComparer { get; set; }
+
+        /// <summary>
+        /// Background for group
+        /// </summary>
+        PaletteBack Back { get; }
     }
 }
