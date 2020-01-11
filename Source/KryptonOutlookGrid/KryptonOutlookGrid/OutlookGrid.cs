@@ -54,6 +54,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private int _previousGroupRowSelected = -1; //Useful to allow the selection of a group row or not when on mouse down 
 
         //Krypton ContextMenu for the columns header
+        private bool _allowdefaultcontextmenu = true;
         private KryptonContextMenu KCtxMenu;
         private KryptonContextMenuItems _menuItems;
         private KryptonContextMenuItem _menuSortAscending;
@@ -77,7 +78,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private KryptonContextMenuSeparator _menuSeparator5;
         private KryptonContextMenuItem _menuConditionalFormatting;
         private int colSelected = 1;         //for menu
-        private const int FormattingBarSolidGradientSepIndex = 3;
+        private const int FormattingBARSolidGradientSepIndex = 3;
 
         //For the Drag and drop of columns
         private Rectangle DragDropRectangle;
@@ -89,7 +90,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private bool _hideColumnOnGrouping;
 
         //Nodes
-        private bool _showLines;
+        private bool _showLines = true;
         internal bool _inExpandCollapseMouseCapture = false;
         private FillMode _fillMode;
 
@@ -134,7 +135,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             groupCollection = new OutlookGridGroupCollection(null);
             internalRows = new List<OutlookGridRow>();
             internalColumns = new OutlookGridColumnCollection();
-            _fillMode = FillMode.GroupsOnly;
+            _fillMode = FillMode.GROUPSONLY;
 
             // Cache the current global palette setting
             _palette = KryptonManager.CurrentGlobalPalette;
@@ -367,6 +368,16 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     Invalidate();
                 }
             }
+        }
+
+        /// <summary>
+        /// Enables integrated context menu
+        /// </summary>
+        [DefaultValue(true)]
+        public bool AllowDefaultContextmenu
+        {
+            get { return _allowdefaultcontextmenu; }
+            set { _allowdefaultcontextmenu = value; }
         }
 
         #endregion OutlookGrid property definitions
@@ -815,50 +826,56 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             {
                 if (e.Button == MouseButtons.Right)
                 {
-                    ShowColumnHeaderContextMenu(e.ColumnIndex);
+                    if (AllowDefaultContextmenu)
+                    {
+                        ShowColumnHeaderContextMenu(e.ColumnIndex);
+                    }
                 }
                 else if (e.Button == MouseButtons.Left)
                 {
                     OutlookGridColumn col = internalColumns.FindFromColumnIndex(e.ColumnIndex);
-                    if (col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable)
+                    if (col != null)
                     {
-                        SortOrder previousSort = col.SortDirection;
-                        //Reset all sorting column only if not Ctrl or Shift or the column is grouped
-                        if (Control.ModifierKeys != Keys.Shift && Control.ModifierKeys != Keys.Control && !col.IsGrouped)
+                        if (col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable)
                         {
-                            ResetAllSortingColumns();
-                        }
-
-                        //Remove this SortIndex
-                        if (Control.ModifierKeys == Keys.Control)
-                        {
-                            UnSortColum(col);
-                        }
-                        //Add the first or a new SortIndex
-                        else
-                        {
-                            if (previousSort == SortOrder.None)
+                            SortOrder previousSort = col.SortDirection;
+                            //Reset all sorting column only if not Ctrl or Shift or the column is grouped
+                            if (Control.ModifierKeys != Keys.Shift && Control.ModifierKeys != Keys.Control && !col.IsGrouped)
                             {
-                                SortColumn(col, SortOrder.Ascending);
+                                ResetAllSortingColumns();
                             }
+
+                            //Remove this SortIndex
+                            if (Control.ModifierKeys == Keys.Control)
+                            {
+                                UnSortColum(col);
+                            }
+                            //Add the first or a new SortIndex
                             else
                             {
-                                SortColumn(col, (previousSort == SortOrder.Ascending) ? SortOrder.Descending : SortOrder.Ascending);
+                                if (previousSort == SortOrder.None)
+                                {
+                                    SortColumn(col, SortOrder.Ascending);
+                                }
+                                else
+                                {
+                                    SortColumn(col, (previousSort == SortOrder.Ascending) ? SortOrder.Descending : SortOrder.Ascending);
+                                }
                             }
-                        }
 
 #if DEBUG
-                        internalColumns.DebugOutput();
+                            internalColumns.DebugOutput();
 #endif
 
-                        //Refresh the groupBox if the column is grouped
-                        if (col.IsGrouped)
-                        {
-                            ForceRefreshGroupBox();
-                        }
+                            //Refresh the groupBox if the column is grouped
+                            if (col.IsGrouped)
+                            {
+                                ForceRefreshGroupBox();
+                            }
 
-                        //Apply the changes
-                        Fill();
+                            //Apply the changes
+                            Fill();
+                        }
                     }
                 }
             }
@@ -1112,7 +1129,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             fm.Dispose();
         }
 
-        private void OnBarCustomClick(object sender, EventArgs e)
+        private void OnBARCustomClick(object sender, EventArgs e)
         {
             CustomFormatRule fm = new CustomFormatRule(EnumConditionalFormatType.Bar);
             fm.ShowDialog();
@@ -1433,7 +1450,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             {
                 internalColumns.Add(col);
                 //Already reflect the SortOrder on the column
-                col.DataGridViewColumn.HeaderCell.SortGlyphDirection = col.SortDirection;
+                if (col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable)
+                {
+                    col.DataGridViewColumn.HeaderCell.SortGlyphDirection = col.SortDirection;
+                }
                 if (_hideColumnOnGrouping && col.GroupIndex > -1 && col.GroupingType.AllowHiddenWhenGrouped)
                     col.DataGridViewColumn.Visible = false;
             }
@@ -1844,46 +1864,46 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                         it.Image = Properties.Resources.databar_generic_16;
 
                         //Solid
-                        KryptonContextMenuHeading KFormattingBarHeadingSolid = new KryptonContextMenuHeading();
-                        KFormattingBarHeadingSolid.Text = LangManager.Instance.GetString("SolidFill");
-                        KryptonContextMenuImageSelect KFormattingBarImgSelectSolid = new KryptonContextMenuImageSelect();
-                        KFormattingBarImgSelectSolid.ImageList = imgListFormatting;
-                        KFormattingBarImgSelectSolid.ImageIndexStart = 0;
-                        KFormattingBarImgSelectSolid.ImageIndexEnd = 5;
-                        KFormattingBarImgSelectSolid.LineItems = 4;
-                        KFormattingBarImgSelectSolid.Tag = tmpTag;
-                        KFormattingBarImgSelectSolid.Click += OnConditionalFormattingClick;
+                        KryptonContextMenuHeading KFormattingBARHeadingSolid = new KryptonContextMenuHeading();
+                        KFormattingBARHeadingSolid.Text = LangManager.Instance.GetString("SolidFill");
+                        KryptonContextMenuImageSelect KFormattingBARImgSelectSolid = new KryptonContextMenuImageSelect();
+                        KFormattingBARImgSelectSolid.ImageList = imgListFormatting;
+                        KFormattingBARImgSelectSolid.ImageIndexStart = 0;
+                        KFormattingBARImgSelectSolid.ImageIndexEnd = 5;
+                        KFormattingBARImgSelectSolid.LineItems = 4;
+                        KFormattingBARImgSelectSolid.Tag = tmpTag;
+                        KFormattingBARImgSelectSolid.Click += OnConditionalFormattingClick;
 
                         //Gradient
-                        KryptonContextMenuHeading KFormattingBarHeadingGradient = new KryptonContextMenuHeading();
-                        KFormattingBarHeadingGradient.Text = LangManager.Instance.GetString("GradientFill");
-                        KryptonContextMenuImageSelect KFormattingBarImgSelectGradient = new KryptonContextMenuImageSelect();
-                        KFormattingBarImgSelectGradient.ImageList = imgListFormatting;
-                        KFormattingBarImgSelectGradient.ImageIndexStart = 6;
-                        KFormattingBarImgSelectGradient.ImageIndexEnd = 11;
-                        KFormattingBarImgSelectGradient.LineItems = 4;
-                        KFormattingBarImgSelectGradient.Tag = tmpTag;
-                        KFormattingBarImgSelectGradient.Click += OnConditionalFormattingClick;
+                        KryptonContextMenuHeading KFormattingBARHeadingGradient = new KryptonContextMenuHeading();
+                        KFormattingBARHeadingGradient.Text = LangManager.Instance.GetString("GradientFill");
+                        KryptonContextMenuImageSelect KFormattingBARImgSelectGradient = new KryptonContextMenuImageSelect();
+                        KFormattingBARImgSelectGradient.ImageList = imgListFormatting;
+                        KFormattingBARImgSelectGradient.ImageIndexStart = 6;
+                        KFormattingBARImgSelectGradient.ImageIndexEnd = 11;
+                        KFormattingBARImgSelectGradient.LineItems = 4;
+                        KFormattingBARImgSelectGradient.Tag = tmpTag;
+                        KFormattingBARImgSelectGradient.Click += OnConditionalFormattingClick;
 
                         //Custom
-                        KryptonContextMenuHeading KFormattingBarHeadingOther = new KryptonContextMenuHeading();
-                        KFormattingBarHeadingOther.Text = LangManager.Instance.GetString("Other");
+                        KryptonContextMenuHeading KFormattingBARHeadingOther = new KryptonContextMenuHeading();
+                        KFormattingBARHeadingOther.Text = LangManager.Instance.GetString("Other");
                         KryptonContextMenuItem it2 = null;
                         it2 = new KryptonContextMenuItem(LangManager.Instance.GetString("CustomThreeDots"));
                         it2.Tag = "";
                         it2.Image = Properties.Resources.paint_bucket_green;
-                        it2.Click += OnBarCustomClick;
+                        it2.Click += OnBARCustomClick;
 
-                        KryptonContextMenuItems _Bars = new KryptonContextMenuItems(new ComponentFactory.Krypton.Toolkit.KryptonContextMenuItemBase[] { it2 });
+                        KryptonContextMenuItems _BARs = new KryptonContextMenuItems(new ComponentFactory.Krypton.Toolkit.KryptonContextMenuItemBase[] { it2 });
 
                         //Menu construction
                         it.Items.AddRange(new ComponentFactory.Krypton.Toolkit.KryptonContextMenuItemBase[] {
-                        KFormattingBarHeadingSolid,
-                        KFormattingBarImgSelectSolid,
-                        KFormattingBarHeadingGradient,
-                        KFormattingBarImgSelectGradient,
-                        KFormattingBarHeadingOther,
-                        _Bars
+                        KFormattingBARHeadingSolid,
+                        KFormattingBARImgSelectSolid,
+                        KFormattingBARHeadingGradient,
+                        KFormattingBARImgSelectGradient,
+                        KFormattingBARHeadingOther,
+                        _BARs
                         });
                     }
                     else if (names[i] == EnumConditionalFormatType.TwoColorsRange.ToString())
@@ -2593,7 +2613,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 // }
 
                 //Add rows to underlying DataGridView
-                if (_fillMode == FillMode.GroupsOnly)
+                if (_fillMode == FillMode.GROUPSONLY)
                 {
                     Rows.AddRange(list.ToArray());
                 }
@@ -2659,7 +2679,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                                     }
                                 }
                                 gr.GroupImage = bmp;
-                            } else if (value is System.Drawing.Bitmap)
+                            }
+                            else if (value is System.Drawing.Bitmap)
                                 gr.GroupImage = (System.Drawing.Bitmap)value;
                             //else if (groupedColumns[i].DataGridViewColumn.GetType() == typeof(KryptonDataGridViewRatingColumn))
                             //{
@@ -2741,7 +2762,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             {
                 if (groupCollection[0].Column.GroupingType.SortBySummaryCount)
                     groupCollection.Sort(new OutlookGridGroupCountComparer());
-                else
+                else if (GroupCollection[0].Column.SortDirection != SortOrder.None)
                     groupCollection.Sort();
             }
 
@@ -2812,7 +2833,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 }
 
                 //We add the rows associated with the current group
-                if (_fillMode == FillMode.GroupsOnly)
+                if (_fillMode == FillMode.GROUPSONLY)
                 {
                     tmp.AddRange(gr.Rows);
                 }
@@ -2927,10 +2948,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <summary>
         /// The grid contains only groups (faster).
         /// </summary>
-        GroupsOnly,
+        GROUPSONLY,
         /// <summary>
         /// The grid contains groups and nodes (no choice, choose this one !)
         /// </summary>
-        GroupsAndNodes
+        GROUPSANDNODES
     }
 }
