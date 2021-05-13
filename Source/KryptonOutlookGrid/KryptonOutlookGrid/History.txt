@@ -1,4 +1,11 @@
-﻿Version 1.6.0
+﻿Version 1.7.0
++Added custom row comparer per column if needed
+
+Version 1.6.1
++Added grouping image for image column (with a specific grouping class)
+*Fixed bug in multi-column sorting with a specific IComparer object.
+
+Version 1.6.0
 +Allow conditional formatting for all rows in tree grid mode
 *Fixed custom rule form in french language
 *Updated and bug fixes in Sandbox

@@ -305,4 +305,13 @@
   <data name="Finish" xml:space="preserve">
     <value>Terminer</value>
   </data>
+  <data name="EARLIERTHISYEAR" xml:space="preserve">
+    <value>Plus tôt cette année</value>
+  </data>
+  <data name="OLDER" xml:space="preserve">
+    <value>Plus ancien</value>
+  </data>
+  <data name="PREVIOUSYEAR" xml:space="preserve">
+    <value>L'année dernière</value>
+  </data>
 </root>

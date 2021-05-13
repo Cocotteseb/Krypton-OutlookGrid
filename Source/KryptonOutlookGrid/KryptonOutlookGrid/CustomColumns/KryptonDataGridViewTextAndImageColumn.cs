@@ -318,8 +318,8 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns
         /// <returns></returns>
         protected override bool SetValue(int rowIndex, object value)
         {
-            if (value != null)
-                Image = ((TextAndImage)value).Image;
+            if (value != null && !((OutlookGridRow)OwningRow).IsGroupRow) //Test to catch crash when first colum is text and image when grouping
+              Image = ((TextAndImage)value).Image;
             return base.SetValue(rowIndex, value);
         }
 
@@ -382,8 +382,12 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid.CustomColumns
             //TODO : improve we assume it is a 16x16 image 
             if (Value != null && ((TextAndImage)Value).Image != null)
             {
-                //Padding inheritedPadding = this.InheritedStyle.Padding;
-                //this.Style.Padding = new Padding(18, inheritedPadding.Top, inheritedPadding.Right, inheritedPadding.Bottom);
+                Padding inheritedPadding = Style.Padding;
+                Style.Padding = new Padding(imageSize.Width + 2,
+                 inheritedPadding.Top, inheritedPadding.Right,
+                 inheritedPadding.Bottom);
+                //To be in phase with highlight feature who forces the style.
+
                 // Draw the image clipped to the cell.
                 System.Drawing.Drawing2D.GraphicsContainer container = graphics.BeginContainer();
                 graphics.SetClip(cellBounds);

@@ -865,6 +865,17 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             base.OnColumnHeaderMouseClick(e);
         }
 
+        //protected override void OnColumnAdded(DataGridViewColumnEventArgs e)
+        //{
+        //    var header = new FilterColumnHeaderCell();
+        //   // header.FilterButtonClicked += new EventHandler<ColumnFilterClickedEventArg>(header_FilterButtonClicked);
+        //    e.Column.HeaderCell = header;
+
+
+        //    base.OnColumnAdded(e);
+        //}
+    
+
 
         /// <summary>
         /// Raises the <see cref="E:CellFormatting" /> event.

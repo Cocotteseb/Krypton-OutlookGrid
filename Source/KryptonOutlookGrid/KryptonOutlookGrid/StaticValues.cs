@@ -30,7 +30,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <summary>
         /// The offset height for 2013 palettes
         /// </summary>
-        public static int _2013OffsetHeight = 22;
+        public static int _2013OffsetHeight = 11;
         /// <summary>
         /// The image offset width
         /// </summary>

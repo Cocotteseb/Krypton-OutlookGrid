@@ -305,4 +305,19 @@
   <data name="Finish" xml:space="preserve">
     <value>Finish</value>
   </data>
+  <data name="PaletteCustom" xml:space="preserve">
+    <value>Custom...</value>
+  </data>
+  <data name="PaletteCustomHeading" xml:space="preserve">
+    <value>Custom palettes</value>
+  </data>
+  <data name="EARLIERTHISYEAR" xml:space="preserve">
+    <value>Earlier this year</value>
+  </data>
+  <data name="OLDER" xml:space="preserve">
+    <value>Older</value>
+  </data>
+  <data name="PREVIOUSYEAR" xml:space="preserve">
+    <value>Previous year</value>
+  </data>
 </root>
