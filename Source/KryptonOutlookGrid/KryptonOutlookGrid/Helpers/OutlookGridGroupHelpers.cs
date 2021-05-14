@@ -179,83 +179,58 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             switch (GetDateCode(date))
             {
                 case "NODATE":
-                    return Int32.MaxValue ;
-                    break;
+                    return int.MaxValue ;
                 case "AFTERNEXTMONTH":  //Au-delà du prochain mois 
                     return 14;
-                    break;
                 case "NEXTMONTH": //Prochain mois
                     return 13;
-                    break;
                 case "LATERDURINGTHISMONTH": //Plus tard au cours de ce mois 
                     return 12;
-                    break;
                 case "INTHREEWEEKS": //dans les trois semaines à venir
                     return 11;
-                    break;
                 case "INTWOWEEKS": //dans les deux semaines a venir
                     return 10;
-                    break;
                 case "NEXTWEEK":
                     return 9;
-                    break;
                 case "Sunday":
                     return 8;
-                    break;
                 case "Saturday":
                     return 7;
-                    break;
                 case "Friday":
                     return 6;
-                    break;
                 case "Thursday":
                     return 5;
-                    break;
                 case "Wednesday":
                     return 4;
-                    break;
                 case "Tuesday":
                     return 3;
-                    break;
                 case "Monday":
                     return 2;
-                    break;
                 case "TOMORROW":
                     return 1;
-                    break;
                 case "TODAY":
                     return 0;
-                    break;
                 case "YESTERDAY":
                     return -1;
-                    break;
                 case "PREVIOUSWEEK":
                     return -2;
-                    break;
                 case "TWOWEEKSAGO": //Il y a deux semaines
                     return -3;
-                    break;
                 case "THREEWEEKSAGO": //Il y a trois semaines
                     return -4;
-                    break;
                 case "EARLIERDURINGTHISMONTH": //Plus tôt durant ce mois
                     return -5;
-                    break;
                 case "PREVIOUSMONTH": //Mois précédent
                     return -6;
-                    break;
                 case "EARLIERTHISYEAR":  //Plus tôt cet année
                     return -7;
-                    break;
                 case "PREVIOUSYEAR":  //L'année dernière
                     return -8;
-                    break;
                 case "OLDER":  //Older
                     return -9;
-                    break;
                 //case date.Date.ToShortDateString():
                 default:
-                    return Int32.MinValue;
+                    return int.MinValue;
             }
         }
 

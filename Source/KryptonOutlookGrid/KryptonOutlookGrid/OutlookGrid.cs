@@ -1423,6 +1423,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="sortDirection">The sort direction.</param>
         /// <param name="groupIndex">The column's position in grouping and at which level.</param>
         /// <param name="sortIndex">the column's position among sorted columns.</param>
+        /// <param name="comparer">The comparer if needed</param>
         public void AddInternalColumn(DataGridViewColumn col, IOutlookGridGroup group, SortOrder sortDirection, int groupIndex, int sortIndex, IComparer comparer)
         {
             AddInternalColumn(new OutlookGridColumn(col, group, sortDirection, groupIndex, sortIndex, comparer));
@@ -1453,7 +1454,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <summary>
         /// Add an array of OutlookGridColumns for internal use of OutlookGrid. The columns must already exist in the datagridview. Do this *BEFORE* using the grid (sorting and grouping, filling,...)
         /// </summary>
-        /// <param name="cols"></param>
+        /// <param name="cols">The array of columns</param>
         public void AddRangeInternalColumns(params OutlookGridColumn[] cols)
         {
             Debug.Assert(cols != null);
@@ -1464,6 +1465,10 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             }
         }
 
+        /// <summary>
+        /// Add an array of OutlookGridColumns for internal use of OutlookGrid. The columns must already exist in the datagridview. Do this *BEFORE* using the grid (sorting and grouping, filling,...)
+        /// </summary>
+        /// <param name="cols">The list of columns.</param>
         public void AddRangeInternalColumns(List<OutlookGridColumn> cols)
         {
             Debug.Assert(cols != null);

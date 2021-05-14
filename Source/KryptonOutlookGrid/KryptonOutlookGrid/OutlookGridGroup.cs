@@ -84,12 +84,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Sort groups using count items value
         /// </summary>
         private bool _sortBySummaryCount;
-        /// <summary>
-        /// Specific Comparer object for items in the group, if needed
-        /// </summary>
-        private IComparer _itemsComparer;
-
-
         #endregion
 
         #region "Constructor"
