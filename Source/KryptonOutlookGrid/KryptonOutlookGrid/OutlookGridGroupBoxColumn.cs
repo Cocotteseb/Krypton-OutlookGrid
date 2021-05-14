@@ -9,6 +9,7 @@
 //--------------------------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -20,12 +21,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     public class OutlookGridGroupBoxColumn : IEquatable<OutlookGridGroupBoxColumn>
     {
         #region "Constructor"
-        ///// <summary>
-        ///// Constructor
-        ///// </summary>
-        //public OutlookGridGroupBoxColumn()
-        //{}
-
         /// <summary>
         /// Constructor
         /// </summary>

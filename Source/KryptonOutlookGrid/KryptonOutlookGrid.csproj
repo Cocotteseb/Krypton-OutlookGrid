@@ -100,7 +100,6 @@
     <Compile Include="KryptonOutlookGrid\OutlookGridGroupCountComparer.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridGroupImageEventArgs.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridRow.cs" />
-    <Compile Include="KryptonOutlookGrid\OutlookGridRowComparer.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridRowComparer2.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridRowNodeCollection.cs" />
     <Compile Include="KryptonOutlookGrid\OutlookGridRowNodeEvents.cs" />

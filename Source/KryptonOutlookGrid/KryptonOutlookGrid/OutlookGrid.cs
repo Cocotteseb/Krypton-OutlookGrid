@@ -820,7 +820,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 else if (e.Button == MouseButtons.Left)
                 {
                     OutlookGridColumn col = internalColumns.FindFromColumnIndex(e.ColumnIndex);
-                    if (col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable)
+                    if (col != null && col.DataGridViewColumn.SortMode != DataGridViewColumnSortMode.NotSortable)
                     {
                         SortOrder previousSort = col.SortDirection;
                         //Reset all sorting column only if not Ctrl or Shift or the column is grouped
@@ -1423,9 +1423,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="sortDirection">The sort direction.</param>
         /// <param name="groupIndex">The column's position in grouping and at which level.</param>
         /// <param name="sortIndex">the column's position among sorted columns.</param>
-        public void AddInternalColumn(DataGridViewColumn col, IOutlookGridGroup group, SortOrder sortDirection, int groupIndex, int sortIndex)
+        public void AddInternalColumn(DataGridViewColumn col, IOutlookGridGroup group, SortOrder sortDirection, int groupIndex, int sortIndex, IComparer comparer)
         {
-            AddInternalColumn(new OutlookGridColumn(col, group, sortDirection, groupIndex, sortIndex));
+            AddInternalColumn(new OutlookGridColumn(col, group, sortDirection, groupIndex, sortIndex, comparer));
             //internalColumns.Add(new OutlookGridColumn(col, group, sortDirection, groupIndex, sortIndex));
             ////Already reflect the SortOrder on the column
             //col.HeaderCell.SortGlyphDirection = sortDirection;
@@ -1455,6 +1455,16 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// </summary>
         /// <param name="cols"></param>
         public void AddRangeInternalColumns(params OutlookGridColumn[] cols)
+        {
+            Debug.Assert(cols != null);
+            // All columns with DisplayIndex != -1 are put into the initialColumns array
+            foreach (OutlookGridColumn col in cols)
+            {
+                AddInternalColumn(col);
+            }
+        }
+
+        public void AddRangeInternalColumns(List<OutlookGridColumn> cols)
         {
             Debug.Assert(cols != null);
             // All columns with DisplayIndex != -1 are put into the initialColumns array
@@ -2864,7 +2874,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                         writer.WriteElementString("OneItemText", col.GroupingType.OneItemText);
                         writer.WriteElementString("XXXItemsText", col.GroupingType.XXXItemsText);
                         writer.WriteElementString("SortBySummaryCount", CommonHelper.BoolToString(col.GroupingType.SortBySummaryCount));
-                        writer.WriteElementString("ItemsComparer", (col.GroupingType.ItemsComparer == null) ? "" : col.GroupingType.ItemsComparer.GetType().AssemblyQualifiedName);
+                        //writer.WriteElementString("ItemsComparer", (col.GroupingType.ItemsComparer == null) ? "" : col.GroupingType.ItemsComparer.GetType().AssemblyQualifiedName);
                         if (col.GroupingType.GetType() == typeof(OutlookGridDateTimeGroup))
                         {
                             writer.WriteElementString("GroupDateInterval", ((OutlookGridDateTimeGroup)col.GroupingType).Interval.ToString());
@@ -2878,6 +2888,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     writer.WriteElementString("Width", col.DataGridViewColumn.Width.ToString());
                     writer.WriteElementString("Index", col.DataGridViewColumn.Index.ToString());
                     writer.WriteElementString("DisplayIndex", col.DataGridViewColumn.DisplayIndex.ToString());
+                    writer.WriteElementString("RowsComparer", (col.RowsComparer == null) ? "" : col.RowsComparer.GetType().AssemblyQualifiedName);
                     writer.WriteEndElement();
                 }
                 writer.WriteEndElement();

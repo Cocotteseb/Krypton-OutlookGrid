@@ -361,17 +361,17 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             set { _sortBySummaryCount = value; }
         }
 
-        /// <summary>
-        /// Gets or sets the items comparer.
-        /// </summary>
-        /// <value>
-        /// The items comparer.
-        /// </value>
-        public virtual IComparer ItemsComparer
-        {
-            get { return _itemsComparer; }
-            set { _itemsComparer = value; }
-        }
+        ///// <summary>
+        ///// Gets or sets the items comparer.
+        ///// </summary>
+        ///// <value>
+        ///// The items comparer.
+        ///// </value>
+        //public virtual IComparer ItemsComparer
+        //{
+        //    get { return _itemsComparer; }
+        //    set { _itemsComparer = value; }
+        //}
 
         #endregion
 

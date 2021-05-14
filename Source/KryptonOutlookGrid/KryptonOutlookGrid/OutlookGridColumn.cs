@@ -9,6 +9,8 @@
 //--------------------------------------------------------------------------------
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
@@ -18,13 +20,6 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
     /// </summary>
     public class OutlookGridColumn : IEquatable<OutlookGridColumn>
     {
-        private IOutlookGridGroup groupingType;
-        private DataGridViewColumn column;
-        private SortOrder sortDirection;
-        private int groupIndex;
-        private int sortIndex;
-        private string name;
-
         #region Constructor
         /// <summary>
         /// Constructor
@@ -34,14 +29,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="sortDirection">The sort direction.</param>
         /// <param name="groupIndex">The column's position in grouping and at which level.</param>
         /// <param name="sortIndex">the column's position among sorted columns.</param>
-        public OutlookGridColumn(DataGridViewColumn col, IOutlookGridGroup group, SortOrder sortDirection, int groupIndex, int sortIndex)
+        public OutlookGridColumn(DataGridViewColumn col, IOutlookGridGroup group, SortOrder sortDirection, int groupIndex, int sortIndex, IComparer comparer)
         {
-            this.column = col;
-            this.name = col.Name;
-            this.groupingType = group;
-            this.sortDirection = sortDirection;
-            this.groupIndex = groupIndex;
-            this.sortIndex = sortIndex;
+            DataGridViewColumn = col;
+            Name = col.Name;
+            GroupingType = group;
+            SortDirection = sortDirection;
+            GroupIndex = groupIndex;
+            SortIndex = sortIndex;
+            RowsComparer = comparer;
         }
 
         /// <summary>
@@ -53,14 +49,15 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="sortDirection">The sort direction.</param>
         /// <param name="groupIndex">The column's position in grouping and at which level.</param>
         /// <param name="sortIndex">the column's position among sorted columns.</param>
-        public OutlookGridColumn(string columnName, DataGridViewColumn col, IOutlookGridGroup group, SortOrder sortDirection, int groupIndex, int sortIndex)
+        public OutlookGridColumn(string columnName, DataGridViewColumn col, IOutlookGridGroup group, SortOrder sortDirection, int groupIndex, int sortIndex, IComparer comparer)
         {
-            this.column = col;
-            this.name = columnName;
-            this.groupingType = group;
-            this.sortDirection = sortDirection;
-            this.groupIndex = groupIndex;
-            this.sortIndex = sortIndex;
+            DataGridViewColumn = col;
+            Name = columnName;
+            GroupingType = group;
+            SortDirection = sortDirection;
+            GroupIndex = groupIndex;
+            SortIndex = sortIndex;
+            RowsComparer = comparer;
         }
 
         #endregion
@@ -69,64 +66,45 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <summary>
         /// Gets or sets the column name
         /// </summary>
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets if the column is grouped
         /// </summary>
         public bool IsGrouped
         {
-            get { return groupIndex > -1; }
+            get { return GroupIndex > -1; }
         }
 
         /// <summary>
         /// Gets or sets the sort direction
         /// </summary>
-        public SortOrder SortDirection
-        {
-            get { return sortDirection; }
-            set { sortDirection = value; }
-        }
+        public SortOrder SortDirection { get; set; }
 
         /// <summary>
         /// Gets or sets the associated DataGridViewColumn
         /// </summary>
-        public DataGridViewColumn DataGridViewColumn
-        {
-            get { return column; }
-            set { column = value; }
-        }
+        public DataGridViewColumn DataGridViewColumn { get; set; }
 
         /// <summary>
         /// Gets or sets the group
         /// </summary>
-        public IOutlookGridGroup GroupingType
-        {
-            get { return groupingType; }
-            set { groupingType = value; }
-        }
+        public IOutlookGridGroup GroupingType { get; set; }
 
         /// <summary>
         /// Gets or sets the column's position in grouping and at which level
         /// </summary>
-        public int GroupIndex
-        {
-            get { return groupIndex; }
-            set { groupIndex = value; }
-        }
+        public int GroupIndex { get; set; }
 
         /// <summary>
         /// Gets or sets the column's position among sorted columns
         /// </summary>
-        public int SortIndex
-        {
-            get { return sortIndex; }
-            set { sortIndex = value; }
-        }
+        public int SortIndex { get; set; }
+
+        /// <summary>
+        /// Gets or sets the custom row comparer, if needed.
+        /// </summary>
+        public IComparer RowsComparer { get; set; }
 
         #endregion
 
@@ -139,7 +117,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <returns></returns>
         public bool Equals(OutlookGridColumn other)
         {
-            return column.Name.Equals(other.DataGridViewColumn.Name);
+            return DataGridViewColumn.Name.Equals(other.DataGridViewColumn.Name);
         }
 
         #endregion

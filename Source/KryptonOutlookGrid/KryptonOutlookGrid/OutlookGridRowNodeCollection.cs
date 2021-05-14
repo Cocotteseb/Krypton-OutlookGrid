@@ -126,7 +126,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// Sorts the specified comparer.
         /// </summary>
         /// <param name="comparer">The comparer.</param>
-        internal void Sort(OutlookGridRowComparer comparer)
+        internal void Sort(OutlookGridRowComparer2 comparer)
         {
             subNodes.Sort(comparer);
         }

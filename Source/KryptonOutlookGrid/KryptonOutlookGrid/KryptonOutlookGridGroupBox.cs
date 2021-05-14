@@ -255,7 +255,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     //If no grouped columns, draw to the indicating text
                     if (columnsList.Count == 0)
                     {
-                        TextRenderer.DrawText(e.Graphics, _dragColumnToGroupText , _palette.GetContentShortTextFont(PaletteContentStyle.LabelNormalPanel, PaletteState.Normal), e.ClipRectangle, _palette.GetContentShortTextColor1(PaletteContentStyle.LabelNormalPanel, PaletteState.Normal),
+                        TextRenderer.DrawText(e.Graphics, _dragColumnToGroupText, _palette.GetContentShortTextFont(PaletteContentStyle.LabelNormalPanel, PaletteState.Normal), e.ClipRectangle, _palette.GetContentShortTextColor1(PaletteContentStyle.LabelNormalPanel, PaletteState.Normal),
                             TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.PreserveGraphicsClipping);
                     }
 
@@ -263,14 +263,14 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                     _paletteBack.Style = PaletteBackStyle.GridHeaderColumnList;
                     _paletteBorder.Style = PaletteBorderStyle.GridHeaderColumnList;
                     // PaintGroupBox(e.Graphics, e.ClipRectangle, this.Font, "Drag a column here to group", columnsList.Count > 0);
-                   
+
 
 
                     //Draw the column boxes
                     foreach (OutlookGridGroupBoxColumn current in this.columnsList)
                     {
                         Rectangle rectangle = default(Rectangle);
-                        rectangle.Width = (int)(100 * factorX) ;
+                        rectangle.Width = (int)(100 * factorX);
                         rectangle.X = nextPosition;
                         rectangle.Y = (e.ClipRectangle.Height - (int)(25 * factorY)) / 2;
                         rectangle.Height = (int)(25 * factorY);
@@ -387,7 +387,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 foreach (OutlookGridGroupBoxColumn c in l)
                 {
                     //Warn the Grid
-                    OnColumnGroupRemoved(new OutlookGridColumnEventArgs(new OutlookGridColumn(c.ColumnName, null, null, SortOrder.None, -1, -1)));
+                    OnColumnGroupRemoved(new OutlookGridColumnEventArgs(new OutlookGridColumn(c.ColumnName, null, null, SortOrder.None, -1, -1, null)));
 
                     columnsList.Remove(c);
                 }
@@ -407,7 +407,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                             i++;
                         }
                     }
-                    OnColumnGroupOrderChanged(new OutlookGridColumnEventArgs(new OutlookGridColumn(columnMovingInsideGroupBox.ColumnName, null, null, SortOrder.None, i, -1)));
+                    OnColumnGroupOrderChanged(new OutlookGridColumnEventArgs(new OutlookGridColumn(columnMovingInsideGroupBox.ColumnName, null, null, SortOrder.None, i, -1, null)));
                     //MessageBox.Show("Changed order = " + i.ToString());
                 }
             }
@@ -438,7 +438,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             {
                 //On MouseClick is before OnMouseUp, so if it is moving, don't click...
                 bool somethingIsMoving = false;
-                foreach (OutlookGridGroupBoxColumn c in this.columnsList)
+                foreach (OutlookGridGroupBoxColumn c in columnsList)
                 {
                     if (c.IsMoving)
                         somethingIsMoving = true;
@@ -452,7 +452,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                         {
                             c.SortDirection = c.SortDirection == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
                             //Warn the Grid
-                            OnColumnSortChanged(new OutlookGridColumnEventArgs(new OutlookGridColumn(c.ColumnName, null, null, c.SortDirection, -1, -1)));
+                            OnColumnSortChanged(new OutlookGridColumnEventArgs(new OutlookGridColumn(c.ColumnName, null, null, c.SortDirection, -1, -1, null)));
                         }
                     }
                 }
@@ -684,7 +684,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="e">A OutlookGridColumnEventArgs that contains the event data.</param>
         private void OnGroupCollapse(object sender, EventArgs e)
         {
-            OnGroupCollapse(new OutlookGridColumnEventArgs(new OutlookGridColumn(columnsList[indexselected].ColumnName, null, null, SortOrder.None, -1, -1)));
+            OnGroupCollapse(new OutlookGridColumnEventArgs(new OutlookGridColumn(columnsList[indexselected].ColumnName, null, null, SortOrder.None, -1, -1, null)));
         }
 
         /// <summary>
@@ -694,7 +694,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         /// <param name="e">A OutlookGridColumnEventArgs that contains the event data.</param>
         private void OnGroupExpand(object sender, EventArgs e)
         {
-            OnGroupExpand(new OutlookGridColumnEventArgs(new OutlookGridColumn(columnsList[indexselected].ColumnName, null, null, SortOrder.None, -1, -1)));
+            OnGroupExpand(new OutlookGridColumnEventArgs(new OutlookGridColumn(columnsList[indexselected].ColumnName, null, null, SortOrder.None, -1, -1, null)));
         }
 
         /// <summary>
@@ -708,7 +708,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             OutlookGridGroupBoxColumn col = columnsList[indexselected];
             col.SortDirection = SortOrder.Ascending;
             //Raise event
-            OnColumnSortChanged(new OutlookGridColumnEventArgs(new OutlookGridColumn(col.ColumnName, null, null, SortOrder.Ascending, -1, -1)));
+            OnColumnSortChanged(new OutlookGridColumnEventArgs(new OutlookGridColumn(col.ColumnName, null, null, SortOrder.Ascending, -1, -1, null)));
             //Redraw
             this.Invalidate();
         }
@@ -724,7 +724,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             OutlookGridGroupBoxColumn col = columnsList[indexselected];
             col.SortDirection = SortOrder.Descending;
             //Raise event
-            OnColumnSortChanged(new OutlookGridColumnEventArgs(new OutlookGridColumn(col.ColumnName, null, null, SortOrder.Descending, -1, -1)));
+            OnColumnSortChanged(new OutlookGridColumnEventArgs(new OutlookGridColumn(col.ColumnName, null, null, SortOrder.Descending, -1, -1, null)));
             //Redraw
             this.Invalidate();
         }
@@ -737,7 +737,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         private void OnUngroup(object sender, EventArgs e)
         {
             OutlookGridGroupBoxColumn col = columnsList[indexselected];
-            OnColumnGroupRemoved(new OutlookGridColumnEventArgs(new OutlookGridColumn(col.ColumnName, null, null, SortOrder.None, -1, -1)));
+            OnColumnGroupRemoved(new OutlookGridColumnEventArgs(new OutlookGridColumn(col.ColumnName, null, null, SortOrder.None, -1, -1, null)));
             columnsList.Remove(col);
             this.Invalidate();
         }
@@ -751,7 +751,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             KryptonContextMenuItem item = (KryptonContextMenuItem)sender;
             OutlookGridGroupBoxColumn col = columnsList[indexselected];
-            OutlookGridColumn colEvent = new OutlookGridColumn(col.ColumnName, null, null, SortOrder.None, -1, -1);
+            OutlookGridColumn colEvent = new OutlookGridColumn(col.ColumnName, null, null, SortOrder.None, -1, -1, null);
             colEvent.GroupingType = new OutlookGridDateTimeGroup(null) { Interval = ((OutlookGridDateTimeGroup.DateInterval)Enum.Parse(typeof(OutlookGridDateTimeGroup.DateInterval), item.Tag.ToString())) };
             col.GroupInterval = ((OutlookGridDateTimeGroup)colEvent.GroupingType).Interval.ToString();
             //Raise event
@@ -767,7 +767,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             KryptonContextMenuItem item = (KryptonContextMenuItem)sender;
             OutlookGridGroupBoxColumn col = columnsList[indexselected];
-            OutlookGridColumn colEvent = new OutlookGridColumn(col.ColumnName, null, null, SortOrder.None, -1, -1);
+            OutlookGridColumn colEvent = new OutlookGridColumn(col.ColumnName, null, null, SortOrder.None, -1, -1, null);
             colEvent.GroupingType = new OutlookGridDefaultGroup(null) { SortBySummaryCount = item.Checked };
             col.SortBySummaryCount = item.Checked;
             //Raise event
@@ -813,9 +813,9 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
 
                 //try
                 //{
-                    //Warns the grid of a new grouping
-                    OnColumnGroupAdded(new OutlookGridColumnEventArgs(new OutlookGridColumn(columnName, null, null, sortOrder, i, -1)));
-                    this.Invalidate();
+                //Warns the grid of a new grouping
+                OnColumnGroupAdded(new OutlookGridColumnEventArgs(new OutlookGridColumn(columnName, null, null, sortOrder, i, -1, null)));
+                this.Invalidate();
                 //}
                 //catch (Exception exc)
                 //{
@@ -852,7 +852,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                 _menuSortAscending = new KryptonContextMenuItem(LangManager.Instance.GetString("SORTASCENDING"), Properties.Resources.sort_ascending, new EventHandler(OnSortAscending));
                 _menuSortDescending = new KryptonContextMenuItem(LangManager.Instance.GetString("SORTDESCENDING"), Properties.Resources.sort_descending, new EventHandler(OnSortDescending));
                 _menuSeparator1 = new KryptonContextMenuSeparator();
-                _menuExpand = new KryptonContextMenuItem(LangManager.Instance.GetString("EXPAND"), Properties.Resources.element_plus_16, new EventHandler(OnGroupExpand)); 
+                _menuExpand = new KryptonContextMenuItem(LangManager.Instance.GetString("EXPAND"), Properties.Resources.element_plus_16, new EventHandler(OnGroupExpand));
                 _menuCollapse = new KryptonContextMenuItem(LangManager.Instance.GetString("COLLAPSE"), Properties.Resources.element_minus_16, new EventHandler(OnGroupCollapse));
                 _menuUnGroup = new KryptonContextMenuItem(LangManager.Instance.GetString("UNGROUP"), Properties.Resources.element_delete, new EventHandler(OnUngroup));
                 _menuSeparator2 = new KryptonContextMenuSeparator();
@@ -886,7 +886,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
                                                                                             _menuSortBySummary,
                                                                                             _menuSeparator1,
                                                                                             _menuGroupInterval,
-                                                                                            _menuExpand, 
+                                                                                            _menuExpand,
                                                                                             _menuCollapse,
                                                                                             _menuUnGroup,
                                                                                             _menuSeparator2,

@@ -120,7 +120,7 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
             foreach (OutlookGridColumn col in tmp)
             {
                 if (col.IsGrouped && col.GroupIndex > -1)
-                    res.Add(Tuple.Create<int, SortOrder, IComparer>(col.DataGridViewColumn.Index, col.SortDirection, col.GroupingType.ItemsComparer));
+                    res.Add(Tuple.Create<int, SortOrder, IComparer>(col.DataGridViewColumn.Index, col.SortDirection, col.RowsComparer));
             }
             return res;
         }
@@ -144,19 +144,21 @@ namespace JDHSoftware.Krypton.Toolkit.KryptonOutlookGrid
         {
             return this.FirstOrDefault(x => x.Name == name);
         }
-        
+
         /// <summary>
         /// Gets a list of columns which are sorted and not grouped.
         /// </summary>
         /// <returns>List of Column indexes and SortDirection ordered by SortIndex.</returns>
         public List<Tuple<int, SortOrder, IComparer>> GetIndexAndSortSortedOnlyColumns()
         {
-            List<Tuple<int, SortOrder, IComparer>> res = new List<Tuple<int, SortOrder, IComparer>>();
+            var res = new List<Tuple<int, SortOrder, IComparer>>();
             var tmp = this.OrderBy(x => x.SortIndex);
             foreach (OutlookGridColumn col in tmp)
             {
                 if (!col.IsGrouped && col.SortIndex > -1)
-                    res.Add(Tuple.Create<int, SortOrder, IComparer>(col.DataGridViewColumn.Index, col.SortDirection, col.GroupingType.ItemsComparer));
+                {
+                    res.Add(Tuple.Create(col.DataGridViewColumn.Index, col.SortDirection, col.RowsComparer));
+                }
             }
             return res;
         }
